@@ -1,13 +1,17 @@
 import axios from "axios";
 
 export const callDummyController = async (req, res) => {
+  const headers = {
+    'Content-Type': 'application/json', 
+  };
   try {
-    const res = await axios.get(
-      `http://localhost:8080/api/submitProblem/dummy`
+    console.log('HELLOOOOOOO')
+    const result = await axios.get(
+      `http://submitproblem:5000/api/submitProblem/dummy`, {headers:headers}
     );
-    console.log(res.data)
+    console.log('HELLOOOOOOO2', result)
   } catch (error) {
     console.log(error);
   }
-  return {"message":"everything is OK"}
+  return res.status(200).json({ message: "Data received successfully" });
 };

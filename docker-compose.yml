@@ -10,6 +10,7 @@ services:
     ports:
       - "5001:5000"
 
+
   nginx:
     image: nginx:latest
     ports:
