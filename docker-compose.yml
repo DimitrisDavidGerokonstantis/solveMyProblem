@@ -4,12 +4,24 @@ services:
     build: './submitproblem'
     ports:
       - "5000:5000"
+    depends_on: 
+      - db
+    environment:
+      - MONGO_DB_URI=mongodb://db/microservices1
 
   showsubmissions:
     build: './showsubmissions'
     ports:
       - "5001:5000"
-
+    depends_on: 
+      - db
+    environment:
+      - MONGO_DB_URI=mongodb://db/microservices2
+ 
+  db:
+    image: mongo
+    ports:
+      - "27016:27017"
 
   nginx:
     image: nginx:latest
