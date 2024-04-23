@@ -1,6 +1,9 @@
 import express from "express";
 import routes from "./src/routes/routes.js";
 import cors from "cors";
+import mongoose from "mongoose"
+
+mongoose.connect(process.env.MONGO_DB_URI);
 
 const app = express();
 
