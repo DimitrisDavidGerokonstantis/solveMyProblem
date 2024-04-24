@@ -1,6 +1,5 @@
 version: '3'
 services:
-
   dummyfrontend:
     build: './dummyfrontend/dummyfrontend'
     ports:
@@ -12,10 +11,10 @@ services:
       - "5000:5000"
     depends_on: 
       - db
+      - rabbitmqquestions
     environment:
       - MONGO_DB_URI=mongodb://db/microservices1
       - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
-      - RABBITMQ_ANSWERS_URL=amqp://rabbitmqanswers/guest:guest@rabbitmq:5672/
       - EXCHANGE_NAME=questionsExchange
 
 
@@ -26,15 +25,13 @@ services:
       - "5001:5000"
     depends_on: 
       - db
+      - rabbitmqquestions
     environment:
       - MONGO_DB_URI=mongodb://db/microservices2
       - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
-      - RABBITMQ_ANSWERS_URL=amqp://rabbitmqanswers/guest:guest@rabbitmq:5672/
       - EXCHANGE_NAME=questionsExchange
       - QUEUE_SHOW_SUBMISSIONS=showSubmissionsQueue
       - QUEUE_VIEW_RESULTS=viewResultsQueue
-
-
 
 
   db:
