@@ -42,8 +42,26 @@ export const dummyController = async (req, res) => {
 
 export const submitController = async (req, res) => {
   console.log('HELLO', req.body)
-  let problem = await Problems.create({userID: req.body.userID, inputDataFile: req.body.inputDataFile, pythonScript : req.body.pythonScript, status: req.body.status})
+  let problem = await Problems.create({userID: req.body.userID, inputDataFile: req.body.inputDataFile, extraParams: req.body.extraParams,pythonScript : req.body.pythonScript, status: req.body.status})
   console.log("PROBLEM",problem);
   produce_to_questions_queue(JSON.stringify(problem));
-  return res.status(201).json({ message: "Resource created. Problem Added successfully", problem: problem });
+  return res.status(200).json({ message: "Resource created. Problem Added successfully", problem: problem });
+};
+
+
+export const updateSubmission = async (req, res) => {
+  let problemToUpdate = await Problems.findOne({_id:req.body.problemId})  
+  problemToUpdate.pythonScript=req.body.pythonScript;
+  problemToUpdate.inputDataFile=req.body.inputDataFile;
+  problemToUpdate.extraParams=req.body.extraParams;
+  await problemToUpdate.save();
+  produce_to_questions_queue(JSON.stringify(problemToUpdate));
+  return res.status(200).json({ message: "Resource updated. Problem updated successfully"});
+};
+
+
+export const getProblemInfo = async (req, res) => {
+  console.log(req.params.problemId)
+  let problem=await Problems.find({_id:req.params.problemId})
+  return res.status(200).json({problem});
 };

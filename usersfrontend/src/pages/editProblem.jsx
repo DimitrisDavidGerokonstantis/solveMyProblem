@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from 'react-dom';
 import { CopyBlock,dracula } from 'react-code-blocks';
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 const EditProblem = () => {
     const [showModalInput, setShowModalInput] = React.useState(false);
     const [showModalScript, setShowModalScript] = React.useState(false);
@@ -24,10 +25,40 @@ const EditProblem = () => {
     const [maxDistance,setMaxDistance]=useState("")
     const [distanceError, setDistanceError]=useState("")
     const [submitError,setSubmitError]=useState("")
+    const [problemId, setProblemId]=useState(useLocation().pathname.split("/")[2])
+
 
     const numberRegex = /^[0-9]+$/;
 
-    console.log(inputDataFile.length, inputScriptFile.length);
+
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          const res = await axios.get(
+            `http://localhost:8080/api/submitProblem/getProblemInfo/${problemId}`
+          );
+  
+          console.log("INFO",res.data.problem)
+          setModel(models[1])
+          setInputDataFile(JSON.stringify(res.data.problem[0].inputDataFile.content))
+          setInputScriptFile(res.data.problem[0].pythonScript.script)
+          setNumVehicles(res.data.problem[0].extraParams.numVehicles)
+          setDepot(res.data.problem[0].extraParams.depot)
+          setMaxDistance(res.data.problem[0].extraParams.maxDistance)
+          setTextContent1(res.data.problem[0].inputDataFile.info)
+          setTextContent2(res.data.problem[0].pythonScript.info)
+      
+        } catch (err) {
+          console.log(err);
+        }
+      };
+      fetchData();
+
+    }, []);
+
+
+
+    //console.log(inputDataFile.length, inputScriptFile.length);
     function MyCoolCodeBlock({ code, language, showLineNumbers }) {
       return(
         <div class="ml-10 mr-10">
@@ -39,6 +70,10 @@ const EditProblem = () => {
         codeBlock
       /></div>);
     }
+
+
+
+
     
 
     function toggleDropdown() {
@@ -154,7 +189,7 @@ const EditProblem = () => {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
-    const handleSubmit=(e)=>{
+    const handleSubmit=async(e)=>{
       e.preventDefault();
       setSubmitError("")
       if(inputDataFile==="" || inputScriptFile==="" || numVehicles==="" || depot===""|| maxDistance===""){
@@ -162,6 +197,36 @@ const EditProblem = () => {
       }
       if(vehiclesError!=="" || depotError!=="" || distanceError!=="" ||file1Error!="" || file2Error!="")
         setSubmitError("Some fields are not correct. Try again!")
+      
+      
+      if(submitError===""){
+        let extraParams={
+          numVehicles: numVehicles, depot: depot, maxDistance: maxDistance 
+        }
+
+        try {
+          console.log(typeof inputScriptFile)
+          let inputDataFileJSON = {};
+          inputDataFileJSON.content=JSON.parse(inputDataFile);
+          inputDataFileJSON.info=textContent1
+
+          const res=await axios.put(`http://localhost:8080/api/submitProblem/updateSubmission`,  
+          {
+            userID:1,
+            pythonScript: {script: `${inputScriptFile}`, info:`${textContent2}`},
+            inputDataFile: inputDataFileJSON,
+            status: "submitted",
+            extraParams: extraParams,
+            problemId: problemId
+          })
+          console.log("DATA",res.data.problem)
+        } catch (error) {
+          console.log(error)
+        }
+      }
+      
+      
+      
       }
 
     const handleVehicles=(e)=>{
@@ -265,13 +330,13 @@ const EditProblem = () => {
             {model==="Model 1 : Vehicle Routing Problem (VRP)" && isOpen &&(<div class="gap-10 mt-10 flex justify-center items-center relative"> 
             <div class="flex flex-col justify-center items-center relative"> 
             <label class="mb-3 block font-extrabold" for="num_vehicles">Number of vehicles</label>
-            <input  onChange={handleVehicles} id="num_vehicles" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="number of vehicles" />
+            <input  value={numVehicles} onChange={handleVehicles} id="num_vehicles" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="number of vehicles" />
             <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">{vehiclesError}</p>
             </div>
          
             <div class="flex flex-col justify-center items-center relative"> 
             <label class="mb-3 block font-extrabold" for="depot">Depot</label>
-            <input  onChange={handleDepot} id="depot" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="depot" />
+            <input value={depot} onChange={handleDepot} id="depot" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="depot" />
             <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">{depotError}</p>
 
             </div>
@@ -279,7 +344,7 @@ const EditProblem = () => {
             <div class="flex flex-col justify-center items-center relative"> 
             <label class="mb-3 block font-extrabold" for="max_distance">Maximum Distance</label>
             
-            <input onChange={handleDistance} id="max_distance" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="maximum distance" />
+            <input value={maxDistance} onChange={handleDistance} id="max_distance" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="maximum distance" />
             <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">{distanceError}</p>
 
             </div>

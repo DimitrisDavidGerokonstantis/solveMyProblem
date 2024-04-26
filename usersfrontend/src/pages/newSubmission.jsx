@@ -27,6 +27,7 @@ const NewSubmission = () => {
     const [distanceError, setDistanceError]=useState("")
     const [submitError,setSubmitError]=useState("")
 
+
     const numberRegex = /^[0-9]+$/;
 
     console.log(inputDataFile.length, inputScriptFile.length);
@@ -167,14 +168,23 @@ const NewSubmission = () => {
       
       
       if(submitError===""){
+        let extraParams={
+          numVehicles: numVehicles, depot: depot, maxDistance: maxDistance 
+        }
+
         try {
           console.log(typeof inputScriptFile)
+          let inputDataFileJSON = {};
+          inputDataFileJSON.content=JSON.parse(inputDataFile);
+          inputDataFileJSON.info=textContent1
+
           const res=await axios.post(`http://localhost:8080/api/submitProblem/submit`,  
           {
             userID:1,
-            pythonScript: {script: `${inputScriptFile}`},
-            inputDataFile: JSON.parse(inputDataFile),
+            pythonScript: {script: `${inputScriptFile}`, info:`${textContent2}`},
+            inputDataFile: inputDataFileJSON,
             status: "submitted",
+            extraParams: extraParams
           })
           console.log("DATA",res.data.problem)
         } catch (error) {
