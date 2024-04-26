@@ -1,9 +1,14 @@
 version: '3'
 services:
-  dummyfrontend:
-    build: './dummyfrontend/dummyfrontend'
+  commonfrontend:
+    build: './commonfrontend'
     ports:
       - "3000:3000"
+
+  usersfrontend:
+    build: './usersfrontend'
+    ports:
+      - "3001:3000"
 
   submitproblem:
     build: './submitproblem'
@@ -19,19 +24,19 @@ services:
 
 
 
-  showsubmissions:
-    build: './showsubmissions'
-    ports:
-      - "5001:5000"
-    depends_on: 
-      - db
-      - rabbitmqquestions
-    environment:
-      - MONGO_DB_URI=mongodb://db/microservices2
-      - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
-      - EXCHANGE_NAME=questionsExchange
-      - QUEUE_SHOW_SUBMISSIONS=showSubmissionsQueue
-      - QUEUE_VIEW_RESULTS=viewResultsQueue
+  # showsubmissions:
+  #   build: './showsubmissions'
+  #   ports:
+  #     - "5001:5000"
+  #   depends_on: 
+  #     - db
+  #     - rabbitmqquestions
+  #   environment:
+  #     - MONGO_DB_URI=mongodb://db/microservices2
+  #     - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
+  #     - EXCHANGE_NAME=questionsExchange
+  #     - QUEUE_SHOW_SUBMISSIONS=showSubmissionsQueue
+  #     - QUEUE_VIEW_RESULTS=viewResultsQueue
 
 
   db:
@@ -48,12 +53,12 @@ services:
       - 25672:25672
 
 
-  rabbitmqanswers:
-    image: rabbitmq:3-management
-    ports:
-      - 5673:5672
-      - 15673:15672
-      - 25673:25672
+  # rabbitmqanswers:
+  #   image: rabbitmq:3-management
+  #   ports:
+  #     - 5673:5672
+  #     - 15673:15672
+  #     - 25673:25672
 
 
   nginx:
@@ -61,10 +66,11 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - ./dummyfrontend/dummyfrontend/public:/srv/www/static
+      - ./commonfrontend/public:/srv/www/static
+      - ./usersfrontend/public:/srv/www/static
       - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - submitproblem
-      - showsubmissions
+      # - showsubmissions
 
 

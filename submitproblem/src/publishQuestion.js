@@ -13,7 +13,7 @@ export async function produce_to_questions_queue(message) {
       await channel.assertExchange(exchangeName, 'fanout', { durable: true });
   
       channel.publish(exchangeName, "" ,Buffer.from(message));
-      console.log(`Sent random number: ${message}`);
+      console.log(`Sent : ${message}`);
   
     } catch (error) {
       console.log(error);

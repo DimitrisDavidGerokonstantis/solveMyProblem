@@ -39,3 +39,11 @@ export const dummyController = async (req, res) => {
   produce_to_questions_queue('Hello there !');
   return res.status(200).json({ message: "Data received successfully" });
 };
+
+export const submitController = async (req, res) => {
+  console.log('HELLO', req.body)
+  let problem = await Problems.create({userID: req.body.userID, inputDataFile: req.body.inputDataFile, pythonScript : req.body.pythonScript, status: req.body.status})
+  console.log("PROBLEM",problem);
+  produce_to_questions_queue(JSON.stringify(problem));
+  return res.status(201).json({ message: "Resource created. Problem Added successfully", problem: problem });
+};

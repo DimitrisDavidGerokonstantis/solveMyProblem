@@ -25,7 +25,7 @@ export async function consume_from_questions_queue() {
         console.log(`Received message from ${queueName}: ${message.content.toString()}`);
         channel.ack(message);
       }, { noAck: false });
-  
+
     } catch (error) {
       console.log(error);
     }
