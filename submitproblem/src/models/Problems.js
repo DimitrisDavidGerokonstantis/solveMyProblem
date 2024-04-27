@@ -4,6 +4,8 @@ const Schema=mongoose.Schema
 
 const problemsSchema=new Schema({
     userID : Number,
+    name: String,
+    model: String,
     pythonScript : {
         "script": String,
         "info": String

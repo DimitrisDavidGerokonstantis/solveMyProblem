@@ -26,6 +26,7 @@ const EditProblem = () => {
     const [distanceError, setDistanceError]=useState("")
     const [submitError,setSubmitError]=useState("")
     const [problemId, setProblemId]=useState(useLocation().pathname.split("/")[2])
+    const [name, setName]=useState("");
 
 
     const numberRegex = /^[0-9]+$/;
@@ -39,7 +40,7 @@ const EditProblem = () => {
           );
   
           console.log("INFO",res.data.problem)
-          setModel(models[1])
+          setModel(res.data.problem[0].model)
           setInputDataFile(JSON.stringify(res.data.problem[0].inputDataFile.content))
           setInputScriptFile(res.data.problem[0].pythonScript.script)
           setNumVehicles(res.data.problem[0].extraParams.numVehicles)
@@ -47,6 +48,7 @@ const EditProblem = () => {
           setMaxDistance(res.data.problem[0].extraParams.maxDistance)
           setTextContent1(res.data.problem[0].inputDataFile.info)
           setTextContent2(res.data.problem[0].pythonScript.info)
+          setName(res.data.problem[0].name)
       
         } catch (err) {
           console.log(err);
@@ -189,17 +191,26 @@ const EditProblem = () => {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     }
 
+    const handleName=(e)=>{
+      setName(e.target.value)
+    }
+
+
     const handleSubmit=async(e)=>{
       e.preventDefault();
+      let error=false;
       setSubmitError("")
-      if(inputDataFile==="" || inputScriptFile==="" || numVehicles==="" || depot===""|| maxDistance===""){
-        setSubmitError("Missing values!")
+      if(inputDataFile==="" || inputScriptFile==="" || numVehicles==="" || depot===""|| maxDistance==="" || name===""){
+        setSubmitError("Missing values!");
+        error=true;
       }
-      if(vehiclesError!=="" || depotError!=="" || distanceError!=="" ||file1Error!="" || file2Error!="")
-        setSubmitError("Some fields are not correct. Try again!")
+      if(vehiclesError!=="" || depotError!=="" || distanceError!=="" ||file1Error!="" || file2Error!=""){
+        setSubmitError("Some fields are not correct. Try again!");
+        error=true;
+      }
       
       
-      if(submitError===""){
+      if(!error){
         let extraParams={
           numVehicles: numVehicles, depot: depot, maxDistance: maxDistance 
         }
@@ -217,7 +228,8 @@ const EditProblem = () => {
             inputDataFile: inputDataFileJSON,
             status: "submitted",
             extraParams: extraParams,
-            problemId: problemId
+            problemId: problemId,
+            name:name
           })
           console.log("DATA",res.data.problem)
         } catch (error) {
@@ -347,6 +359,15 @@ const EditProblem = () => {
             <input value={maxDistance} onChange={handleDistance} id="max_distance" class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="maximum distance" />
             <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">{distanceError}</p>
 
+            </div>
+            
+          </div>)}
+          {model==="Model 1 : Vehicle Routing Problem (VRP)" && isOpen &&(<div class="gap-10 mt-20 flex justify-center items-center relative"> 
+
+            <div class="flex flex-col justify-center items-center relative"> 
+            <label class="mb-3 block font-extrabold" for="name">Name of the problem</label>
+            
+            <input value={name} onChange={handleName} id="name" class="inline-block w-full rounded-full bg-orange-100 py-2.5 px-6 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40" placeholder="name" />
             </div>
             
           </div>)}
