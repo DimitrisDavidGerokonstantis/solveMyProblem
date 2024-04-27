@@ -6,6 +6,7 @@ import Footer from "./components/Footer.jsx"
 import NewSubmission from "./pages/newSubmission.jsx";
 import EditProblem from "./pages/editProblem.jsx";
 import ShowResults from "./pages/showResults.jsx";
+import ShowMySubmissions from "./pages/showMySubmissions.jsx";
 
 import "./index.css";
 
@@ -35,6 +36,15 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <ShowResults />
+      </React.Fragment>
+    ),
+  },
+  {
+    path: "/",   //it seems to be the homepage for users
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <ShowMySubmissions />
       </React.Fragment>
     ),
   },
