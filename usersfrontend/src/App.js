@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar.jsx"
 import Footer from "./components/Footer.jsx"
 import NewSubmission from "./pages/newSubmission.jsx";
 import EditProblem from "./pages/editProblem.jsx";
+import ShowResults from "./pages/showResults.jsx";
 
 import "./index.css";
 
@@ -27,7 +28,16 @@ const router = createBrowserRouter([
         <EditProblem />
       </React.Fragment>
     ),
-  }
+  },
+  {
+    path: "/showresults/:id",
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <ShowResults />
+      </React.Fragment>
+    ),
+  },
 ]);
 
 class App extends Component {
