@@ -9,6 +9,7 @@ import ShowResults from "./pages/showResults.jsx";
 import ShowMySubmissions from "./pages/showMySubmissions.jsx";
 import RegisterPage from "./pages/registerPage.jsx";
 import LoginPage from "./pages/loginPage";
+import ShowAllSubmissions from "./pages/showAllSubmissions.jsx";
 
 import "./index.css";
 
@@ -65,6 +66,15 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <ShowMySubmissions />
+      </React.Fragment>
+    ),
+  },
+  {
+    path: "/allsubmissions",   //it seems to be the homepage for admins
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <ShowAllSubmissions />
       </React.Fragment>
     ),
   },
