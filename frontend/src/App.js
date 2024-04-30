@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import Navbar from "./components/Navbar.jsx"
-import Footer from "./components/Footer.jsx"
+import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
 import NewSubmission from "./pages/newSubmission.jsx";
 import EditProblem from "./pages/editProblem.jsx";
 import ShowResults from "./pages/showResults.jsx";
@@ -11,7 +11,7 @@ import RegisterPage from "./pages/registerPage.jsx";
 import LoginPage from "./pages/loginPage";
 
 import "./index.css";
-
+import { AuthContextProvider } from "./context/authContext.js";
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       </React.Fragment>
     ),
   },
-   {
+  {
     path: "/register",
     element: (
       <React.Fragment>
@@ -60,7 +60,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/submissions",   //it seems to be the homepage for users
+    path: "/submissions", //it seems to be the homepage for users
     element: (
       <React.Fragment>
         <Navbar />
