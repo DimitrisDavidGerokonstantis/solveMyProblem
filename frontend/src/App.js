@@ -7,11 +7,31 @@ import NewSubmission from "./pages/newSubmission.jsx";
 import EditProblem from "./pages/editProblem.jsx";
 import ShowResults from "./pages/showResults.jsx";
 import ShowMySubmissions from "./pages/showMySubmissions.jsx";
+import RegisterPage from "./pages/registerPage.jsx";
+import LoginPage from "./pages/loginPage";
 
 import "./index.css";
 
 
 const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <LoginPage />
+      </React.Fragment>
+    ),
+  },
+   {
+    path: "/register",
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <RegisterPage />
+      </React.Fragment>
+    ),
+  },
   {
     path: "/submitproblem",
     element: (
@@ -40,7 +60,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/",   //it seems to be the homepage for users
+    path: "/submissions",   //it seems to be the homepage for users
     element: (
       <React.Fragment>
         <Navbar />

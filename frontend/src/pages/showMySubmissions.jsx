@@ -1,7 +1,10 @@
 import React from 'react'
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const ShowMySubmissions = () => {
+
+    const navigate = useNavigate();
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const json1 = {
         userID: 1,
@@ -72,7 +75,7 @@ const ShowMySubmissions = () => {
             <br></br>
             <div className="flex justify-between">
             <h2 className="text-2xl font-bold text-blue-500 flex-initial">My Submissions</h2>
-            <button className="bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-700 transition flex-initial">
+            <button onClick={()=>navigate('/submitproblem')} className="bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-700 transition flex-initial">
                 Submit new problem
             </button>
             </div>
