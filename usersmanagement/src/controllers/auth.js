@@ -64,3 +64,15 @@ export const logoutController = async (req, res) => {
     .status(200)
     .json("User has been logged out.");
 };
+
+export const getTokenController = async (req, res) => {
+  const myToken = req.cookies.access_token;
+  return res.status(200).json({ token: myToken });
+  // if (!myToken) return res.status(200).json({ token: myToken });
+  // jwt.verify(myToken, process.env.JWT_KEY, (err, userInfo) => {
+  //   if (err) return res.status(403).json({ token: null });
+  //   if (req.params.userID != userInfo.id)
+  //     return res.status(401).json({ token: null });
+  //   return res.status(200).json({ token: myToken });
+  // });
+};

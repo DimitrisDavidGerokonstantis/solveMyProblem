@@ -17,12 +17,10 @@ export const submitController = async (req, res) => {
     });
     console.log("PROBLEM", problem);
     produce_to_questions_queue(JSON.stringify(problem));
-    return res
-      .status(200)
-      .json({
-        message: "Resource created. Problem Added successfully",
-        problem: problem,
-      });
+    return res.status(200).json({
+      message: "Resource created. Problem Added successfully",
+      problem: problem,
+    });
   } catch (error) {
     return res.status(500).json(error);
   }
@@ -31,6 +29,7 @@ export const submitController = async (req, res) => {
 export const updateSubmission = async (req, res) => {
   try {
     let problemToUpdate = await Problems.findOne({ _id: req.body.problemId });
+    if (!problemToUpdate) return res.status(404).json("Problem not found!");
     problemToUpdate.pythonScript = req.body.pythonScript;
     problemToUpdate.inputDataFile = req.body.inputDataFile;
     problemToUpdate.extraParams = req.body.extraParams;

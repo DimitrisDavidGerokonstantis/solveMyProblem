@@ -4,6 +4,7 @@ import {
   registerController,
   loginController,
   logoutController,
+  getTokenController,
 } from "../controllers/auth.js";
 
 const router = express.Router();
@@ -11,5 +12,6 @@ const router = express.Router();
 router.post("/register", registerController);
 router.post("/login", loginController);
 router.post("/logout", logoutController);
+router.get("/getToken", getTokenController);
 
 export default router;

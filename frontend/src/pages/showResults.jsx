@@ -2,11 +2,14 @@ import React, { useEffect, useState, useRef } from "react";
 import Highcharts from "highcharts";
 import HighchartsNetworkgraph from "highcharts/modules/networkgraph";
 import File from "../images/file.png";
+import axios from "axios";
 
 // Initialize the networkgraph module
 HighchartsNetworkgraph(Highcharts);
 
 const ShowResults = () => {
+  const [accessToken, setAccessToken] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [isFileOpen, setIsFileOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
@@ -64,6 +67,20 @@ const ShowResults = () => {
   }, []);
 
   useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/auth/getToken/${userId}`
+        );
+        setAccessToken(res.data.token);
+        console.log("TOKEN", res.data);
+        if (res.data.token) {
+          setUserId(JSON.parse(localStorage.getItem("user")).id);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
     // Create the Highcharts chart
     if (isModalOpen && selectedRoute !== null && chartContainerRef.current) {
       const selectedRouteData = routesData[selectedRoute];
@@ -124,6 +141,7 @@ const ShowResults = () => {
         ],
       });
     }
+    fetchAccessToken();
   }, [isModalOpen, selectedRoute, routesData, chartContainerRef]);
 
   const handleFileClick = () => {
@@ -154,155 +172,163 @@ const ShowResults = () => {
     setSelectedRoute(null);
   };
 
-  return (
-    <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
-      <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
-      <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
-        <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
-          <div class="gap-5 mt-10 flex items-center">
-            <h3 class="text-xl font-bold text-orange-800">
-              The entire answer to the problem is in this file
-            </h3>
-            <button onClick={handleFileClick}>
-              <img src={File} alt="" class="w-9 h-9" />
-            </button>
-          </div>
-          <br></br>
-          <br></br>
-          <h2 class="mt-10 mb-6 text-2xl font-bold text-orange-800">
-            Information per vehicle{" "}
-          </h2>
-          <br></br>
-          <div className="money bg-orange-100 w-full">
-            <table>
-              <thead>
-                <tr>
-                  <th>Vehicle Number</th>
-                  <th>Distance of the route</th>
-                  <th>See route</th>
-                </tr>
-              </thead>
-              <tbody>
-                {routesData.map((route, index) => (
-                  <tr key={index}>
-                    <td>{index}</td>
-                    <td>{route["Distance of the route"]}</td>
-                    <td>
-                      <button
-                        className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                        onClick={() => openModal(index)}
-                      >
-                        Click to see route
-                      </button>
-                    </td>
+  if (accessToken) {
+    return (
+      <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
+        <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
+        <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
+          <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
+            <div class="gap-5 mt-10 flex items-center">
+              <h3 class="text-xl font-bold text-orange-800">
+                The entire answer to the problem is in this file
+              </h3>
+              <button onClick={handleFileClick}>
+                <img src={File} alt="" class="w-9 h-9" />
+              </button>
+            </div>
+            <br></br>
+            <br></br>
+            <h2 class="mt-10 mb-6 text-2xl font-bold text-orange-800">
+              Information per vehicle{" "}
+            </h2>
+            <br></br>
+            <div className="money bg-orange-100 w-full">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Vehicle Number</th>
+                    <th>Distance of the route</th>
+                    <th>See route</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {routesData.map((route, index) => (
+                    <tr key={index}>
+                      <td>{index}</td>
+                      <td>{route["Distance of the route"]}</td>
+                      <td>
+                        <button
+                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                          onClick={() => openModal(index)}
+                        >
+                          Click to see route
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Modal */}
-          {isModalOpen && selectedRoute !== null && (
-            <div className="fixed z-50 inset-0 bg-orange-900 bg-opacity-40 overflow-y-auto h-full w-full px-4">
-              <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
-                <div className="flex justify-end p-2">
-                  <button
-                    onClick={closeModal}
-                    type="button"
-                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
+            {/* Modal */}
+            {isModalOpen && selectedRoute !== null && (
+              <div className="fixed z-50 inset-0 bg-orange-900 bg-opacity-40 overflow-y-auto h-full w-full px-4">
+                <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
+                  <div className="flex justify-end p-2">
+                    <button
+                      onClick={closeModal}
+                      type="button"
+                      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                     >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-                {/* Container for Highcharts graph */}
-                <div
-                  ref={chartContainerRef}
-                  id="modal-graph"
-                  className="mb-2 p-6 pt-0 text-center"
-                ></div>
-                <div class="text-center">
-                  The path until the first stop is specified with{" "}
-                  <span class="text-red-500">red</span> color
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                  {/* Container for Highcharts graph */}
+                  <div
+                    ref={chartContainerRef}
+                    id="modal-graph"
+                    className="mb-2 p-6 pt-0 text-center"
+                  ></div>
+                  <div class="text-center">
+                    The path until the first stop is specified with{" "}
+                    <span class="text-red-500">red</span> color
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* File */}
-          {/* File */}
-          {isFileOpen && (
-            <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
-              <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-3xl">
-                {" "}
-                {/* Adjusted max-width */}
-                <div className="flex justify-end p-2">
-                  <button
-                    class="middle none center rounded-lg bg-orange-700 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:bg-orange-500 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    data-ripple-light="true"
-                    onClick={DownloadFile}
-                  >
-                    Download
-                  </button>
-                  <button
-                    onClick={FileClose}
-                    type="button"
-                    className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                  >
-                    <svg
-                      className="w-5 h-5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
+            {/* File */}
+            {/* File */}
+            {isFileOpen && (
+              <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
+                <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-3xl">
+                  {" "}
+                  {/* Adjusted max-width */}
+                  <div className="flex justify-end p-2">
+                    <button
+                      class="middle none center rounded-lg bg-orange-700 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:bg-orange-500 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                      data-ripple-light="true"
+                      onClick={DownloadFile}
                     >
-                      <path
-                        fillRule="evenodd"
-                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                </div>
-                <div className="py-3 px-4 flex items-center justify-center bg-gray-800 shadow-2xl rounded-lg overflow-hidden">
-                  <div className="w-full lg:w-9/12 bg-gray-800 shadow-2xl rounded-lg overflow-hidden">
-                    {" "}
-                    {/* Adjusted width */}
-                    <div id="header-buttons" className="py-3 px-4 flex">
-                      <div className="rounded-full w-3 h-3 bg-red-500 mr-2"></div>
-                      <div className="rounded-full w-3 h-3 bg-yellow-500 mr-2"></div>
-                      <div className="rounded-full w-3 h-3 bg-green-500"></div>
-                    </div>
-                    <div
-                      id="code-area"
-                      className="py-4 px-4 mt-1 text-white text-xl"
+                      Download
+                    </button>
+                    <button
+                      onClick={FileClose}
+                      type="button"
+                      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                     >
-                      {render_results_file.map((line, index) => (
-                        <>
-                          <div key={index}>{line}</div>
-                          {line.startsWith("Distance") && <br></br>}
-                        </>
-                      ))}
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="py-3 px-4 flex items-center justify-center bg-gray-800 shadow-2xl rounded-lg overflow-hidden">
+                    <div className="w-full lg:w-9/12 bg-gray-800 shadow-2xl rounded-lg overflow-hidden">
+                      {" "}
+                      {/* Adjusted width */}
+                      <div id="header-buttons" className="py-3 px-4 flex">
+                        <div className="rounded-full w-3 h-3 bg-red-500 mr-2"></div>
+                        <div className="rounded-full w-3 h-3 bg-yellow-500 mr-2"></div>
+                        <div className="rounded-full w-3 h-3 bg-green-500"></div>
+                      </div>
+                      <div
+                        id="code-area"
+                        className="py-4 px-4 mt-1 text-white text-xl"
+                      >
+                        {render_results_file.map((line, index) => (
+                          <>
+                            <div key={index}>{line}</div>
+                            {line.startsWith("Distance") && <br></br>}
+                          </>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+        <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
       </div>
-      <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
+        <h3 className="mt-40 text-4xl font-semibold">You have to login!</h3>
+      </div>
+    );
+  }
 };
 
 export default ShowResults;
