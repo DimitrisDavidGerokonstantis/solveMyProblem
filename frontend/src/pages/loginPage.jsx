@@ -1,4 +1,3 @@
-//Loading Spinner from : https://contactmentor.com/how-to-add-loading-spinner-react-js/
 import LoginPhoto from "../images/loginPhoto.png";
 import GoogleLogo from "../images/googleLogo.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -42,7 +41,7 @@ const LoginPage = () => {
           password: password,
         });
         if (result === "user") navigate("/submissions");
-        else if (result === "admin") navigate("/submissions");
+        else if (result === "admin") navigate("/allsubmissions");
       } catch (error) {
         console.log(error.response.data);
         setLoginError(error.response.data);

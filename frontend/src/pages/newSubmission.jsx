@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { CopyBlock, dracula } from "react-code-blocks";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const NewSubmission = () => {
+  const navigate = useNavigate();
+
   const [showModalInput, setShowModalInput] = React.useState(false);
   const [showModalScript, setShowModalScript] = React.useState(false);
   const [file1Error, setFile1Error] = useState("");
@@ -233,6 +235,7 @@ const NewSubmission = () => {
           }
         );
         console.log("DATA", res.data.problem);
+        navigate("/submissions");
       } catch (error) {
         console.log(error);
       }

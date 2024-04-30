@@ -31,15 +31,15 @@ const ShowMySubmissions = () => {
 
   const jsonArray = [json1, json2, json3];
 
-  /* Possible Statuses and buttons the user can press: */
+  /* Possible Statuses and buttons the admin can press - he cannot run a problem a user has created: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
-  //        Buttons: The user can press the View/Edit button so as to both edit and view, the Run button and the delete button
+  //        Buttons: The admin can press the View button so as to view the problem and the delete button
 
   // Running: The user has pressed the Run button and the problem has been submitted to the queue and trying to reach the solver
-  //        Buttons: The user can press only the View/Edit button and only to view
+  //        Buttons: The admin can press the View button to view the problem and the delete button to delete a problem (if there is need to do that)
 
-  // Finished: The problem has finished running and the answers have returned throught the second queue to the user
-  //        Buttons: The user can press the View/Edit button so as to only view and the View Results button
+  // Finished: The problem has finished running and the answers have returned through the second queue to the user
+  //        Buttons: The admin can press the View button so as to view the problem and the View Results button to view the results
 
   let readabledateCreate = [];
   let readabledateUpdate = [];
@@ -70,19 +70,13 @@ const ShowMySubmissions = () => {
   return (
     <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
       <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
-      <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-scroll">
+      <div class="bg-orange-50 bg-cover w-10/12 h-screen flex-col items-center justify-center overflow-scroll">
         <div className="money w-full shadow-lg ring-1 ring-orange-200">
           <br></br>
           <div className="flex justify-between">
-            <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
-              My Submissions
+            <h2 className="mt-5 text-2xl font-bold text-orange-800 flex-initial">
+              Submissions
             </h2>
-            <button
-              onClick={() => navigate("/submitproblem")}
-              className="mt-5 mr-20 bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-400 transition flex-initial"
-            >
-              Submit new problem
-            </button>
           </div>
           <br></br>
           <br></br>
@@ -92,9 +86,8 @@ const ShowMySubmissions = () => {
                 <th>Name</th>
                 <th>Created On</th>
                 <th>Status</th>
-                <th>View/Edit</th>
+                <th>View</th>
                 <th>Last Updated On</th>
-                <th>Run</th>
                 <th>View Results</th>
                 <th>Delete</th>
               </tr>
@@ -107,24 +100,10 @@ const ShowMySubmissions = () => {
                   <td>{jsonData.status}</td>
                   <td>
                     <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                      View/Edit
+                      View
                     </button>
                   </td>
                   <td>{readabledateUpdate[0]}</td>
-                  <td>
-                    {jsonData.status === "Ready" ? (
-                      <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                        Run
-                      </button>
-                    ) : (
-                      <button
-                        disabled
-                        className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                      >
-                        Run
-                      </button>
-                    )}
-                  </td>
                   <td>
                     {jsonData.status === "Finished" ? (
                       <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
@@ -140,7 +119,8 @@ const ShowMySubmissions = () => {
                     )}
                   </td>
                   <td>
-                    {jsonData.status === "Ready" ? (
+                    {jsonData.status === "Ready" ||
+                    jsonData.status === "Running" ? (
                       <button
                         className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
                         onClick={openModal}
