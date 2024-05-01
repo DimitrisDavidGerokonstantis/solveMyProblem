@@ -3,37 +3,54 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
 const problemsSchema = new Schema({
-  userID: mongoose.SchemaTypes.ObjectId,
-  name: String,
-  model: String,
+  userID: {
+    type: mongoose.SchemaTypes.ObjectId,
+    required: true,
+  },
+  name: {
+    type: String,
+    required: true,
+  },
+  model: { type: String, required: true },
   pythonScript: {
-    script: String,
-    info: String,
+    type: {
+      script: String,
+      info: String,
+    },
+    required: true,
   },
   inputDataFile: {
-    content: {
-      Locations: [
-        {
-          Latitude: Number,
-          Longitude: Number,
-        },
-      ],
+    type: {
+      content: {
+        Locations: [
+          {
+            Latitude: Number,
+            Longitude: Number,
+          },
+        ],
+      },
+      info: String,
     },
-    info: String,
+    required: true,
   },
   extraParams: {
-    numVehicles: Number,
-    depot: Number,
-    maxDistance: Number,
+    type: {
+      numVehicles: Number,
+      depot: Number,
+      maxDistance: Number,
+    },
+    required: true,
   },
-  status: String,
+  status: { type: String, required: true },
   createdAt: {
     type: Date,
     immutable: true,
+    required: true,
     default: () => Date.now(),
   },
   updatedAt: {
     type: Date,
+    required: true,
     default: () => Date.now(),
   },
 });

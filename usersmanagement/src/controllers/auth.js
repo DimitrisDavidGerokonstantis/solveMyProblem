@@ -121,3 +121,40 @@ export const buyCreditsController = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+// checks if a user is logged in
+export const authenticationController = async (req, res) => {
+  console.log("REQUEST", req.body);
+  if (!req.body.request.access_token) {
+    return res.status(200).json(false);
+  }
+  return res.status(200).json(true);
+};
+
+export const usersPermissionsController = async (req, res) => {
+  console.log("REQUEST", req.body);
+  jwt.verify(
+    req.body.request.access_token,
+    process.env.JWT_KEY,
+    async (err, userInfo) => {
+      if (err) return res.status(403).json("Token is not valid!");
+      let user = await Users.findOne({ _id: userInfo.id });
+      if (user.role === "user") return res.status(200).json(true);
+      return res.status(200).json(false);
+    }
+  );
+};
+
+export const adminsPermissionsController = async (req, res) => {
+  console.log("REQUEST", req.body);
+  jwt.verify(
+    req.body.request.access_token,
+    process.env.JWT_KEY,
+    async (err, userInfo) => {
+      if (err) return res.status(403).json("Token is not valid!");
+      let user = await Users.findOne({ _id: userInfo.id });
+      if (user.role === "admin") return res.status(200).json(true);
+      return res.status(200).json(false);
+    }
+  );
+};

@@ -73,25 +73,23 @@ const ShowMySubmissions = () => {
 
   const makeDatesReadable = (dateString) => {
     const date = new Date(dateString);
-    
+
     const year = date.getFullYear();
-    const month = ('0' + (date.getMonth() + 1)).slice(-2);
-    const day = ('0' + date.getDate()).slice(-2);
-  
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+
     const options = {
-      timeZone: 'Europe/Athens',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
+      timeZone: "Europe/Athens",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
     };
-    const timeString = date.toLocaleTimeString('el-GR', options);
-  
+    const timeString = date.toLocaleTimeString("el-GR", options);
+
     const formattedDate = `${year}-${month}-${day} ${timeString}`;
     return formattedDate;
   };
-  
-  
 
   useEffect(() => {
     const fetchAccessToken = async () => {
@@ -113,7 +111,9 @@ const ShowMySubmissions = () => {
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/showSubmissions`);
+        const res = await axios.get(
+          `http://localhost:8080/api/showSubmissions`
+        );
         console.log(res.data[0].createdAt);
         setProblems(res.data);
       } catch (error) {
@@ -122,6 +122,8 @@ const ShowMySubmissions = () => {
     };
     fetchAccessToken();
   }, []);
+
+  console.log(accessToken);
 
   if (accessToken && role != "admin") {
     return (
