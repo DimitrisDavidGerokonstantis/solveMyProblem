@@ -90,6 +90,10 @@ export const getTokenController = async (req, res) => {
 
 export const updateUsernameController = async (req, res) => {
   try {
+    let existingUser = await Users.findOne({ username: req.body.username });
+    if (existingUser && existingUser._id != req.body.userID) {
+      return res.status(409).json("This username is already in use");
+    }
     let user = await Users.findOne({ username: req.body.oldName });
     user.username = req.body.username;
     await user.save();

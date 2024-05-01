@@ -10,6 +10,8 @@ const ShowMySubmissions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [problems, setProblems] = useState([]);
   const [toBeDeleted, setToBeDeleted] = useState("");
+
+  const [problemDeleted, setProblemDeleted] = useState(false);
   // const json1 = {
   //   userID: 1,
   //   name: "Problem1",
@@ -64,6 +66,18 @@ const ShowMySubmissions = () => {
   //   readabledateUpdate[i] = dateUpdate.toLocaleString();
   // }
 
+  const [ReadyToRefresh, setReadyToRefresh] = useState(false);
+
+  useEffect(() => {
+    if (!ReadyToRefresh) {
+      const timer = setTimeout(() => {
+        setReadyToRefresh(true); // Revert the boolean variable after 2 seconds
+      }, 1000);
+
+      return () => clearTimeout(timer); // Clean up the timer to avoid memory leaks
+    }
+  }, []); // Empty dependency array ensures this effect runs only once after initial render
+
   const openModal = (name) => {
     setIsModalOpen(true);
     setToBeDeleted(name);
@@ -73,15 +87,13 @@ const ShowMySubmissions = () => {
     setIsModalOpen(false);
   };
 
-  const handleDeleteProblem = async() => {
-    const res = await axios.post(
-      `http://localhost:8080/api/deleteProblem`,
-      {
-        name: toBeDeleted,
-      }
-    );
-    closeModal()
+  const handleDeleteProblem = async () => {
+    const res = await axios.post(`http://localhost:8080/api/deleteProblem`, {
+      name: toBeDeleted,
+    });
+    closeModal();
     console.log("Problem Deleted!");
+    setProblemDeleted(!problemDeleted);
   };
 
   const makeDatesReadable = (dateString) => {
@@ -124,21 +136,16 @@ const ShowMySubmissions = () => {
   useEffect(() => {
     const fetchMySubmissions = async () => {
       try {
-<<<<<<< HEAD
         const res = await axios.get(
           `http://localhost:8080/api/showSubmissions`
         );
-        console.log(res.data[0].createdAt);
-=======
-        const res = await axios.get(`http://localhost:8080/api/showSubmissions`);
->>>>>>> 13b51e645c62d8b0f50f7b85522d96b062584c81
         setProblems(res.data);
       } catch (error) {
         console.log(error);
       }
     };
     fetchMySubmissions();
-  }, []);
+  }, [problemDeleted, ReadyToRefresh]);
 
   console.log(accessToken);
 
@@ -176,71 +183,79 @@ const ShowMySubmissions = () => {
                 </tr>
               </thead>
               <tbody>
-              {(problems.length > 0) ? (
-                problems.map((problem, index) => (
-                  <tr key={index}>
-                    <td>{problem.name}</td>
-                    <td>{makeDatesReadable(problem.createdAt)}</td>
-                    <td>{problem.status}</td>
-                    <td>
-                      <button onClick={() => navigate(`/editproblem/${problem._id}`)} className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                        View/Edit
-                      </button>
-                    </td>
-                    <td>{makeDatesReadable(problem.updatedAt)}</td>
-                    <td>
-                      {problem.status === "ready" ? (
-                        <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                          Run
-                        </button>
-                      ) : (
+                {problems.length > 0 ? (
+                  problems.map((problem, index) => (
+                    <tr key={index}>
+                      <td>{problem.name}</td>
+                      <td>{makeDatesReadable(problem.createdAt)}</td>
+                      <td>{problem.status}</td>
+                      <td>
                         <button
-                          disabled
-                          className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          onClick={() =>
+                            navigate(`/editproblem/${problem._id}`)
+                          }
+                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
                         >
-                          Run
+                          View/Edit
                         </button>
-                      )}
-                    </td>
-                    <td>
-                      {problem.status === "Finished" ? (
-                        <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                          View Results
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                        >
-                          View Results
-                        </button>
-                      )}
-                    </td>
-                    <td>
-                      {problem.status === "ready" ? (
-                        <button
-                          className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
-                          onClick={() => openModal(problem.name)}
-                        >
-                          Delete
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                          onClick={() => openModal(problem.name)}
-                        >
-                          Delete
-                        </button>
-                      )}
+                      </td>
+                      <td>{makeDatesReadable(problem.updatedAt)}</td>
+                      <td>
+                        {problem.status === "ready" ? (
+                          <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                            Run
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          >
+                            Run
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        {problem.status === "Finished" ? (
+                          <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                            View Results
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          >
+                            View Results
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        {problem.status === "ready" ? (
+                          <button
+                            className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
+                            onClick={() => openModal(problem.name)}
+                          >
+                            Delete
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                            onClick={() => openModal(problem.name)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8">
+                      No problems have been found. Refresh the page to try
+                      again!
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="8">No problems have been found. Refresh the page to try again!</td>
-                </tr>
-              )}
+                )}
               </tbody>
             </table>
 
@@ -286,7 +301,10 @@ const ShowMySubmissions = () => {
                     </div>
                   </div>
                   <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button onClick={handleDeleteProblem} class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button
+                      onClick={handleDeleteProblem}
+                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    >
                       {" "}
                       Delete{" "}
                     </button>

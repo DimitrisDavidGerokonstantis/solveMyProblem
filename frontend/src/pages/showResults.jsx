@@ -69,9 +69,7 @@ const ShowResults = () => {
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:8080/auth/getToken/${userId}`
-        );
+        const res = await axios.get(`http://localhost:8080/auth/getToken`);
         setAccessToken(res.data.token);
         console.log("TOKEN", res.data);
         if (res.data.token) {

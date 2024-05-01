@@ -62,18 +62,23 @@ const Navbar = () => {
           {
             oldName: usernameInButton,
             username: username,
+            userID: userID,
           }
         );
+
+        setUsernameError("");
         console.log(res.data);
         let user = JSON.parse(localStorage.getItem("user"));
         user.username = username;
         localStorage.setItem("user", JSON.stringify(user));
+        document.getElementById("my_modal_1").close();
+        setNameChanged(!nameChanged);
       } catch (error) {
-        console.log(error);
+        console.log("ERROR", error);
+        console.log("ERROR", error.response.data);
+        setUsernameError(error.response.data);
       }
     }
-    document.getElementById("my_modal_1").close();
-    setNameChanged(!nameChanged);
   };
 
   const handleCredits = (e) => {
@@ -132,7 +137,7 @@ const Navbar = () => {
                   <p className="py-4">
                     You can update your username and buy credits!
                   </p>
-                  <div className="mb-10 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
+                  <div className="mb-2 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
                     <input
                       onChange={handleUsername}
                       type="text"
@@ -141,6 +146,9 @@ const Navbar = () => {
                       className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
                     />
                     <form method="dialog">
+                      <p class="mt-2 mb-2 flex flex-col text-center text-red-500 ">
+                        {usernameError}
+                      </p>
                       <button
                         onClick={handleUpdate}
                         className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"

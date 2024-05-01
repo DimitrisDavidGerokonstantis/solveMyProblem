@@ -13,15 +13,32 @@ import {
   adminsPermissionsController,
 } from "../controllers/auth.js";
 
+// middleware that checks if the user who makes the request is logged in
+import {
+  hasAdminsPermissions,
+  isLoggedIn,
+  hasUsersPermissions,
+} from "../controllers/askForAuthentication.js";
+
 const router = express.Router();
 
 router.post("/register", registerController);
 router.post("/login", loginController);
 router.post("/logout", logoutController);
-router.get("/getToken", getTokenController);
-router.put("/updateUsername", updateUsernameController);
-router.get("/getCredits/:userid", getCreditsController);
-router.put("/buyCredits/:userid", buyCreditsController);
+router.get("/getToken", isLoggedIn, getTokenController);
+router.put("/updateUsername", isLoggedIn, updateUsernameController);
+router.get(
+  "/getCredits/:userid",
+  isLoggedIn,
+  hasUsersPermissions,
+  getCreditsController
+);
+router.put(
+  "/buyCredits/:userid",
+  isLoggedIn,
+  hasUsersPermissions,
+  buyCreditsController
+);
 
 router.post("/authenticate", authenticationController);
 router.post("/usersPermissions", usersPermissionsController);
