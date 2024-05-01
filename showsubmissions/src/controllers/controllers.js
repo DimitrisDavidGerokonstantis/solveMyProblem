@@ -5,7 +5,14 @@ import axios from "axios";
 import Problems from "../models/Problems.js";
 
 export const fetchProblems = async (req, res) => {
-  const problems = await Problems.find();
+  //const userId = req.query.userId;
+  const problems = await Problems.find(); 
+  console.log(problems)
+  return res.status(200).json(problems);
+};
+
+export const deleteProblem = async (req, res) => {
+  const problems = await Problems.deleteOne({name : req.body.name});
   console.log(problems)
   return res.status(200).json(problems);
 };
