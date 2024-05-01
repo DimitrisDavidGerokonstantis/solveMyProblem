@@ -72,7 +72,7 @@ const LoginPage = () => {
                   class="inline-block w-full rounded-full bg-orange-50 p-2.5 leading-none text-black placeholder-yellow-900 shadow placeholder:opacity-30"
                   placeholder="username"
                 />
-                <p class="mt-2 mb-10 flex flex-col text-center text-md text-red-500 ">
+                <p class="mt-1 mb-3 flex flex-col text-center text-md text-red-500 ">
                   {usernameError}
                 </p>
               </div>

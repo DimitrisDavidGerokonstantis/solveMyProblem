@@ -85,3 +85,14 @@ export const getTokenController = async (req, res) => {
   //   return res.status(200).json({ token: myToken });
   // });
 };
+
+export const updateUsernameController = async (req, res) => {
+  try {
+    let user = await Users.findOne({ username: req.body.oldName });
+    user.username = req.body.username;
+    await user.save();
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
