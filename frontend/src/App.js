@@ -21,6 +21,7 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <LoginPage />
+        <Footer />
       </React.Fragment>
     ),
   },
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <RegisterPage />
+        <Footer />
       </React.Fragment>
     ),
   },
@@ -39,6 +41,7 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <NewSubmission />
+        <Footer />
       </React.Fragment>
     ),
   },
@@ -48,6 +51,7 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <EditProblem />
+        <Footer />
       </React.Fragment>
     ),
   },
@@ -57,6 +61,7 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <ShowResults />
+        <Footer />
       </React.Fragment>
     ),
   },
@@ -66,15 +71,17 @@ const router = createBrowserRouter([
       <React.Fragment>
         <Navbar />
         <ShowMySubmissions />
+        <Footer />
       </React.Fragment>
     ),
   },
   {
-    path: "/allsubmissions",   //it seems to be the homepage for admins
+    path: "/allsubmissions", //it seems to be the homepage for admins
     element: (
       <React.Fragment>
         <Navbar />
         <ShowAllSubmissions />
+        <Footer />
       </React.Fragment>
     ),
   },
