@@ -1,5 +1,6 @@
 import amqp from "amqplib";
 import Problem from "./models/Problems.js"; 
+import mongoose from "mongoose";
 
 export async function consume_from_questions_queue() {
   try {
@@ -27,7 +28,15 @@ export async function consume_from_questions_queue() {
         const messageData = JSON.parse(message.content.toString());
         console.log(`Received message from ${queueName}: ${messageData}`);
 
+        const existingProblem = await Problem.findOne({ _id: messageData._id });
+        if(existingProblem){
+          existingProblem.updatedAt = new Date();
+          await existingProblem.save(); 
+          console.log("Existing problem updated in MongoDB:", existingProblem);
+        }
+        else{
         const newProblem = new Problem({
+          _id: messageData._id,
           userID: messageData.userID,
           name: messageData.name,
           model: messageData.model,
@@ -37,7 +46,7 @@ export async function consume_from_questions_queue() {
         });
         await newProblem.save();
         console.log("New problem saved to MongoDB:", newProblem);
-
+        }
         channel.ack(message);
       } catch (error) {
         console.error("Error processing message:", error);

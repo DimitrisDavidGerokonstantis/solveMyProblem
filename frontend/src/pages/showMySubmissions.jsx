@@ -163,13 +163,13 @@ const ShowMySubmissions = () => {
                     <td>{makeDatesReadable(problem.createdAt)}</td>
                     <td>{problem.status}</td>
                     <td>
-                      <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                      <button onClick={() => navigate(`/editproblem/${problem._id}`)} className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                         View/Edit
                       </button>
                     </td>
                     <td>{makeDatesReadable(problem.updatedAt)}</td>
                     <td>
-                      {problem.status === "submitted" ? (
+                      {problem.status === "ready" ? (
                         <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                           Run
                         </button>
@@ -197,7 +197,7 @@ const ShowMySubmissions = () => {
                       )}
                     </td>
                     <td>
-                      {problem.status === "submitted" ? (
+                      {problem.status === "ready" ? (
                         <button
                           className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
                           onClick={openModal}
