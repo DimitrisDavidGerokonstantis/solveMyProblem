@@ -7,31 +7,32 @@ const ShowMySubmissions = () => {
   const [userId, setUserId] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const json1 = {
-    userID: 1,
-    name: "Problem1",
-    status: "Ready",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  const [problems, setProblems] = useState([]);
+  // const json1 = {
+  //   userID: 1,
+  //   name: "Problem1",
+  //   status: "Ready",
+  //   createdAt: Date.now(),
+  //   updatedAt: Date.now(),
+  // };
 
-  const json2 = {
-    userID: 1,
-    name: "Problem2",
-    status: "Running",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  // const json2 = {
+  //   userID: 1,
+  //   name: "Problem2",
+  //   status: "Running",
+  //   createdAt: Date.now(),
+  //   updatedAt: Date.now(),
+  // };
 
-  const json3 = {
-    userID: 1,
-    name: "Problem3",
-    status: "Finished",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  // const json3 = {
+  //   userID: 1,
+  //   name: "Problem3",
+  //   status: "Finished",
+  //   createdAt: Date.now(),
+  //   updatedAt: Date.now(),
+  // };
 
-  const jsonArray = [json1, json2, json3];
+  // const jsonArray = [json1, json2, json3];
 
   /* Possible Statuses and buttons the user can press: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
@@ -43,23 +44,23 @@ const ShowMySubmissions = () => {
   // Finished: The problem has finished running and the answers have returned throught the second queue to the user
   //        Buttons: The user can press the View/Edit button so as to only view and the View Results button
 
-  let readabledateCreate = [];
-  let readabledateUpdate = [];
-  let jsonData = [];
-  for (let i = 0; i < jsonArray.length; i++) {
-    const json = jsonArray[i];
+  // let readabledateCreate = [];
+  // let readabledateUpdate = [];
+  // let jsonData = [];
+  // for (let i = 0; i < jsonArray.length; i++) {
+  //   const json = jsonArray[i];
 
-    const jsonString = JSON.stringify(json);
-    jsonData[i] = JSON.parse(jsonString);
+  //   const jsonString = JSON.stringify(json);
+  //   jsonData[i] = JSON.parse(jsonString);
 
-    const CreatedOnTimestamp = jsonData[i].createdAt;
-    const UpdatedOnTimestamp = jsonData[i].updatedAt;
+  //   const CreatedOnTimestamp = jsonData[i].createdAt;
+  //   const UpdatedOnTimestamp = jsonData[i].updatedAt;
 
-    const dateCreate = new Date(CreatedOnTimestamp);
-    const dateUpdate = new Date(UpdatedOnTimestamp);
-    readabledateCreate[i] = dateCreate.toLocaleString();
-    readabledateUpdate[i] = dateUpdate.toLocaleString();
-  }
+  //   const dateCreate = new Date(CreatedOnTimestamp);
+  //   const dateUpdate = new Date(UpdatedOnTimestamp);
+  //   readabledateCreate[i] = dateCreate.toLocaleString();
+  //   readabledateUpdate[i] = dateUpdate.toLocaleString();
+  // }
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -68,6 +69,28 @@ const ShowMySubmissions = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const makeDatesReadable = (dateString) => {
+    const date = new Date(dateString);
+    
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+  
+    const options = {
+      timeZone: 'Europe/Athens',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false
+    };
+    const timeString = date.toLocaleTimeString('el-GR', options);
+  
+    const formattedDate = `${year}-${month}-${day} ${timeString}`;
+    return formattedDate;
+  };
+  
+  
 
   useEffect(() => {
     const fetchAccessToken = async () => {
@@ -84,6 +107,20 @@ const ShowMySubmissions = () => {
     };
     fetchAccessToken();
   }, []);
+
+  useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/api/showSubmissions`);
+        console.log(res.data[0].createdAt);
+        setProblems(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccessToken();
+  }, []);
+
   if (accessToken) {
     return (
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
@@ -118,19 +155,19 @@ const ShowMySubmissions = () => {
                 </tr>
               </thead>
               <tbody>
-                {jsonData.map((jsonData, index) => (
+                {problems.map((problem, index) => (
                   <tr key={index}>
-                    <td>{jsonData.name}</td>
-                    <td>{readabledateCreate[0]}</td>
-                    <td>{jsonData.status}</td>
+                    <td>{problem.name}</td>
+                    <td>{makeDatesReadable(problem.createdAt)}</td>
+                    <td>{problem.status}</td>
                     <td>
                       <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                         View/Edit
                       </button>
                     </td>
-                    <td>{readabledateUpdate[0]}</td>
+                    <td>{makeDatesReadable(problem.updatedAt)}</td>
                     <td>
-                      {jsonData.status === "Ready" ? (
+                      {problem.status === "submitted" ? (
                         <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                           Run
                         </button>
@@ -144,7 +181,7 @@ const ShowMySubmissions = () => {
                       )}
                     </td>
                     <td>
-                      {jsonData.status === "Finished" ? (
+                      {problem.status === "Finished" ? (
                         <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                           View Results
                         </button>
@@ -158,7 +195,7 @@ const ShowMySubmissions = () => {
                       )}
                     </td>
                     <td>
-                      {jsonData.status === "Ready" ? (
+                      {problem.status === "submitted" ? (
                         <button
                           className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
                           onClick={openModal}

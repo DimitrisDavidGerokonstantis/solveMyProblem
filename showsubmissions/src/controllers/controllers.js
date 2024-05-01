@@ -1,7 +1,20 @@
 import axios from "axios";
-import amqp from "amqplib"
-import { consume_from_questions_queue } from "../consumeQuestion.js";
-import { consume_from_questions_queue2 } from "../consumeQuestion2.js";
+// import amqp from "amqplib"
+// import { consume_from_questions_queue } from "../consumeQuestion.js";
+// import { consume_from_questions_queue2 } from "../consumeQuestion2.js";
+import Problems from "../models/Problems.js";
+
+export const fetchProblems = async (req, res) => {
+  const problems = await Problems.find();
+  console.log(problems)
+  return res.status(200).json(problems);
+};
+
+
+
+
+
+
 export const callDummyController = async (req, res) => {
   // const headers = {
   //   'Content-Type': 'application/json', 
@@ -48,8 +61,8 @@ export const callDummyController = async (req, res) => {
   //     console.log(error);
   //   }
   // }
-  consume_from_questions_queue();
-  consume_from_questions_queue2();
+  // consume_from_questions_queue();
+  // consume_from_questions_queue2();
   // consume_from_questions_queue();
   // console.log('ekana kai kati allo meta giati den kollaw!!!!!!!!!!!')
   return res.status(200).json({ message: "Data received successfully" });
