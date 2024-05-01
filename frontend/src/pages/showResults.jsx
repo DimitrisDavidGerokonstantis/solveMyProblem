@@ -325,7 +325,9 @@ const ShowResults = () => {
   } else {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
-        <h3 className="mt-40 text-4xl font-semibold">You have to login!</h3>
+        <h3 className="mt-40 text-4xl font-semibold">
+          You have to login with a valid account!
+        </h3>
       </div>
     );
   }
