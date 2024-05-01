@@ -8,8 +8,12 @@ import axios from "axios";
 const Navbar = () => {
   var { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [userID, setUserID] = useState(null);
+  const [credits, setCredits] = useState("");
+  const [creditsToBuy, setCreditsToBuy] = useState(0);
   const [username, setUsername] = useState(currentUser?.username);
   const [nameChanged, setNameChanged] = useState(false);
+  const [creditsChanged, setCreditsChanged] = useState(false);
   const [usernameError, setUsernameError] = useState("");
   const [usernameInButton, setUsernameInButton] = useState(
     currentUser?.username
@@ -18,11 +22,27 @@ const Navbar = () => {
   console.log(username, currentUser);
 
   useEffect(() => {
+    const fetchCredits = async (userid) => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/auth/getCredits/${userid}`
+        );
+        console.log(res.data);
+        setCredits(res.data.credits);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     setUsernameInButton(username || currentUser?.username);
     if (!username) {
       setUsername(currentUser?.username);
     }
-  }, [nameChanged, currentUser]);
+    if (currentUser) {
+      fetchCredits(currentUser.id);
+      setUserID(currentUser.id);
+    }
+  }, [nameChanged, currentUser, creditsChanged]);
 
   const handleUsername = (e) => {
     setUsername(e.target.value);
@@ -54,6 +74,25 @@ const Navbar = () => {
     }
     document.getElementById("my_modal_1").close();
     setNameChanged(!nameChanged);
+  };
+
+  const handleCredits = (e) => {
+    setCreditsToBuy(e.target.value);
+  };
+
+  const handleCreditsBuy = async (e) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:8080/auth/buyCredits/${userID}`,
+        {
+          creditsToBuy: creditsToBuy,
+        }
+      );
+      console.log(res.data);
+      setCreditsChanged(!creditsChanged);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -113,7 +152,7 @@ const Navbar = () => {
                   <div className="mb-10 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
                     <div className="flex mt-2 justify-center shadow-xl rounded-lg bg-orange-300">
                       <p className="mb-2 mt-2 py-4 text-xl ">
-                        Your credits : 400
+                        Your credits : {credits}
                       </p>
                     </div>
                     <p className="py-4 mt-4 text-lg ">Buy credits</p>
@@ -121,10 +160,14 @@ const Navbar = () => {
                     <input
                       type="text"
                       placeholder="credits to buy"
+                      onChange={handleCredits}
                       className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
                     />
                     <form method="dialog">
-                      <button className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400">
+                      <button
+                        onClick={handleCreditsBuy}
+                        className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"
+                      >
                         Buy
                       </button>
                     </form>

@@ -68,14 +68,16 @@ export const logoutController = async (req, res) => {
 export const getTokenController = async (req, res) => {
   const myToken = req.cookies.access_token;
   let role = "";
+  let id = "";
   if (myToken) {
     jwt.verify(myToken, process.env.JWT_KEY, async (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
+      id = userInfo.id;
       let user = await Users.findOne({ _id: userInfo.id });
       return res.status(200).json({ token: myToken, role: user.role });
     });
   } else {
-    return res.status(200).json({ token: myToken, role: role });
+    return res.status(200).json({ token: myToken, role: role, userid: id });
   }
   // if (!myToken) return res.status(200).json({ token: myToken });
   // jwt.verify(myToken, process.env.JWT_KEY, (err, userInfo) => {
@@ -90,6 +92,29 @@ export const updateUsernameController = async (req, res) => {
   try {
     let user = await Users.findOne({ username: req.body.oldName });
     user.username = req.body.username;
+    await user.save();
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export const getCreditsController = async (req, res) => {
+  try {
+    let user = await Users.findOne({ _id: req.params.userid });
+    return res.status(200).json({ credits: user.credits });
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};
+
+export const buyCreditsController = async (req, res) => {
+  try {
+    let user = await Users.findOne({ _id: req.params.userid });
+    user.credits = `${
+      parseInt(user.credits) + parseInt(req.body.creditsToBuy)
+    }`;
+
     await user.save();
     return res.status(200).json(user);
   } catch (error) {
