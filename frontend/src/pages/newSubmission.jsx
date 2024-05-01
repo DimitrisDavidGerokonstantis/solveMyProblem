@@ -249,7 +249,7 @@ const NewSubmission = () => {
               info: `${textContent2}`,
             },
             inputDataFile: inputDataFileJSON,
-            status: "submitted",
+            status: "ready",
             extraParams: extraParams,
             model: model,
             name: name,

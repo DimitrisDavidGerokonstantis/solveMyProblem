@@ -270,7 +270,7 @@ const EditProblem = () => {
               info: `${textContent2}`,
             },
             inputDataFile: inputDataFileJSON,
-            status: "submitted",
+            status: "ready",
             extraParams: extraParams,
             problemId: problemId,
             name: name,
