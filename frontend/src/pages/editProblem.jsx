@@ -6,6 +6,7 @@ import axios from "axios";
 const EditProblem = () => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState(null);
+  const [role, setRole] = useState("");
   const [userId, setUserId] = useState(null);
   const [showModalInput, setShowModalInput] = React.useState(false);
   const [showModalScript, setShowModalScript] = React.useState(false);
@@ -48,6 +49,7 @@ const EditProblem = () => {
       try {
         const res = await axios.get(`http://localhost:8080/auth/getToken`);
         setAccessToken(res.data.token);
+        setRole(res.data.role);
         console.log("TOKEN", res.data);
         if (res.data.token) {
           setUserId(JSON.parse(localStorage.getItem("user")).id);
@@ -268,7 +270,7 @@ const EditProblem = () => {
               info: `${textContent2}`,
             },
             inputDataFile: inputDataFileJSON,
-            status: "submitted",
+            status: "ready",
             extraParams: extraParams,
             problemId: problemId,
             name: name,
@@ -309,7 +311,7 @@ const EditProblem = () => {
     }
   };
 
-  if (accessToken) {
+  if (accessToken && role != "admin") {
     return (
       <React.Fragment>
         <div class=" bg-orange-50 bg-cover w-screen h-screen flex-col items-center justify-center overflow-scroll">
@@ -636,7 +638,9 @@ const EditProblem = () => {
   } else {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
-        <h3 className="mt-40 text-4xl font-semibold">You have to login!</h3>
+        <h3 className="mt-40 text-4xl font-semibold">
+          You have to login with a valid user account!
+        </h3>
       </div>
     );
   }

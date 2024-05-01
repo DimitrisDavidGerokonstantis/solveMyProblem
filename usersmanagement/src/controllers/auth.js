@@ -67,7 +67,16 @@ export const logoutController = async (req, res) => {
 
 export const getTokenController = async (req, res) => {
   const myToken = req.cookies.access_token;
-  return res.status(200).json({ token: myToken });
+  let role = "";
+  if (myToken) {
+    jwt.verify(myToken, process.env.JWT_KEY, async (err, userInfo) => {
+      if (err) return res.status(403).json("Token is not valid!");
+      let user = await Users.findOne({ _id: userInfo.id });
+      return res.status(200).json({ token: myToken, role: user.role });
+    });
+  } else {
+    return res.status(200).json({ token: myToken, role: role });
+  }
   // if (!myToken) return res.status(200).json({ token: myToken });
   // jwt.verify(myToken, process.env.JWT_KEY, (err, userInfo) => {
   //   if (err) return res.status(403).json({ token: null });
@@ -75,4 +84,15 @@ export const getTokenController = async (req, res) => {
   //     return res.status(401).json({ token: null });
   //   return res.status(200).json({ token: myToken });
   // });
+};
+
+export const updateUsernameController = async (req, res) => {
+  try {
+    let user = await Users.findOne({ username: req.body.oldName });
+    user.username = req.body.username;
+    await user.save();
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json(error);
+  }
 };

@@ -1,11 +1,14 @@
 import LoginPhoto from "../images/loginPhoto.png";
 import GoogleLogo from "../images/googleLogo.png";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
 const LoginPage = () => {
   const { login } = useContext(AuthContext);
+  const [accessToken, setAccessToken] = useState(null);
+  const [role, setRole] = useState("");
+  const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -48,6 +51,28 @@ const LoginPage = () => {
       }
     }
   };
+  useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/auth/getToken`);
+        setAccessToken(res.data.token);
+        setRole(res.data.role);
+        console.log("TOKEN", res.data);
+        if (res.data.token) {
+          setUserId(JSON.parse(localStorage.getItem("user")).id);
+        }
+        if (res.data.token && res.data.role === "user") {
+          navigate("/submissions");
+        }
+        if (res.data.token && res.data.role === "admin") {
+          navigate("/allsubmissions");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccessToken();
+  }, []);
 
   return (
     <div class="relative flex h-screen w-screen">
@@ -72,7 +97,7 @@ const LoginPage = () => {
                   class="inline-block w-full rounded-full bg-orange-50 p-2.5 leading-none text-black placeholder-yellow-900 shadow placeholder:opacity-30"
                   placeholder="username"
                 />
-                <p class="mt-2 mb-10 flex flex-col text-center text-md text-red-500 ">
+                <p class="mt-1 mb-3 flex flex-col text-center text-md text-red-500 ">
                   {usernameError}
                 </p>
               </div>

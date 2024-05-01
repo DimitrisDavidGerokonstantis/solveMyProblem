@@ -6,6 +6,7 @@ import axios from "axios";
 const ShowMySubmissions = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
+  const [role, setRole] = useState("");
   const [accessToken, setAccessToken] = useState(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,6 +77,7 @@ const ShowMySubmissions = () => {
       try {
         const res = await axios.get(`http://localhost:8080/auth/getToken`);
         setAccessToken(res.data.token);
+        setRole(res.data.role);
         console.log("TOKEN", res.data);
         if (res.data.token) {
           setUserId(JSON.parse(localStorage.getItem("user")).id);
@@ -87,7 +89,7 @@ const ShowMySubmissions = () => {
     fetchAccessToken();
   }, []);
 
-  if (accessToken) {
+  if (accessToken && role != "user") {
     return (
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
         <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
@@ -228,7 +230,9 @@ const ShowMySubmissions = () => {
   } else {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
-        <h3 className="mt-40 text-4xl font-semibold">You have to login!</h3>
+        <h3 className="mt-40 text-4xl font-semibold">
+          You have to login with a valid admin account!
+        </h3>
       </div>
     );
   }
