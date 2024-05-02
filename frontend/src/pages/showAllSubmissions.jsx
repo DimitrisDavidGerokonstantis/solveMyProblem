@@ -151,10 +151,10 @@ const ShowAllSubmissions = () => {
 
   if (accessToken && role != "user") {
     return (
-      <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
-        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
-        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-scroll">
-          <div className="money w-full shadow-lg ring-1 ring-orange-200">
+      <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
+        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center"></div>
+        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-auto ">
+          <div className="money w-full shadow-lg ring-1 ring-orange-200 ">
             <br></br>
             <div className="flex justify-between">
               <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
@@ -163,7 +163,7 @@ const ShowAllSubmissions = () => {
             </div>
             <br></br>
             <br></br>
-            <table className="bg-orange-100">
+            <table className="bg-orange-100 ">
               <thead>
                 <tr>
                   <th>Name</th>
@@ -303,7 +303,7 @@ const ShowAllSubmissions = () => {
             )}
           </div>
         </div>
-        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
+        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center"></div>
       </div>
     );
   } else {

@@ -4,6 +4,7 @@ import {
   submitController,
   getProblemInfo,
   updateSubmission,
+  runProblemController,
 } from "../controllers/controllers.js";
 
 // middleware that checks if the user who makes the request is logged in
@@ -31,6 +32,12 @@ router.put(
   isLoggedIn,
   hasUsersPermissions,
   updateSubmission
+);
+router.put(
+  "/runproblem",
+  isLoggedIn,
+  hasUsersPermissions,
+  runProblemController
 );
 
 export default router;

@@ -53,3 +53,16 @@ export const getProblemInfo = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+export const runProblemController = async (req, res) => {
+  try {
+    console.log("RECEIVED", req.body.problemID);
+    let problem = await Problems.findOne({ _id: req.body.problemID });
+    problem.status = "running";
+    await problem.save();
+    produce_to_questions_queue(JSON.stringify(problem));
+    return res.status(200).json("Problem status updated to running");
+  } catch (error) {
+    return res.status(500).json(error);
+  }
+};

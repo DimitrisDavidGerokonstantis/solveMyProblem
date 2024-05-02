@@ -10,6 +10,7 @@ const ShowMySubmissions = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [problems, setProblems] = useState([]);
   const [toBeDeleted, setToBeDeleted] = useState("");
+  const [problemRun, setProblemRun] = useState(false);
 
   const [problemDeleted, setProblemDeleted] = useState(false);
   // const json1 = {
@@ -136,7 +137,7 @@ const ShowMySubmissions = () => {
   useEffect(() => {
     const fetchMySubmissions = async () => {
       console.log("UserId is ", userId);
-      if(userId){
+      if (userId) {
         try {
           //       `http://localhost:8080/api/showSubmissions?userId=${userId}`
           const res = await axios.get(
@@ -148,16 +149,32 @@ const ShowMySubmissions = () => {
         }
       }
     };
+
     fetchMySubmissions();
-  }, [problemDeleted, ReadyToRefresh, userId]);
+  }, [problemDeleted, ReadyToRefresh, userId, problemRun]);
 
   console.log(accessToken);
 
+  const handleRun = async (e) => {
+    try {
+      console.log("RUN ", e.target.id);
+      const res = await axios.put(`http://localhost:8080/api/runproblem`, {
+        problemID: e.target.id,
+      });
+      console.log(res.data);
+      setTimeout(() => {
+        setProblemRun(problemRun + 1);
+      }, 100);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   if (accessToken && role != "admin") {
     return (
-      <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
-        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
-        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-scroll">
+      <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
+        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center "></div>
+        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-auto">
           <div className="money w-full shadow-lg ring-1 ring-orange-200">
             <br></br>
             <div className="flex justify-between">
@@ -206,7 +223,11 @@ const ShowMySubmissions = () => {
                       <td>{makeDatesReadable(problem.updatedAt)}</td>
                       <td>
                         {problem.status === "ready" ? (
-                          <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                          <button
+                            id={problem._id}
+                            onClick={handleRun}
+                            className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                          >
                             Run
                           </button>
                         ) : (
@@ -325,7 +346,7 @@ const ShowMySubmissions = () => {
             )}
           </div>
         </div>
-        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
+        <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-auto"></div>
       </div>
     );
   } else {
