@@ -63,3 +63,27 @@ export const hasAdminsPermissions = async (req, res, next) => {
     return res.status(500).json(error.response.data);
   }
 };
+
+export const hasPermissionsToUpdate = async (req, res, next) => {
+  try {
+    console.log("REQUEST FOR HAS PERMISSIONS TO EDIT", req);
+    // checks if a this user has permissions to edit this problem
+    // i.e. he is the creator of this problem
+    const resp = await axios.post(
+      "http://usersmanagement:5000/auth/editPermissions",
+      {
+        request: req.cookies,
+        problemToEdit: req.body.problemId,
+      }
+    );
+    if (!resp.data) {
+      return res
+        .status(403)
+        .json("Forbidden : You have not permissions to edit this problem");
+    }
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.response.data);
+  }
+};

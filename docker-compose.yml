@@ -16,6 +16,7 @@ services:
       - MONGO_DB_URI=mongodb://db/microservices1
       - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
       - EXCHANGE_NAME=questionsExchange
+      - JWT_KEY="arandomjwtkey"
 
   usersmanagement:
     build: "./usersmanagement"
@@ -28,7 +29,7 @@ services:
       - JWT_KEY="arandomjwtkey"
 
   showsubmissions:
-    build: './showsubmissions'
+    build: "./showsubmissions"
     ports:
       - "5002:5000"
     depends_on:
@@ -40,6 +41,7 @@ services:
       - EXCHANGE_NAME=questionsExchange
       - QUEUE_SHOW_SUBMISSIONS=showSubmissionsQueue
       - QUEUE_VIEW_RESULTS=viewResultsQueue
+      - JWT_KEY="arandomjwtkey"
 
   db:
     image: mongo

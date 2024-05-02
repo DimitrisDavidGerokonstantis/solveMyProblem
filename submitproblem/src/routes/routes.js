@@ -12,6 +12,7 @@ import {
   hasAdminsPermissions,
   isLoggedIn,
   hasUsersPermissions,
+  hasPermissionsToUpdate,
 } from "../controllers/askForAuthentication.js";
 
 const router = express.Router();
@@ -22,15 +23,12 @@ router.post(
   hasUsersPermissions,
   submitController
 );
-router.get(
-  "/submitProblem/getProblemInfo/:problemId",
-  isLoggedIn,
-  getProblemInfo
-);
+router.get("/submitProblem/getProblemInfo/:problemId", getProblemInfo);
 router.put(
   "/submitProblem/updateSubmission",
   isLoggedIn,
   hasUsersPermissions,
+  hasPermissionsToUpdate,
   updateSubmission
 );
 router.put(

@@ -10,12 +10,18 @@ import {
   hasAdminsPermissions,
   isLoggedIn,
   hasUsersPermissions,
+  hasPermissionsToDelete,
 } from "../controllers/askForAuthentication.js";
 
 const router = express.Router();
 
 router.get("/showSubmissions", isLoggedIn, fetchProblems);
-router.post("/deleteProblem", isLoggedIn, deleteProblem);
+router.post(
+  "/deleteProblem",
+  isLoggedIn,
+  hasPermissionsToDelete,
+  deleteProblem
+);
 router.get("/admin/showSubmissions", isLoggedIn, fetchProblemsAdmin);
 
 export default router;

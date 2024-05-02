@@ -63,3 +63,28 @@ export const hasAdminsPermissions = async (req, res, next) => {
     return res.status(500).json(error.response.data);
   }
 };
+
+export const hasPermissionsToDelete = async (req, res, next) => {
+  try {
+    console.log("REQUEST FOR HAS PERMISSIONS TO DELETE", req);
+    // checks if a this user has permissions to edit this problem
+    // i.e. he is the creator of this problem
+    const resp = await axios.post(
+      "http://usersmanagement:5000/auth/deletePermissions",
+      {
+        request: req.cookies,
+        problemToDelete: req.body.id,
+      }
+    );
+    console.log("DELETE ? ", resp.data);
+    if (!resp.data) {
+      return res
+        .status(403)
+        .json("Forbidden : You have not permissions to delete this problem");
+    }
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.response.data);
+  }
+};

@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Users from "../models/Users.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 export const registerController = async (req, res) => {
   try {
@@ -74,14 +75,12 @@ export const getTokenController = async (req, res) => {
       if (err) return res.status(403).json("Token is not valid!");
       id = userInfo.id;
       let user = await Users.findOne({ _id: userInfo.id });
-      return res
-        .status(200)
-        .json({
-          token: myToken,
-          role: user.role,
-          userid: id,
-          username: user.username,
-        });
+      return res.status(200).json({
+        token: myToken,
+        role: user.role,
+        userid: id,
+        username: user.username,
+      });
     });
   } else {
     return res.status(200).json({ token: myToken, role: role, userid: id });
@@ -174,6 +173,57 @@ export const adminsPermissionsController = async (req, res) => {
       let user = await Users.findOne({ _id: userInfo.id });
       if (user.role === "admin") return res.status(200).json(true);
       return res.status(200).json(false);
+    }
+  );
+};
+
+export const editPermissionsController = async (req, res) => {
+  jwt.verify(
+    req.body.request.access_token,
+    process.env.JWT_KEY,
+    async (err, userInfo) => {
+      if (err) return res.status(403).json("Token is not valid!");
+      try {
+        const result = await axios.get(
+          `http://submitproblem:5000/api/submitProblem/getProblemInfo/${req.body.problemToEdit}`
+        );
+        console.log(
+          "PROBLEM's USER ID",
+          result.data,
+          result.data !== userInfo.id
+        );
+        if (result.data.problem[0].userID != userInfo.id)
+          return res.status(200).json(false);
+        return res.status(200).json(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  );
+};
+
+export const deletePermissionsController = async (req, res) => {
+  jwt.verify(
+    req.body.request.access_token,
+    process.env.JWT_KEY,
+    async (err, userInfo) => {
+      if (err) return res.status(403).json("Token is not valid!");
+      try {
+        const result = await axios.get(
+          `http://submitproblem:5000/api/submitProblem/getProblemInfo/${req.body.problemToDelete}`
+        );
+
+        let user = await Users.where("_id").equals(userInfo.id);
+        console.log(userInfo.id, user);
+        if (
+          result.data.problem[0].userID != userInfo.id &&
+          user[0].role !== "admin"
+        )
+          return res.status(200).json(false);
+        return res.status(200).json(true);
+      } catch (error) {
+        console.log(error);
+      }
     }
   );
 };

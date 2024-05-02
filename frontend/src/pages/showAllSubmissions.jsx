@@ -78,9 +78,9 @@ const ShowAllSubmissions = () => {
     }
   }, []); // Empty dependency array ensures this effect runs only once after initial render
 
-  const openModal = (name) => {
+  const openModal = (id) => {
     setIsModalOpen(true);
-    setToBeDeleted(name);
+    setToBeDeleted(id);
   };
 
   const closeModal = () => {
@@ -89,7 +89,7 @@ const ShowAllSubmissions = () => {
 
   const handleDeleteProblem = async () => {
     const res = await axios.post(`http://localhost:8080/api/deleteProblem`, {
-      name: toBeDeleted,
+      id: toBeDeleted,
     });
     closeModal();
     console.log("Problem Deleted!");
@@ -214,7 +214,7 @@ const ShowAllSubmissions = () => {
                         problem.status === "Running" ? (
                           <button
                             className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
-                            onClick={() => openModal(problem.name)}
+                            onClick={() => openModal(problem._id)}
                           >
                             Delete
                           </button>
@@ -222,7 +222,7 @@ const ShowAllSubmissions = () => {
                           <button
                             disabled
                             className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                            onClick={() => openModal(problem.name)}
+                            onClick={() => openModal(problem._id)}
                           >
                             Delete
                           </button>

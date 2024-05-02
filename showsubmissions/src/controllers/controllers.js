@@ -6,36 +6,31 @@ import Problems from "../models/Problems.js";
 import mongoose from "mongoose";
 
 export const fetchProblems = async (req, res) => {
- let userId = req.query.userId;
- console.log("backend :   ", userId, typeof userId);
- let userId_mongo = new mongoose.Types.ObjectId(userId);
+  let userId = req.query.userId;
+  console.log("backend :   ", userId, typeof userId);
+  let userId_mongo = new mongoose.Types.ObjectId(userId);
 
-  const problems = await Problems.find({userID : userId_mongo}); 
-  console.log("Problems : ", problems)
+  const problems = await Problems.find({ userID: userId_mongo });
+  console.log("Problems : ", problems);
   return res.status(200).json(problems);
 };
 
 export const fetchProblemsAdmin = async (req, res) => {
   //const userId = req.query.userId;
-  const problems = await Problems.find(); 
-  console.log(problems)
+  const problems = await Problems.find();
+  console.log(problems);
   return res.status(200).json(problems);
 };
 
 export const deleteProblem = async (req, res) => {
-  const problems = await Problems.deleteOne({name : req.body.name});
-  console.log(problems)
+  const problems = await Problems.deleteOne({ _id: req.body.id });
+  console.log(problems);
   return res.status(200).json(problems);
 };
 
-
-
-
-
-
 export const callDummyController = async (req, res) => {
   // const headers = {
-  //   'Content-Type': 'application/json', 
+  //   'Content-Type': 'application/json',
   // };
   // try {
   //   console.log('HELLOOOOOOO')
@@ -52,29 +47,29 @@ export const callDummyController = async (req, res) => {
   //     // Connect to RabbitMQ server
   //     const connection = await amqp.connect(process.env.RABBITMQ_QUESTIONS_URL);
   //     console.log(process.env.RABBITMQ_QUESTIONS_URL)
-      
+
   //     // Create a channel
   //     const channel = await connection.createChannel();
-      
+
   //     // Create the direct exchange
   //     const exchangeName = process.env.EXCHANGE_NAME;
   //     await channel.assertExchange(exchangeName, 'direct', { durable: true });
-      
+
   //     // Create the chart_A queue
   //     const queueName = process.env.QUEUE_SHOW_SUBMISSIONS;
   //     const assertQueue = await channel.assertQueue(queueName, { durable: true });
-      
+
   //     // Bind the queue to the exchange with the routing key
   //     const routingKey_q_A = process.env.ROUTING_KEY_SHOW_SUBMISSIONS;
   //     await channel.bindQueue(assertQueue.queue, exchangeName, routingKey_q_A);
-      
+
   //     // Start consuming messages
   //     console.log(`Consumer started. Waiting for messages in queue ${queueName}...`);
   //     channel.consume(assertQueue.queue, (message) => {
   //       console.log(`Received message: ${message.content.toString()}`);
   //       channel.ack(message);
   //     }, { noAck: false });
-  
+
   //   } catch (error) {
   //     console.log(error);
   //   }

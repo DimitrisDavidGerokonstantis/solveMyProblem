@@ -4,7 +4,6 @@ import amqp from "amqplib";
 import { produce_to_questions_queue } from "../publishQuestion.js";
 
 export const submitController = async (req, res) => {
-  console.log("HELLO", req.body);
   try {
     let problem = await Problems.create({
       userID: req.body.userID,
@@ -15,7 +14,7 @@ export const submitController = async (req, res) => {
       name: req.body.name,
       model: req.body.model,
     });
-    console.log("PROBLEM", problem);
+
     produce_to_questions_queue(JSON.stringify(problem));
     return res.status(200).json({
       message: "Resource created. Problem Added successfully",
