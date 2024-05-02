@@ -41,6 +41,7 @@ const Navbar = () => {
     if (currentUser) {
       fetchCredits(currentUser.id);
       setUserID(currentUser.id);
+      setUsernameInButton(currentUser?.username);
     }
   }, [nameChanged, currentUser, creditsChanged]);
 

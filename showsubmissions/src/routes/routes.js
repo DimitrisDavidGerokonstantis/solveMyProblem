@@ -14,6 +14,6 @@ import {
 const router = express.Router();
 
 router.get("/showSubmissions", isLoggedIn, fetchProblems);
-router.post("/deleteProblem", deleteProblem);
+router.post("/deleteProblem", isLoggedIn, deleteProblem);
 
 export default router;
