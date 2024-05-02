@@ -135,17 +135,21 @@ const ShowMySubmissions = () => {
 
   useEffect(() => {
     const fetchMySubmissions = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8080/api/showSubmissions`
-        );
-        setProblems(res.data);
-      } catch (error) {
-        console.log(error);
+      console.log("UserId is ", userId);
+      if(userId){
+        try {
+          //       `http://localhost:8080/api/showSubmissions?userId=${userId}`
+          const res = await axios.get(
+            `http://localhost:8080/api/showSubmissions?userId=${userId}`
+          );
+          setProblems(res.data);
+        } catch (error) {
+          console.log(error);
+        }
       }
     };
     fetchMySubmissions();
-  }, [problemDeleted, ReadyToRefresh]);
+  }, [problemDeleted, ReadyToRefresh, userId]);
 
   console.log(accessToken);
 
