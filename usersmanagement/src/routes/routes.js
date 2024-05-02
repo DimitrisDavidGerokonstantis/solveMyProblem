@@ -25,7 +25,7 @@ const router = express.Router();
 router.post("/register", registerController);
 router.post("/login", loginController);
 router.post("/logout", logoutController);
-router.get("/getToken", isLoggedIn, getTokenController);
+router.get("/getToken", getTokenController);
 router.put("/updateUsername", isLoggedIn, updateUsernameController);
 router.get(
   "/getCredits/:userid",

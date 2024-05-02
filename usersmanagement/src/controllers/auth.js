@@ -74,7 +74,14 @@ export const getTokenController = async (req, res) => {
       if (err) return res.status(403).json("Token is not valid!");
       id = userInfo.id;
       let user = await Users.findOne({ _id: userInfo.id });
-      return res.status(200).json({ token: myToken, role: user.role });
+      return res
+        .status(200)
+        .json({
+          token: myToken,
+          role: user.role,
+          userid: id,
+          username: user.username,
+        });
     });
   } else {
     return res.status(200).json({ token: myToken, role: role, userid: id });
@@ -126,13 +133,21 @@ export const buyCreditsController = async (req, res) => {
   }
 };
 
-// checks if a user is logged in
+// checks if a user is logged in with a valid token
 export const authenticationController = async (req, res) => {
   console.log("REQUEST", req.body);
   if (!req.body.request.access_token) {
     return res.status(200).json(false);
+  } else {
+    jwt.verify(
+      req.body.request.access_token,
+      process.env.JWT_KEY,
+      async (err, userInfo) => {
+        if (err) return res.status(403).json("Token is not valid!");
+        return res.status(200).json(true);
+      }
+    );
   }
-  return res.status(200).json(true);
 };
 
 export const usersPermissionsController = async (req, res) => {

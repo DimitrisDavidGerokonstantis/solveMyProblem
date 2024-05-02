@@ -185,7 +185,9 @@ const ShowAllSubmissions = () => {
                       <td>
                         <button
                           onClick={() =>
-                            navigate(`/editproblem/${problem._id}`)
+                            navigate(
+                              `/editproblem/${problem._id}?viewOnly=true`
+                            )
                           }
                           className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
                         >
@@ -209,7 +211,7 @@ const ShowAllSubmissions = () => {
                       </td>
                       <td>
                         {problem.status === "ready" ||
-                         problem.status === "Running" ? (
+                        problem.status === "Running" ? (
                           <button
                             className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
                             onClick={() => openModal(problem.name)}

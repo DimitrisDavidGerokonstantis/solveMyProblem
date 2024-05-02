@@ -20,6 +20,8 @@ const EditProblem = () => {
   const [textContent2, setTextContent2] = useState("");
   const [model, setModel] = useState("No model selected");
   const [isOpen, setIsOpen] = useState(true); // Set to true to open the dropdown by default
+  const viewOnly = useLocation().search === "?viewOnly=true";
+  console.log("VIEW ONLY", viewOnly);
   const models = [
     "No model selected",
     "Model 1 : Vehicle Routing Problem (VRP)",
@@ -133,31 +135,39 @@ const EditProblem = () => {
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    e.target.classList.add("border-orange-500", "border-2");
+    if (!viewOnly) {
+      e.target.classList.add("border-orange-500", "border-2");
+    }
   };
 
   const handleDragLeave = (e) => {
-    e.target.classList.remove("border-orange-500", "border-2");
+    if (!viewOnly) {
+      e.target.classList.remove("border-orange-500", "border-2");
+    }
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    e.target.classList.remove("border-orange-500", "border-2");
-    const files = e.dataTransfer.files;
-    console.log(e.target);
-    if (e.target.id == "dropzone1") {
-      handleFiles(files, 1);
-    } else {
-      handleFiles(files, 2);
+    if (!viewOnly) {
+      e.target.classList.remove("border-orange-500", "border-2");
+      const files = e.dataTransfer.files;
+      console.log(e.target);
+      if (e.target.id == "dropzone1") {
+        handleFiles(files, 1);
+      } else {
+        handleFiles(files, 2);
+      }
     }
   };
 
   const handleInputChange = (e) => {
-    const files = e.target.files;
-    if (e.target.id == "fileInput") {
-      handleFiles(files, 1);
-    } else {
-      handleFiles(files, 2);
+    if (!viewOnly) {
+      const files = e.target.files;
+      if (e.target.id == "fileInput") {
+        handleFiles(files, 1);
+      } else {
+        handleFiles(files, 2);
+      }
     }
   };
 
@@ -177,7 +187,6 @@ const EditProblem = () => {
           setInputScriptFileName("");
           setFile2Error("Not valid file format!");
         }
-
         return;
       }
       setFile1Error("");
@@ -311,7 +320,10 @@ const EditProblem = () => {
     }
   };
 
-  if (accessToken && role != "admin") {
+  if (
+    (accessToken && role != "admin") ||
+    (accessToken && role === "admin" && viewOnly)
+  ) {
     return (
       <React.Fragment>
         <div class=" bg-orange-50 bg-cover w-screen h-screen flex-col items-center justify-center overflow-scroll">
@@ -363,12 +375,22 @@ const EditProblem = () => {
                       (or click to select)
                     </span>
                   </label>
-                  <input
-                    type="file"
-                    id="fileInput"
-                    class="hidden"
-                    onChange={handleInputChange}
-                  />
+                  {!viewOnly ? (
+                    <input
+                      type="file"
+                      id="fileInput"
+                      class="hidden"
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <input
+                      readOnly
+                      type="file"
+                      id="fileInput"
+                      class="hidden"
+                      onChange={handleInputChange}
+                    />
+                  )}
                 </div>
                 {inputDataFile && (
                   <div class="mt-6 text-center" id="fileList1">
@@ -424,12 +446,22 @@ const EditProblem = () => {
                       (or click to select)
                     </span>
                   </label>
-                  <input
-                    type="file"
-                    id="fileInput2"
-                    class="hidden"
-                    onChange={handleInputChange}
-                  />
+                  {!viewOnly ? (
+                    <input
+                      type="file"
+                      id="fileInput2"
+                      class="hidden"
+                      onChange={handleInputChange}
+                    />
+                  ) : (
+                    <input
+                      readOnly
+                      type="file"
+                      id="fileInput2"
+                      class="hidden"
+                      onChange={handleInputChange}
+                    />
+                  )}
                 </div>
                 {inputScriptFile && (
                   <div class="mt-6 text-center" id="fileList2">
@@ -461,13 +493,24 @@ const EditProblem = () => {
                 <label class="mb-3 block font-extrabold" for="num_vehicles">
                   Number of vehicles
                 </label>
-                <input
-                  value={numVehicles}
-                  onChange={handleVehicles}
-                  id="num_vehicles"
-                  class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
-                  placeholder="number of vehicles"
-                />
+                {!viewOnly ? (
+                  <input
+                    value={numVehicles}
+                    onChange={handleVehicles}
+                    id="num_vehicles"
+                    class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="number of vehicles"
+                  />
+                ) : (
+                  <input
+                    readOnly
+                    value={numVehicles}
+                    onChange={handleVehicles}
+                    id="num_vehicles"
+                    class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="number of vehicles"
+                  />
+                )}
                 <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">
                   {vehiclesError}
                 </p>
@@ -477,13 +520,24 @@ const EditProblem = () => {
                 <label class="mb-3 block font-extrabold" for="depot">
                   Depot
                 </label>
-                <input
-                  value={depot}
-                  onChange={handleDepot}
-                  id="depot"
-                  class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
-                  placeholder="depot"
-                />
+                {!viewOnly ? (
+                  <input
+                    value={depot}
+                    onChange={handleDepot}
+                    id="depot"
+                    class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="depot"
+                  />
+                ) : (
+                  <input
+                    readOnly
+                    value={depot}
+                    onChange={handleDepot}
+                    id="depot"
+                    class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="depot"
+                  />
+                )}
                 <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">
                   {depotError}
                 </p>
@@ -494,13 +548,24 @@ const EditProblem = () => {
                   Maximum Distance
                 </label>
 
-                <input
-                  value={maxDistance}
-                  onChange={handleDistance}
-                  id="max_distance"
-                  class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
-                  placeholder="maximum distance"
-                />
+                {!viewOnly ? (
+                  <input
+                    value={maxDistance}
+                    onChange={handleDistance}
+                    id="max_distance"
+                    class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="maximum distance"
+                  />
+                ) : (
+                  <input
+                    readOnly
+                    value={maxDistance}
+                    onChange={handleDistance}
+                    id="max_distance"
+                    class="inline-block w-full rounded-full bg-orange-100 p-2.5 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="maximum distance"
+                  />
+                )}
                 <p class="absolute flex flex-col mb-2 text-center text-red-500 mt-40">
                   {distanceError}
                 </p>
@@ -514,30 +579,43 @@ const EditProblem = () => {
                   Name of the problem
                 </label>
 
-                <input
-                  value={name}
-                  onChange={handleName}
-                  id="name"
-                  class="inline-block w-full rounded-full bg-orange-100 py-2.5 px-6 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
-                  placeholder="name"
-                />
+                {!viewOnly ? (
+                  <input
+                    value={name}
+                    onChange={handleName}
+                    id="name"
+                    class="inline-block w-full rounded-full bg-orange-100 py-2.5 px-6 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="name"
+                  />
+                ) : (
+                  <input
+                    readOnly
+                    value={name}
+                    onChange={handleName}
+                    id="name"
+                    class="mb-10 inline-block w-full rounded-full bg-orange-100 py-2.5 px-6 leading-none text-center text-orange-900 placeholder-yellow-900 shadow placeholder:opacity-40"
+                    placeholder="name"
+                  />
+                )}
               </div>
             </div>
           )}
-          {model === "Model 1 : Vehicle Routing Problem (VRP)" && isOpen && (
-            <div class="flex flex-col justify-center items-center">
-              <button
-                className="mt-20 text-orange-900 rounded-full bg-red-300 hover:bg-orange-400 font-bold uppercase px-8 py-4 text-sm outline-none focus:outline-none mr-1  ease-linear transition-all duration-150"
-                type="button"
-                onClick={handleSubmit}
-              >
-                Update
-              </button>
-              <p class="mt-2 mb-10 flex flex-col text-center text-red-500 ">
-                {submitError}
-              </p>
-            </div>
-          )}
+          {model === "Model 1 : Vehicle Routing Problem (VRP)" &&
+            isOpen &&
+            !viewOnly && (
+              <div class="flex flex-col justify-center items-center">
+                <button
+                  className="mt-20 text-orange-900 rounded-full bg-red-300 hover:bg-orange-400 font-bold uppercase px-8 py-4 text-sm outline-none focus:outline-none mr-1  ease-linear transition-all duration-150"
+                  type="button"
+                  onClick={handleSubmit}
+                >
+                  Update
+                </button>
+                <p class="mt-2 mb-10 flex flex-col text-center text-red-500 ">
+                  {submitError}
+                </p>
+              </div>
+            )}
         </div>
 
         <>

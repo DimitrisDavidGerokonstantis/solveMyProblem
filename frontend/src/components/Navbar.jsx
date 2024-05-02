@@ -9,9 +9,11 @@ const Navbar = () => {
   var { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userID, setUserID] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+  const [role, setRole] = useState(null);
   const [credits, setCredits] = useState("");
   const [creditsToBuy, setCreditsToBuy] = useState(0);
-  const [username, setUsername] = useState(currentUser?.username);
+  const [username, setUsername] = useState(null);
   const [nameChanged, setNameChanged] = useState(false);
   const [creditsChanged, setCreditsChanged] = useState(false);
   const [usernameError, setUsernameError] = useState("");
@@ -34,16 +36,35 @@ const Navbar = () => {
       }
     };
 
-    setUsernameInButton(username || currentUser?.username);
-    if (!username) {
-      setUsername(currentUser?.username);
-    }
-    if (currentUser) {
-      fetchCredits(currentUser.id);
-      setUserID(currentUser.id);
-      setUsernameInButton(currentUser?.username);
+    setUsernameInButton(username);
+
+    // if (!username) {
+    //   setUsername(currentUser?.username);
+    // }
+    if (currentUser && role === "user") {
+      fetchCredits(userID);
+      //setUserID(currentUser.id);
     }
   }, [nameChanged, currentUser, creditsChanged]);
+
+  useEffect(() => {
+    const fetchAccessToken = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8080/auth/getToken`);
+        setAccessToken(res.data.token);
+        setRole(res.data.role);
+        setUsername(res.data.username);
+        setUsernameInButton(res.data.username);
+        console.log("TOKEN", res.data);
+        if (res.data.token) {
+          setUserID(res.data.userid);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAccessToken();
+  }, [currentUser]);
 
   const handleUsername = (e) => {
     setUsername(e.target.value);
@@ -158,29 +179,31 @@ const Navbar = () => {
                       </button>
                     </form>
                   </div>
-                  <div className="mb-10 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
-                    <div className="flex mt-2 justify-center shadow-xl rounded-lg bg-orange-300">
-                      <p className="mb-2 mt-2 py-4 text-xl ">
-                        Your credits : {credits}
-                      </p>
-                    </div>
-                    <p className="py-4 mt-4 text-lg ">Buy credits</p>
+                  {role === "user" && (
+                    <div className="mb-10 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
+                      <div className="flex mt-2 justify-center shadow-xl rounded-lg bg-orange-300">
+                        <p className="mb-2 mt-2 py-4 text-xl ">
+                          Your credits : {credits}
+                        </p>
+                      </div>
+                      <p className="py-4 mt-4 text-lg ">Buy credits</p>
 
-                    <input
-                      type="text"
-                      placeholder="credits to buy"
-                      onChange={handleCredits}
-                      className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
-                    />
-                    <form method="dialog">
-                      <button
-                        onClick={handleCreditsBuy}
-                        className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"
-                      >
-                        Buy
-                      </button>
-                    </form>
-                  </div>
+                      <input
+                        type="text"
+                        placeholder="credits to buy"
+                        onChange={handleCredits}
+                        className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
+                      />
+                      <form method="dialog">
+                        <button
+                          onClick={handleCreditsBuy}
+                          className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"
+                        >
+                          Buy
+                        </button>
+                      </form>
+                    </div>
+                  )}
                   <div className=" modal-action">
                     <form method="dialog">
                       {/* if there is a button in form, it will close the modal */}

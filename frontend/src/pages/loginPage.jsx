@@ -43,36 +43,34 @@ const LoginPage = () => {
           username: username,
           password: password,
         });
-        if (result === "user") navigate("/submissions");
-        else if (result === "admin") navigate("/allsubmissions");
+        // if (result === "user") navigate("/submissions");
+        // else if (result === "admin") navigate("/allsubmissions");
+        fetchAccessToken();
       } catch (error) {
         console.log(error.response.data);
         setLoginError(error.response.data);
       }
     }
   };
-  useEffect(() => {
-    const fetchAccessToken = async () => {
-      try {
-        const res = await axios.get(`http://localhost:8080/auth/getToken`);
-        setAccessToken(res.data.token);
-        setRole(res.data.role);
-        console.log("TOKEN", res.data);
-        if (res.data.token) {
-          setUserId(JSON.parse(localStorage.getItem("user")).id);
-        }
-        if (res.data.token && res.data.role === "user") {
-          navigate("/submissions");
-        }
-        if (res.data.token && res.data.role === "admin") {
-          navigate("/allsubmissions");
-        }
-      } catch (error) {
-        console.log(error);
+  const fetchAccessToken = async () => {
+    try {
+      const res = await axios.get(`http://localhost:8080/auth/getToken`);
+      setAccessToken(res.data.token);
+      setRole(res.data.role);
+      console.log("TOKEN", res.data);
+      if (res.data.token) {
+        setUserId(JSON.parse(localStorage.getItem("user")).id);
       }
-    };
-    fetchAccessToken();
-  }, []);
+      if (res.data.token && res.data.role === "user") {
+        navigate("/submissions");
+      }
+      if (res.data.token && res.data.role === "admin") {
+        navigate("/allsubmissions");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div class="relative flex h-screen w-screen">
