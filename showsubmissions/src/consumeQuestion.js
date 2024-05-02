@@ -30,6 +30,11 @@ export async function consume_from_questions_queue() {
 
         const existingProblem = await Problem.findOne({ _id: messageData._id });
         if(existingProblem){
+          if(existingProblem.name!==messageData.name){
+            existingProblem.name = messageData.name;
+            await existingProblem.save(); 
+            console.log("Existing problem updated in MongoDB:", existingProblem);
+          }
           if(messageData.status==="running"){
             existingProblem.status = 'running';
             await existingProblem.save(); 
