@@ -3,8 +3,19 @@ import axios from "axios";
 // import { consume_from_questions_queue } from "../consumeQuestion.js";
 // import { consume_from_questions_queue2 } from "../consumeQuestion2.js";
 import Problems from "../models/Problems.js";
+import mongoose from "mongoose";
 
 export const fetchProblems = async (req, res) => {
+ let userId = req.query.userId;
+ console.log("backend :   ", userId, typeof userId);
+ let userId_mongo = new mongoose.Types.ObjectId(userId);
+
+  const problems = await Problems.find({userID : userId_mongo}); 
+  console.log("Problems : ", problems)
+  return res.status(200).json(problems);
+};
+
+export const fetchProblemsAdmin = async (req, res) => {
   //const userId = req.query.userId;
   const problems = await Problems.find(); 
   console.log(problems)

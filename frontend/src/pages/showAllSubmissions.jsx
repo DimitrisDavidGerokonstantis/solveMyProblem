@@ -2,39 +2,41 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
-const ShowMySubmissions = () => {
+const ShowAllSubmissions = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState("");
   const [accessToken, setAccessToken] = useState(null);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const json1 = {
-    userID: 1,
-    name: "Problem1",
-    status: "Ready",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  const [problems, setProblems] = useState([]);
+  const [toBeDeleted, setToBeDeleted] = useState("");
 
-  const json2 = {
-    userID: 1,
-    name: "Problem2",
-    status: "Running",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  const [problemDeleted, setProblemDeleted] = useState(false);
+  // const json1 = {
+  //   userID: 1,
+  //   name: "Problem1",
+  //   status: "Ready",
+  //   createdAt: Date.now(),
+  //   updatedAt: Date.now(),
+  // };
 
-  const json3 = {
-    userID: 1,
-    name: "Problem3",
-    status: "Finished",
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  // const json2 = {
+  //   userID: 1,
+  //   name: "Problem2",
+  //   status: "Running",
+  //   createdAt: Date.now(),
+  //   updatedAt: Date.now(),
+  // };
 
-  const jsonArray = [json1, json2, json3];
+  // const json3 = {
+  //   userID: 1,
+  //   name: "Problem3",
+  //   status: "Finished",
+  //   createdAt: Date.now(),
+  //   updatedAt: Date.now(),
+  // };
+
+  // const jsonArray = [json1, json2, json3];
 
   /* Possible Statuses and buttons the admin can press - he cannot run a problem a user has created: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
@@ -46,30 +48,72 @@ const ShowMySubmissions = () => {
   // Finished: The problem has finished running and the answers have returned through the second queue to the user
   //        Buttons: The admin can press the View button so as to view the problem and the View Results button to view the results
 
-  let readabledateCreate = [];
-  let readabledateUpdate = [];
-  let jsonData = [];
-  for (let i = 0; i < jsonArray.length; i++) {
-    const json = jsonArray[i];
+  // let readabledateCreate = [];
+  // let readabledateUpdate = [];
+  // let jsonData = [];
+  // for (let i = 0; i < jsonArray.length; i++) {
+  //   const json = jsonArray[i];
 
-    const jsonString = JSON.stringify(json);
-    jsonData[i] = JSON.parse(jsonString);
+  //   const jsonString = JSON.stringify(json);
+  //   jsonData[i] = JSON.parse(jsonString);
 
-    const CreatedOnTimestamp = jsonData[i].createdAt;
-    const UpdatedOnTimestamp = jsonData[i].updatedAt;
+  //   const CreatedOnTimestamp = jsonData[i].createdAt;
+  //   const UpdatedOnTimestamp = jsonData[i].updatedAt;
 
-    const dateCreate = new Date(CreatedOnTimestamp);
-    const dateUpdate = new Date(UpdatedOnTimestamp);
-    readabledateCreate[i] = dateCreate.toLocaleString();
-    readabledateUpdate[i] = dateUpdate.toLocaleString();
-  }
+  //   const dateCreate = new Date(CreatedOnTimestamp);
+  //   const dateUpdate = new Date(UpdatedOnTimestamp);
+  //   readabledateCreate[i] = dateCreate.toLocaleString();
+  //   readabledateUpdate[i] = dateUpdate.toLocaleString();
+  // }
 
-  const openModal = () => {
+  const [ReadyToRefresh, setReadyToRefresh] = useState(false);
+
+  useEffect(() => {
+    if (!ReadyToRefresh) {
+      const timer = setTimeout(() => {
+        setReadyToRefresh(true); // Revert the boolean variable after 2 seconds
+      }, 1000);
+
+      return () => clearTimeout(timer); // Clean up the timer to avoid memory leaks
+    }
+  }, []); // Empty dependency array ensures this effect runs only once after initial render
+
+  const openModal = (name) => {
     setIsModalOpen(true);
+    setToBeDeleted(name);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleDeleteProblem = async () => {
+    const res = await axios.post(`http://localhost:8080/api/deleteProblem`, {
+      name: toBeDeleted,
+    });
+    closeModal();
+    console.log("Problem Deleted!");
+    setProblemDeleted(!problemDeleted);
+  };
+
+  const makeDatesReadable = (dateString) => {
+    const date = new Date(dateString);
+
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+
+    const options = {
+      timeZone: "Europe/Athens",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    };
+    const timeString = date.toLocaleTimeString("el-GR", options);
+
+    const formattedDate = `${year}-${month}-${day} ${timeString}`;
+    return formattedDate;
   };
 
   useEffect(() => {
@@ -89,16 +133,32 @@ const ShowMySubmissions = () => {
     fetchAccessToken();
   }, []);
 
+  useEffect(() => {
+    const fetchMySubmissions = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/api/admin/showSubmissions`
+        );
+        setProblems(res.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchMySubmissions();
+  }, [problemDeleted, ReadyToRefresh]);
+
+  console.log(accessToken);
+
   if (accessToken && role != "user") {
     return (
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
         <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center overflow-scroll"></div>
-        <div class="bg-orange-50 bg-cover w-10/12 h-screen flex-col items-center justify-center overflow-scroll">
+        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-scroll">
           <div className="money w-full shadow-lg ring-1 ring-orange-200">
             <br></br>
             <div className="flex justify-between">
-              <h2 className="mt-5 text-2xl font-bold text-orange-800 flex-initial">
-                Submissions
+              <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
+                My Submissions
               </h2>
             </div>
             <br></br>
@@ -116,52 +176,66 @@ const ShowMySubmissions = () => {
                 </tr>
               </thead>
               <tbody>
-                {jsonData.map((jsonData, index) => (
-                  <tr key={index}>
-                    <td>{jsonData.name}</td>
-                    <td>{readabledateCreate[0]}</td>
-                    <td>{jsonData.status}</td>
-                    <td>
-                      <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                        View
-                      </button>
-                    </td>
-                    <td>{readabledateUpdate[0]}</td>
-                    <td>
-                      {jsonData.status === "Finished" ? (
-                        <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                          View Results
-                        </button>
-                      ) : (
+                {problems.length > 0 ? (
+                  problems.map((problem, index) => (
+                    <tr key={index}>
+                      <td>{problem.name}</td>
+                      <td>{makeDatesReadable(problem.createdAt)}</td>
+                      <td>{problem.status}</td>
+                      <td>
                         <button
-                          disabled
-                          className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          onClick={() =>
+                            navigate(`/editproblem/${problem._id}`)
+                          }
+                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
                         >
-                          View Results
+                          View
                         </button>
-                      )}
-                    </td>
-                    <td>
-                      {jsonData.status === "Ready" ||
-                      jsonData.status === "Running" ? (
-                        <button
-                          className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
-                          onClick={openModal}
-                        >
-                          Delete
-                        </button>
-                      ) : (
-                        <button
-                          disabled
-                          className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                          onClick={openModal}
-                        >
-                          Delete
-                        </button>
-                      )}
+                      </td>
+                      <td>{makeDatesReadable(problem.updatedAt)}</td>
+                      <td>
+                        {problem.status === "finished" ? (
+                          <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                            View Results
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          >
+                            View Results
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        {problem.status === "ready" ||
+                         problem.status === "Running" ? (
+                          <button
+                            className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
+                            onClick={() => openModal(problem.name)}
+                          >
+                            Delete
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                            onClick={() => openModal(problem.name)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8">
+                      No problems have been found. Refresh the page to try
+                      again!
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
 
@@ -207,7 +281,10 @@ const ShowMySubmissions = () => {
                     </div>
                   </div>
                   <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                    <button class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                    <button
+                      onClick={handleDeleteProblem}
+                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-500 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                    >
                       {" "}
                       Delete{" "}
                     </button>
@@ -231,11 +308,11 @@ const ShowMySubmissions = () => {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
         <h3 className="mt-40 text-4xl font-semibold">
-          You have to login with a valid admin account!
+          You have to login with a valid user account!
         </h3>
       </div>
     );
   }
 };
 
-export default ShowMySubmissions;
+export default ShowAllSubmissions;
