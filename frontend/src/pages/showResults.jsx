@@ -1,20 +1,17 @@
-import React, { useEffect, useState, useRef } from "react";
-import Highcharts from "highcharts";
-import HighchartsNetworkgraph from "highcharts/modules/networkgraph";
-import File from "../images/file.png";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-
-// Initialize the networkgraph module
-HighchartsNetworkgraph(Highcharts);
+import { GraphCanvas } from "reagraph";
+import File from "../images/file.png";
 
 const ShowResults = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [isFileOpen, setIsFileOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [routesData, setRoutesData] = useState([]);
-  const chartContainerRef = useRef(null); // Ref for the chart container
+  const [nodes_graph, setNodes_Graph] = useState([]);
+  const [edges, setEdges] = useState([]);
+  const [showModal, setShowModal] = useState(false);
 
   function formatRoutes(jsonString) {
     const data = JSON.parse(jsonString);
@@ -59,9 +56,6 @@ const ShowResults = () => {
   const render_results_file = results_file.split("\n");
 
   useEffect(() => {
-    // Load routes data
-
-    // Parse the JSON string and set routes data
     const jsonData = JSON.parse(jsonString);
     setRoutesData(jsonData.routes);
   }, []);
@@ -79,68 +73,45 @@ const ShowResults = () => {
         console.log(error);
       }
     };
-    // Create the Highcharts chart
-    if (isModalOpen && selectedRoute !== null && chartContainerRef.current) {
-      const selectedRouteData = routesData[selectedRoute];
+    if (selectedRoute !== null && routesData.length > 0) {  
+      const selectedRouteData = routesData[selectedRoute]; 
       const routeDescription = selectedRouteData["Route"];
-
-      // Parse routeDescription to extract nodes
+  
+      
       const nodes = routeDescription.split(" -> ").map((node) => node.trim());
-
-      // Create edges data based on nodes
-      const edges = [];
+      let help1 = [];
+      let help2 = [];
       for (let i = 0; i < nodes.length - 1; i++) {
-        edges.push({
-          from: nodes[i],
-          to: nodes[i + 1],
-          color: i === 0 ? "red" : undefined,
+        help1.push({
+          id: nodes[i],
+          label: nodes[i]
         });
       }
-      edges.push({
-        from: nodes[nodes.length - 1],
-        to: nodes[0],
-        color: undefined,
-      }); // Connect last node to the first node
-
-      // Create the Highcharts chart with edges data
-      Highcharts.chart(chartContainerRef.current, {
-        chart: {
-          type: "networkgraph",
-          marginTop: 80,
-        },
-        title: {
-          text: `Route for Vehicle ${selectedRoute}`,
-        },
-        plotOptions: {
-          networkgraph: {
-            keys: ["from", "to"],
-            layoutAlgorithm: {
-              linkLength: 30,
-            },
-          },
-        },
-        series: [
-          {
-            marker: {
-              radius: 30,
-            },
-            dataLabels: {
-              enabled: true,
-              linkFormat: "",
-              allowOverlap: true,
-              style: {
-                fontSize: "14px",
-              },
-              textAlign: "center",
-              verticalAlign: "middle",
-            },
-            data: edges,
-          },
-        ],
-      });
+      setNodes_Graph(help1); 
+  
+      for (let i = 0; i < nodes.length - 1; i++) {
+        help2.push({
+          id: i,
+          source: nodes[i],
+          target: nodes[i + 1],
+          label: "Edge" + i
+        });
+      }
+      setEdges(help2); 
     }
     fetchAccessToken();
-  }, [isModalOpen, selectedRoute, routesData, chartContainerRef]);
+
+  }, [selectedRoute, routesData]);
+
+  const handleRouteSelection = (routeIndex) => {
+    setSelectedRoute(routeIndex);
+    setShowModal(true);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedRoute(null);
+  };
+
 
   const handleFileClick = () => {
     setIsFileOpen(true);
@@ -160,109 +131,93 @@ const ShowResults = () => {
     URL.revokeObjectURL(link.href);
   };
 
-  const openModal = (routeIndex) => {
-    setIsModalOpen(true);
-    setSelectedRoute(routeIndex);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-    setSelectedRoute(null);
-  };
-
   if (accessToken) {
     return (
-      <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
-        <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
-        <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
-          <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
-            <div class="gap-5 mt-10 flex items-center">
-              <h3 class="text-xl font-bold text-orange-800">
-                The entire answer to the problem is in this file
-              </h3>
-              <button onClick={handleFileClick}>
-                <img src={File} alt="" class="w-9 h-9" />
-              </button>
-            </div>
-            <br></br>
-            <br></br>
-            <h2 class="mt-10 mb-6 text-2xl font-bold text-orange-800">
-              Information per vehicle{" "}
-            </h2>
-            <br></br>
-            <div className="money bg-orange-100 w-full">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Vehicle Number</th>
-                    <th>Distance of the route</th>
-                    <th>See route</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {routesData.map((route, index) => (
-                    <tr key={index}>
-                      <td>{index}</td>
-                      <td>{route["Distance of the route"]}</td>
-                      <td>
-                        <button
-                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                          onClick={() => openModal(index)}
-                        >
-                          Click to see route
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Modal */}
-            {isModalOpen && selectedRoute !== null && (
-              <div className="fixed z-50 inset-0 bg-orange-900 bg-opacity-40 overflow-y-auto h-full w-full px-4">
-                <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
-                  <div className="flex justify-end p-2">
-                    <button
-                      onClick={closeModal}
-                      type="button"
-                      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
+      <div className="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
+      <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
+      <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
+        <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
+          <div class="gap-5 mt-10 flex items-center">
+            <h3 class="text-xl font-bold text-orange-800">
+              The entire answer to the problem is in this file
+            </h3>
+            <button onClick={handleFileClick}>
+              <img src={File} alt="" class="w-9 h-9" />
+            </button>
+          </div>
+          <br></br>
+          <br></br>
+          <h2 class="mt-10 mb-6 text-2xl font-bold text-orange-800">
+            Information per vehicle{" "}
+          </h2>
+          <br></br>
+          <div className="money bg-orange-100 w-full">
+            <table>
+              <thead>
+                <tr>
+                  <th>Vehicle Number</th>
+                  <th>Distance of the route</th>
+                  <th>See route</th>
+                </tr>
+              </thead>
+              <tbody>
+                {routesData.map((route, index) => (
+                  <tr key={index}>
+                    <td>{index}</td>
+                    <td>{route["Distance of the route"]}</td>
+                    <td>
+                      <button
+                        className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                        onClick={() => handleRouteSelection(index)}
                       >
-                        <path
-                          fillRule="evenodd"
-                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                          clipRule="evenodd"
-                        ></path>
-                      </svg>
-                    </button>
-                  </div>
-                  {/* Container for Highcharts graph */}
-                  <div
-                    ref={chartContainerRef}
-                    id="modal-graph"
-                    className="mb-2 p-6 pt-0 text-center"
-                  ></div>
-                  <div class="text-center">
-                    The path until the first stop is specified with{" "}
-                    <span class="text-red-500">red</span> color
-                  </div>
-                </div>
-              </div>
-            )}
+                        Click to see route
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
-            {/* File */}
+          {/* Modal */}
+          {showModal && selectedRoute !== null && (
+      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+      <div className="relative bg-white shadow-xl rounded-md max-w-screen-lg mx-auto">
+               <div className="flex justify-end p-2">
+               <div className="mt-6 mb-3 text-lg font-bold text-orange-800">
+                    Route for Vehicle {selectedRoute}
+               </div>
+                   <button
+                     onClick={closeModal}
+                     className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                   >
+                   <svg
+                     className="w-5 h-5"
+                     fill="currentColor"
+                     viewBox="0 0 20 20"
+                     xmlns="http://www.w3.org/2000/svg"
+                   >
+                     <path
+                       fillRule="evenodd"
+                       d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                       clipRule="evenodd"
+                     ></path>
+                   </svg>
+                 </button>
+               </div>
+             <div className="relative shadow-xl rounded-md bg-white w-screen max-w-xl min-h-96">
+                   <GraphCanvas nodes={nodes_graph} edges={edges}/>
+       
+             </div>
+         </div>
+         </div>
+          )}
+
             {/* File */}
             {isFileOpen && (
               <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
                 <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-3xl">
                   {" "}
-                  {/* Adjusted max-width */}
                   <div className="flex justify-end p-2">
                     <button
                       class="middle none center rounded-lg bg-orange-700 py-3 px-6 font-sans text-xs font-bold uppercase text-white shadow-md shadow-pink-500/20 transition-all hover:shadow-lg hover:bg-orange-500 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -293,7 +248,6 @@ const ShowResults = () => {
                   <div className="py-3 px-4 flex items-center justify-center bg-gray-800 shadow-2xl rounded-lg overflow-hidden">
                     <div className="w-full lg:w-9/12 bg-gray-800 shadow-2xl rounded-lg overflow-hidden">
                       {" "}
-                      {/* Adjusted width */}
                       <div id="header-buttons" className="py-3 px-4 flex">
                         <div className="rounded-full w-3 h-3 bg-red-500 mr-2"></div>
                         <div className="rounded-full w-3 h-3 bg-yellow-500 mr-2"></div>
