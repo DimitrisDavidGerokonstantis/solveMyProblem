@@ -45,7 +45,7 @@ const Navbar = () => {
       fetchCredits(userID);
       //setUserID(currentUser.id);
     }
-  }, [nameChanged, currentUser, creditsChanged]);
+  }, [nameChanged, currentUser, userID, creditsChanged]);
 
   useEffect(() => {
     const fetchAccessToken = async () => {

@@ -45,7 +45,7 @@ export const updateSubmission = async (req, res) => {
 
 export const getProblemInfo = async (req, res) => {
   try {
-    console.log(req.params.problemId);
+    console.log("GET INFO COOKIES", "");
     let problem = await Problems.find({ _id: req.params.problemId });
     return res.status(200).json({ problem });
   } catch (error) {

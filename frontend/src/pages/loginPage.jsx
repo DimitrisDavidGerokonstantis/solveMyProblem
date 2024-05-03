@@ -55,22 +55,30 @@ const LoginPage = () => {
   const fetchAccessToken = async () => {
     try {
       const res = await axios.get(`http://localhost:8080/auth/getToken`);
-      setAccessToken(res.data.token);
-      setRole(res.data.role);
-      console.log("TOKEN", res.data);
       if (res.data.token) {
+        setAccessToken(res.data.token);
+        setRole(res.data.role);
+        console.log("TOKEN", res.data);
         setUserId(JSON.parse(localStorage.getItem("user")).id);
-      }
-      if (res.data.token && res.data.role === "user") {
-        navigate("/submissions");
-      }
-      if (res.data.token && res.data.role === "admin") {
-        navigate("/allsubmissions");
+        if (res.data.role === "user") {
+          navigate("/submissions");
+        }
+        if (res.data.role === "admin") {
+          navigate("/allsubmissions");
+        }
       }
     } catch (error) {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    try {
+      fetchAccessToken();
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   return (
     <div class="relative flex h-screen w-screen">

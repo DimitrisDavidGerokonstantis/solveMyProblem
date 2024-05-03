@@ -184,8 +184,14 @@ export const editPermissionsController = async (req, res) => {
     async (err, userInfo) => {
       if (err) return res.status(403).json("Token is not valid!");
       try {
+        console.log("REQUEST COOKIE", req);
         const result = await axios.get(
-          `http://submitproblem:5000/api/submitProblem/getProblemInfo/${req.body.problemToEdit}`
+          `http://submitproblem:5000/api/submitProblem/getProblemInfo/${req.body.problemToEdit}`,
+          {
+            headers: {
+              Cookie: { access_token: req.cookies.access_token },
+            },
+          }
         );
         console.log(
           "PROBLEM's USER ID",

@@ -66,7 +66,7 @@ export const hasAdminsPermissions = async (req, res, next) => {
 
 export const hasPermissionsToUpdate = async (req, res, next) => {
   try {
-    console.log("REQUEST FOR HAS PERMISSIONS TO EDIT", req);
+    console.log("REQUEST FOR HAS PERMISSIONS TO EDIT", req.cookies);
     // checks if a this user has permissions to edit this problem
     // i.e. he is the creator of this problem
     const resp = await axios.post(
