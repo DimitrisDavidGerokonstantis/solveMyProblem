@@ -27,6 +27,8 @@ services:
     environment:
       - MONGO_DB_URI=mongodb://db/users
       - JWT_KEY="arandomjwtkey"
+      - CLIENT_ID=1089589254674-d22lmgcff5fm2iivoiuiumilvub9t1ep.apps.googleusercontent.com
+      - CLIENT_SECRET=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
 
   showsubmissions:
     build: "./showsubmissions"

@@ -29,6 +29,10 @@ export const loginController = async (req, res) => {
   try {
     let user = await Users.where("username").equals(req.body.username);
     if (user.length === 0) return res.status(404).json("User not found!");
+    if (user[0].google_access_token)
+      return res
+        .status(409)
+        .json("This is a google user! Sign in with google.");
 
     // else check credentials
     const isPasswordCorrect = bcrypt.compareSync(
@@ -80,6 +84,9 @@ export const getTokenController = async (req, res) => {
         role: user.role,
         userid: id,
         username: user.username,
+        google_access_token: user.google_access_token,
+        picture: user.picture,
+        email: user.email,
       });
     });
   } else {

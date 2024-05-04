@@ -17,6 +17,11 @@ const Navbar = () => {
   const [nameChanged, setNameChanged] = useState(false);
   const [creditsChanged, setCreditsChanged] = useState(false);
   const [usernameError, setUsernameError] = useState("");
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const [googleuser, setGoogleUser] = useState(null);
+  const [profileInfoClass, setProfileInfoClass] = useState(
+    "fixed hidden mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
+  );
   const [usernameInButton, setUsernameInButton] = useState(
     currentUser?.username
   );
@@ -58,6 +63,10 @@ const Navbar = () => {
         console.log("TOKEN", res.data);
         if (res.data.token) {
           setUserID(res.data.userid);
+          if (res.data.google_access_token) {
+            setIsGoogleUser(true);
+            setGoogleUser(res.data);
+          }
         }
       } catch (error) {
         console.log(error);
@@ -122,6 +131,23 @@ const Navbar = () => {
     }
   };
 
+  const toggleDropdown = () => {
+    if (
+      profileInfoClass ===
+      "fixed hidden mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
+    ) {
+      console.log("TO BE NOT HIDDEN", profileInfoClass);
+      setProfileInfoClass(
+        "fixed mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
+      );
+    } else {
+      console.log("TO BE HIDDEN", profileInfoClass);
+      setProfileInfoClass(
+        "fixed hidden mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
+      );
+    }
+  };
+
   return (
     <nav className="w-screen bg-orange-200 text-orange-900">
       <div className="container mx-auto flex items-center justify-between p-4">
@@ -136,7 +162,7 @@ const Navbar = () => {
 
         <div className="flex justify-end items-center relative">
           <div className="block">
-            <div className="inline relative">
+            <div className="inline-flex relative">
               {currentUser && (
                 <button
                   type="button"
@@ -156,29 +182,49 @@ const Navbar = () => {
                   <h3 className="font-bold text-lg">
                     Hello {usernameInButton}!
                   </h3>
-                  <p className="py-4">
-                    You can update your username and buy credits!
-                  </p>
-                  <div className="mb-2 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
-                    <input
-                      onChange={handleUsername}
-                      type="text"
-                      placeholder="Username"
-                      value={username}
-                      className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
-                    />
-                    <form method="dialog">
+                  {!isGoogleUser && role === "user" ? (
+                    <p className="py-4">
+                      You can update your username and buy credits!
+                    </p>
+                  ) : (
+                    <p className="py-4"></p>
+                  )}
+                  {!isGoogleUser ? (
+                    <div className="mb-2 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
+                      <input
+                        onChange={handleUsername}
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
+                      />
+                      <form method="dialog">
+                        <p class="mt-2 mb-2 flex flex-col text-center text-red-500 ">
+                          {usernameError}
+                        </p>
+                        <button
+                          onClick={handleUpdate}
+                          className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"
+                        >
+                          Update
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    <div className="mb-2 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
+                      <input
+                        readOnly
+                        type="text"
+                        placeholder="Username"
+                        value={username}
+                        className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
+                      />
+
                       <p class="mt-2 mb-2 flex flex-col text-center text-red-500 ">
-                        {usernameError}
+                        Username updates not available for google users!
                       </p>
-                      <button
-                        onClick={handleUpdate}
-                        className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"
-                      >
-                        Update
-                      </button>
-                    </form>
-                  </div>
+                    </div>
+                  )}
                   {role === "user" && (
                     <div className="mb-10 w-full shadow-lg p-4 rounded-xl bg-orange-200 flex-col items-center justify-center text-center">
                       <div className="flex mt-2 justify-center shadow-xl rounded-lg bg-orange-300">
@@ -214,8 +260,7 @@ const Navbar = () => {
                   </div>
                 </div>
               </dialog>
-
-              {!currentUser ? (
+              {!currentUser && (
                 <button
                   onClick={() => {
                     navigate("/login");
@@ -225,7 +270,8 @@ const Navbar = () => {
                 >
                   Login
                 </button>
-              ) : (
+              )}{" "}
+              {currentUser && !isGoogleUser && (
                 <button
                   onClick={() => {
                     logout();
@@ -236,6 +282,44 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
+              )}
+              <div id="dropdownAvatar" class={profileInfoClass}>
+                <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                  <div>{googleuser?.username}</div>
+                  <div class="font-medium truncate">{googleuser?.email}</div>
+                </div>
+
+                <div class="py-2">
+                  <a
+                    href="#"
+                    onClick={() => {
+                      logout();
+                      toggleDropdown();
+                      setIsGoogleUser(false);
+                      navigate("/login");
+                    }}
+                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                  >
+                    Logout
+                  </a>
+                </div>
+              </div>
+              {isGoogleUser && (
+                <>
+                  <button
+                    id="dropdownUserAvatarButton"
+                    class="w-10 h-10 ml-10 relative text-sm bg-gray-200 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                    type="button"
+                    onClick={toggleDropdown}
+                  >
+                    <span class="sr-only">Open user menu</span>
+                    <img
+                      class="w-fit h-fit rounded-full"
+                      src={googleuser.picture}
+                      alt="could not load"
+                    />
+                  </button>
+                </>
               )}
             </div>
           </div>

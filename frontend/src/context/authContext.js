@@ -17,6 +17,23 @@ export const AuthContextProvider = ({ children }) => {
     return res.data.role;
   };
 
+  const googleLogin = async (googleToken) => {
+    const res = await axios.post(
+      "http://localhost:8080/googleAuth/loginByGoogleToken",
+      {
+        googleToken: googleToken,
+      }
+    );
+    let user = res.data;
+    let myuser = {};
+    myuser.id = user._id;
+    myuser.role = user.role;
+    myuser.username = user.username;
+    setCurrentUser(myuser);
+    console.log("GOOGLE USER", res.data);
+    return res.data;
+  };
+
   const logout = async (inputs) => {
     const res = await axios.post(`http://localhost:8080/auth/logout`);
     setCurrentUser(null);
@@ -28,7 +45,7 @@ export const AuthContextProvider = ({ children }) => {
   }, [currentUser]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, login, logout }}>
+    <AuthContext.Provider value={{ currentUser, googleLogin, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

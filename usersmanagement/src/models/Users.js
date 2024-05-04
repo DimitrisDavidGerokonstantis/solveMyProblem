@@ -19,6 +19,12 @@ const usersSchema = new Schema({
     type: String,
     default: "user",
   },
+  email: {
+    type: String,
+    default: "",
+  },
+  google_access_token: { type: String, default: "" },
+  picture: { type: String, default: "" },
 });
 
 export default mongoose.model("Users", usersSchema);

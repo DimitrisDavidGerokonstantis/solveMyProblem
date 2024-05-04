@@ -1,11 +1,15 @@
 import LoginPhoto from "../images/loginPhoto.png";
 import GoogleLogo from "../images/googleLogo.png";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../context/authContext";
 const LoginPage = () => {
-  const { login } = useContext(AuthContext);
+  const searchParams = new URLSearchParams(useLocation().search);
+  const isGoogleLogin = searchParams.get("google") === "true";
+  const googleToken = searchParams.get("token");
+  console.log("Is Google login:", isGoogleLogin);
+  const { login, googleLogin } = useContext(AuthContext);
   const [accessToken, setAccessToken] = useState(null);
   const [role, setRole] = useState("");
   const [userId, setUserId] = useState(null);
@@ -16,6 +20,21 @@ const LoginPage = () => {
   const [usernameError, setUsernameError] = useState("");
 
   const navigate = useNavigate();
+
+  const navig = (url) => {
+    window.location.href = url;
+  };
+
+  async function auth() {
+    const response = await fetch(
+      "http://127.0.0.1:5001/googleAuth/googleRequest",
+      {
+        method: "post",
+      }
+    );
+    const data = await response.json();
+    navig(data.url);
+  }
 
   const handleUsername = (e) => {
     setUsername(e.target.value);
@@ -73,11 +92,26 @@ const LoginPage = () => {
   };
 
   useEffect(() => {
-    try {
-      fetchAccessToken();
-    } catch (error) {
-      console.log(error);
-    }
+    const executeGoogleLoginOrFetchToken = async () => {
+      try {
+        if (isGoogleLogin) {
+          console.log("GOOGLE TOKEN", googleToken);
+          const googleUser = await googleLogin(googleToken); // Wait for googleLogin to complete
+          console.log("GU", googleUser);
+          if (googleUser.role === "user") {
+            navigate("/submissions");
+          }
+          if (googleUser.role === "admin") {
+            navigate("/allsubmissions");
+          }
+        }
+        fetchAccessToken();
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    executeGoogleLoginOrFetchToken();
   }, []);
 
   return (
@@ -146,7 +180,10 @@ const LoginPage = () => {
             </fieldset>
           </div>
           <div class="my-10">
-            <button class="flex w-full justify-center rounded-3xl border-none bg-white p-1 text-black hover:bg-orange-100 sm:p-3">
+            <button
+              onClick={() => auth()}
+              class="flex w-full justify-center rounded-3xl border-none bg-white p-1 text-black hover:bg-orange-100 sm:p-3"
+            >
               <img src={GoogleLogo} class="mr-4 w-6 object-fill" />
               Sign in with Google
             </button>

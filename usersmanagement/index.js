@@ -1,5 +1,6 @@
 import express from "express";
 import routes from "./src/routes/routes.js";
+import googleRoutes from "./src/routes/oauth.js";
 import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
@@ -22,6 +23,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/auth", routes);
+app.use("/googleAuth", googleRoutes);
 
 app.listen(5000, () => {
   console.log("Connected!!");
