@@ -45,6 +45,27 @@ services:
       - QUEUE_VIEW_RESULTS=viewResultsQueue
       - JWT_KEY="arandomjwtkey"
 
+  solversproxy:
+    build: "./solversproxy"
+    ports:
+      - "5003:5000"
+    depends_on:
+      - db
+      - rabbitmqquestions
+      - rabbitmqanswers
+    environment:
+      - MONGO_DB_URI=mongodb://db/microservices3
+      - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
+      - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
+      - QUEUE_NAME=ProxyQueue
+      - EXCHANGE_NAME_QUESTIONS=questionsExchange
+      - EXCHANGE_NAME_ANSWERS=answersExchange
+
+  solver:
+    build: "./solver"
+    ports:
+      - "5004:5000"
+
   db:
     image: mongo
     ports:
@@ -57,12 +78,12 @@ services:
       - 15672:15672
       - 25672:25672
 
-  # rabbitmqanswers:
-  #   image: rabbitmq:3-management
-  #   ports:
-  #     - 5673:5672
-  #     - 15673:15672
-  #     - 25673:25672
+  rabbitmqanswers:
+    image: rabbitmq:3-management
+    ports:
+      - 5673:5672
+      - 15673:15672
+      - 25673:25672
 
   nginx:
     image: nginx:latest
