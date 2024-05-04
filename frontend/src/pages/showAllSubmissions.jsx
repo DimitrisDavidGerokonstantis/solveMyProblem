@@ -158,7 +158,7 @@ const ShowAllSubmissions = () => {
             <br></br>
             <div className="flex justify-between">
               <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
-                My Submissions
+                Submissions
               </h2>
             </div>
             <br></br>

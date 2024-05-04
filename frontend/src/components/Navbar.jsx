@@ -6,6 +6,12 @@ import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 const Navbar = () => {
+  const [open, setOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
   var { currentUser, logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [userID, setUserID] = useState(null);
@@ -283,43 +289,86 @@ const Navbar = () => {
                   Logout
                 </button>
               )}
-              <div id="dropdownAvatar" class={profileInfoClass}>
-                <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                  <div>{googleuser?.username}</div>
-                  <div class="font-medium truncate">{googleuser?.email}</div>
-                </div>
-
-                <div class="py-2">
-                  <a
-                    href="#"
-                    onClick={() => {
-                      logout();
-                      toggleDropdown();
-                      setIsGoogleUser(false);
-                      navigate("/login");
-                    }}
-                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                  >
-                    Logout
-                  </a>
-                </div>
-              </div>
               {isGoogleUser && (
-                <>
-                  <button
-                    id="dropdownUserAvatarButton"
-                    class="w-10 h-10 ml-10 relative text-sm bg-gray-200 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                    type="button"
-                    onClick={toggleDropdown}
-                  >
-                    <span class="sr-only">Open user menu</span>
-                    <img
-                      class="w-fit h-fit rounded-full"
-                      src={googleuser.picture}
-                      alt="could not load"
-                    />
-                  </button>
-                </>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <div className="flex justify-between h-fit">
+                    <div className="flex">
+                      <div className="flex-shrink-0 flex items-center">
+                        {/* Your logo or brand */}
+                      </div>
+                    </div>
+                    <div className="flex items-center">
+                      {/* Dropdown menu */}
+                      <div x-data="{ open: false }" className="relative">
+                        <button
+                          onClick={toggleOpen}
+                          className="bg-white dark:bg-gray-200 rounded-full flex text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400"
+                          id="user-menu"
+                          aria-haspopup="true"
+                        >
+                          <span className="sr-only">Open user menu</span>
+                          <img
+                            className="h-10 w-10 rounded-full"
+                            src={googleuser.picture}
+                            alt="could not load"
+                          />
+                        </button>
+                        {open && (
+                          <div
+                            className="origin-top-right absolute right-0 mt-2 w-fit px-5 py-3 dark:bg-gray-800 bg-white rounded-lg shadow border dark:border-transparent"
+                            role="menu"
+                            aria-orientation="vertical"
+                            aria-labelledby="user-menu"
+                            x-show="open"
+                          >
+                            <ul className="space-y-3 dark:text-white">
+                              <li className="font-medium">
+                                <div class="px-4 py-3 text-md text-gray-900 dark:text-white">
+                                  <div>{googleuser?.username}</div>
+                                  <div class="font-medium truncate">
+                                    {googleuser?.email}
+                                  </div>
+                                </div>
+                              </li>
+                              <li className="font-medium"></li>
+                              <hr className="dark:border-gray-700" />
+                              <li className="font-medium">
+                                <a
+                                  href="#"
+                                  onClick={() => {
+                                    logout();
+                                    toggleDropdown();
+                                    setIsGoogleUser(false);
+                                    navigate("/login");
+                                  }}
+                                  className="py-2 flex items-center transform transition-colors duration-200 border-r-4 border-transparent hover:border-orange-600"
+                                >
+                                  <div className="mr-3 text-red-600">
+                                    <svg
+                                      className="w-6 h-6"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                      ></path>
+                                    </svg>
+                                  </div>
+                                  Logout
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           </div>

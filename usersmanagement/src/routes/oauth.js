@@ -42,7 +42,7 @@ const createGoogleUser = async (userData, google_access_token) => {
       return createdUser;
     } else {
       existingUser.google_access_token = google_access_token;
-      existingUser.save();
+      await existingUser.save();
       console.log("USER EXISTS", existingUser);
       return existingUser;
     }
