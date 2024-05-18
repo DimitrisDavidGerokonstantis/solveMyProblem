@@ -2,8 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { GraphCanvas } from "reagraph";
 import File from "../images/file.png";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const ShowResults = () => {
+  const searchParams = new URLSearchParams(useLocation().search);
+  const forwardedFromEmail = searchParams.get("forwarded") === "true";
+  const forwardedDone = searchParams.get("forwardeddone") === "true";
   const [accessToken, setAccessToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [isFileOpen, setIsFileOpen] = useState(false);
@@ -12,6 +16,19 @@ const ShowResults = () => {
   const [nodes_graph, setNodes_Graph] = useState([]);
   const [edges, setEdges] = useState([]);
   const [showModal, setShowModal] = useState(false);
+
+  const path = useLocation().pathname.split("/");
+  const problemID = path[path.length - 1];
+
+  if (forwardedDone) {
+    console.log("forwardedDone");
+    localStorage.setItem(
+      "problemToShowResults",
+      JSON.stringify({ problemID: null })
+    );
+  }
+
+  const navigate = useNavigate();
 
   function formatRoutes(jsonString) {
     const data = JSON.parse(jsonString);
@@ -68,39 +85,37 @@ const ShowResults = () => {
         console.log("TOKEN", res.data);
         if (res.data.token) {
           setUserId(JSON.parse(localStorage.getItem("user")).id);
-        }
+        } else setAccessToken(false);
       } catch (error) {
         console.log(error);
       }
     };
-    if (selectedRoute !== null && routesData.length > 0) {  
-      const selectedRouteData = routesData[selectedRoute]; 
+    if (selectedRoute !== null && routesData.length > 0) {
+      const selectedRouteData = routesData[selectedRoute];
       const routeDescription = selectedRouteData["Route"];
-  
-      
+
       const nodes = routeDescription.split(" -> ").map((node) => node.trim());
       let help1 = [];
       let help2 = [];
       for (let i = 0; i < nodes.length - 1; i++) {
         help1.push({
           id: nodes[i],
-          label: nodes[i]
+          label: nodes[i],
         });
       }
-      setNodes_Graph(help1); 
-  
+      setNodes_Graph(help1);
+
       for (let i = 0; i < nodes.length - 1; i++) {
         help2.push({
           id: i,
           source: nodes[i],
           target: nodes[i + 1],
-          label: "Edge" + i
+          label: "Edge" + i,
         });
       }
-      setEdges(help2); 
+      setEdges(help2);
     }
     fetchAccessToken();
-
   }, [selectedRoute, routesData]);
 
   const handleRouteSelection = (routeIndex) => {
@@ -111,7 +126,6 @@ const ShowResults = () => {
     setShowModal(false);
     setSelectedRoute(null);
   };
-
 
   const handleFileClick = () => {
     setIsFileOpen(true);
@@ -134,84 +148,83 @@ const ShowResults = () => {
   if (accessToken) {
     return (
       <div className="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
-      <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
-      <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
-        <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
-          <div class="gap-5 mt-10 flex items-center">
-            <h3 class="text-xl font-bold text-orange-800">
-              The entire answer to the problem is in this file
-            </h3>
-            <button onClick={handleFileClick}>
-              <img src={File} alt="" class="w-9 h-9" />
-            </button>
-          </div>
-          <br></br>
-          <br></br>
-          <h2 class="mt-10 mb-6 text-2xl font-bold text-orange-800">
-            Information per vehicle{" "}
-          </h2>
-          <br></br>
-          <div className="money bg-orange-100 w-full">
-            <table>
-              <thead>
-                <tr>
-                  <th>Vehicle Number</th>
-                  <th>Distance of the route</th>
-                  <th>See route</th>
-                </tr>
-              </thead>
-              <tbody>
-                {routesData.map((route, index) => (
-                  <tr key={index}>
-                    <td>{index}</td>
-                    <td>{route["Distance of the route"]}</td>
-                    <td>
-                      <button
-                        className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                        onClick={() => handleRouteSelection(index)}
-                      >
-                        Click to see route
-                      </button>
-                    </td>
+        <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
+        <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
+          <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
+            <div class="gap-5 mt-10 flex items-center">
+              <h3 class="text-xl font-bold text-orange-800">
+                The entire answer to the problem is in this file
+              </h3>
+              <button onClick={handleFileClick}>
+                <img src={File} alt="" class="w-9 h-9" />
+              </button>
+            </div>
+            <br></br>
+            <br></br>
+            <h2 class="mt-10 mb-6 text-2xl font-bold text-orange-800">
+              Information per vehicle{" "}
+            </h2>
+            <br></br>
+            <div className="money bg-orange-100 w-full">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Vehicle Number</th>
+                    <th>Distance of the route</th>
+                    <th>See route</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {routesData.map((route, index) => (
+                    <tr key={index}>
+                      <td>{index}</td>
+                      <td>{route["Distance of the route"]}</td>
+                      <td>
+                        <button
+                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                          onClick={() => handleRouteSelection(index)}
+                        >
+                          Click to see route
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
 
-          {/* Modal */}
-          {showModal && selectedRoute !== null && (
-      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-      <div className="relative bg-white shadow-xl rounded-md max-w-screen-lg mx-auto">
-               <div className="flex justify-end p-2">
-               <div className="mt-6 mb-3 text-lg font-bold text-orange-800">
-                    Route for Vehicle {selectedRoute}
-               </div>
-                   <button
-                     onClick={closeModal}
-                     className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
-                   >
-                   <svg
-                     className="w-5 h-5"
-                     fill="currentColor"
-                     viewBox="0 0 20 20"
-                     xmlns="http://www.w3.org/2000/svg"
-                   >
-                     <path
-                       fillRule="evenodd"
-                       d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                       clipRule="evenodd"
-                     ></path>
-                   </svg>
-                 </button>
-               </div>
-             <div className="relative shadow-xl rounded-md bg-white w-screen max-w-xl min-h-96">
-                   <GraphCanvas nodes={nodes_graph} edges={edges}/>
-       
-             </div>
-         </div>
-         </div>
-          )}
+            {/* Modal */}
+            {showModal && selectedRoute !== null && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div className="relative bg-white shadow-xl rounded-md max-w-screen-lg mx-auto">
+                  <div className="flex justify-end p-2">
+                    <div className="mt-6 mb-3 text-lg font-bold text-orange-800">
+                      Route for Vehicle {selectedRoute}
+                    </div>
+                    <button
+                      onClick={closeModal}
+                      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        ></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="relative shadow-xl rounded-md bg-white w-screen max-w-xl min-h-96">
+                    <GraphCanvas nodes={nodes_graph} edges={edges} />
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* File */}
             {isFileOpen && (
@@ -275,13 +288,20 @@ const ShowResults = () => {
       </div>
     );
   } else {
-    return (
-      <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
-        <h3 className="mt-40 text-4xl font-semibold">
-          You have to login with a valid account!
-        </h3>
-      </div>
-    );
+    if (!forwardedFromEmail) {
+      return (
+        <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
+          <h3 className="mt-40 text-4xl font-semibold">
+            You have to login with a valid account!
+          </h3>
+        </div>
+      );
+    } else {
+      if (accessToken === false) {
+        console.log("accessTokFalse");
+        navigate(`/login?showresults=${problemID}`);
+      }
+    }
   }
 };
 

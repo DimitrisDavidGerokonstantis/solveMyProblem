@@ -50,7 +50,7 @@ export const sendEmailForAnswerController = async (req, res) => {
     let userID = req.body.userID;
     let problemID = req.body.problemID;
 
-    let link = `http://localhost:8080/showresults/${problemID}`;
+    let link = `http://localhost:8080/showresults/${problemID}?forwarded=true`;
 
     const user = await Users.findOne({ _id: userID });
     console.log("USER", user);
