@@ -24,11 +24,15 @@ services:
       - "5001:5000"
     depends_on:
       - db
+      - rabbitmqanswers
     environment:
       - MONGO_DB_URI=mongodb://db/users
       - JWT_KEY="arandomjwtkey"
       - CLIENT_ID=1089589254674-d22lmgcff5fm2iivoiuiumilvub9t1ep.apps.googleusercontent.com
       - CLIENT_SECRET=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
+      - EXCHANGE_NAME_ANSWERS=answersExchange
+      - QUEUE_NAME_USERS_MANAGEMENT=UsersManagementQueue
+      - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
 
   showsubmissions:
     build: "./showsubmissions"
@@ -65,6 +69,20 @@ services:
     build: "./solver"
     ports:
       - "5004:5000"
+
+  emailservice:
+    build: "./emailservice"
+    ports:
+      - "5005:5000"
+    depends_on:
+      - db
+      - rabbitmqanswers
+    environment:
+      - MONGO_DB_URI=mongodb://db/googleusers
+      - EXCHANGE_NAME_ANSWERS=answersExchange
+      - QUEUE_NAME_EMAIL_SERVICE=EmailServiceQueue
+      - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
+      - APP_PWD=jdxbyyngpnvrzluh
 
   showresults:
     build: "./showresults"

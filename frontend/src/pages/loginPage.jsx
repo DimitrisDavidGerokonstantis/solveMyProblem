@@ -6,7 +6,7 @@ import axios from "axios";
 import { AuthContext } from "../context/authContext";
 const LoginPage = () => {
   const searchParams = new URLSearchParams(useLocation().search);
-  const isGoogleLogin = searchParams.get("google") === "true";
+  let isGoogleLogin = searchParams.get("google") === "true";
   const googleToken = searchParams.get("token");
   console.log("Is Google login:", isGoogleLogin);
   const { login, googleLogin } = useContext(AuthContext);
@@ -18,6 +18,14 @@ const LoginPage = () => {
 
   const [loginError, setLoginError] = useState("");
   const [usernameError, setUsernameError] = useState("");
+
+  const problemID = searchParams.get("showresults");
+  if (problemID) {
+    localStorage.setItem(
+      "problemToShowResults",
+      JSON.stringify({ problemID: problemID })
+    );
+  }
 
   const navigate = useNavigate();
 
@@ -79,11 +87,18 @@ const LoginPage = () => {
         setRole(res.data.role);
         console.log("TOKEN", res.data);
         setUserId(JSON.parse(localStorage.getItem("user")).id);
-        if (res.data.role === "user") {
-          navigate("/submissions");
-        }
-        if (res.data.role === "admin") {
-          navigate("/allsubmissions");
+        let probID = JSON.parse(localStorage.getItem("problemToShowResults"));
+        console.log("probID", probID, typeof probID);
+        if (probID.problemID !== null) {
+          console.log("probID2", probID, typeof probID);
+          navigate(`/showresults/${probID.problemID}?forwardeddone=true`);
+        } else {
+          if (res.data.role === "user") {
+            navigate("/submissions");
+          }
+          if (res.data.role === "admin") {
+            navigate("/allsubmissions");
+          }
         }
       }
     } catch (error) {
@@ -95,15 +110,17 @@ const LoginPage = () => {
     const executeGoogleLoginOrFetchToken = async () => {
       try {
         if (isGoogleLogin) {
+          isGoogleLogin = false;
           console.log("GOOGLE TOKEN", googleToken);
           const googleUser = await googleLogin(googleToken); // Wait for googleLogin to complete
           console.log("GU", googleUser);
-          if (googleUser.role === "user") {
-            navigate("/submissions");
-          }
-          if (googleUser.role === "admin") {
-            navigate("/allsubmissions");
-          }
+
+          // if (googleUser.role === "user") {
+          //   navigate("/submissions");
+          // }
+          // if (googleUser.role === "admin") {
+          //   navigate("/allsubmissions");
+          // }
         }
         fetchAccessToken();
       } catch (error) {
@@ -122,7 +139,13 @@ const LoginPage = () => {
       <div class="h-screen w-3/5 bg-orange-900">
         <div class="mx-auto flex h-screen w-2/3 flex-col justify-center text-white xl:w-1/3">
           <div class="flex justify-center">
-            <p class="text-3xl text-orange-100">Login</p>
+            {problemID ? (
+              <p class="mb-4 text-3xl text-yellow-400 text-center">
+                Login so as to see your results
+              </p>
+            ) : (
+              <p class="text-3xl text-orange-100">Login</p>
+            )}
           </div>
           <div class="mt-10">
             <form>
