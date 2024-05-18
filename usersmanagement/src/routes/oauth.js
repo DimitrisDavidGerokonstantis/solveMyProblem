@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 import Users from "../models/Users.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 
 dotenv.config();
 
@@ -78,6 +79,10 @@ router.get("/oauth", async (req, res, next) => {
     console.log("Tokens acquired", tokens);
     const data = await getUserData(tokens.access_token);
     const createdUser = await createGoogleUser(data, tokens.access_token);
+    const result = await axios.post("http://emailservice:5000/email/addUser", {
+      user: createdUser,
+    });
+    console.log("Email service - Add user", result);
     res.redirect(
       `http://localhost:8080/login?google=true&token=${tokens.access_token}`
     );
