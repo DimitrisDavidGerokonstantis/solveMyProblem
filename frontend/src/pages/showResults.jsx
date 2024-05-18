@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { GraphCanvas } from "reagraph";
 import File from "../images/file.png";
+import { useLocation } from 'react-router-dom';
+
 
 const ShowResults = () => {
   const [accessToken, setAccessToken] = useState(null);
@@ -9,20 +11,32 @@ const ShowResults = () => {
   const [isFileOpen, setIsFileOpen] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
   const [routesData, setRoutesData] = useState([]);
+  const [Objective, setAnswerObjective] = useState("");
+  const [MaxDistance, setAnswerMaxDistance] = useState("");
   const [nodes_graph, setNodes_Graph] = useState([]);
   const [edges, setEdges] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  // const [answer, setAnswer] = useState([]);
+
+  const [ques_id, setQuestionId] = useState(
+    useLocation().pathname.split("/")[2]
+  );
+
+  console.log("QUESTION ID1", ques_id);
 
   function formatRoutes(jsonString) {
-    const data = JSON.parse(jsonString);
-    const { Objective, routes } = data;
+    // const data = JSON.parse(jsonString);
+    // const { Objective, routes } = data;
 
     let result = `Objective: ${Objective}\n`;
+    let maxDistance = `\nMaximum of the route distances: ${MaxDistance}\n`;
 
-    routes.forEach((route, index) => {
-      const { Route, "Distance of the route": distance } = route;
-      result += `\nRoute for vehicle ${index}:\n ${Route}\nDistance of the route: ${distance}\n`;
+    routesData.forEach((route, index) => {
+      const Route = route.Route;
+      result += `\nRoute for vehicle ${index}:\n ${Route}\n`;
     });
+
+    result += maxDistance;
 
     return result;
   }
@@ -56,9 +70,23 @@ const ShowResults = () => {
   const render_results_file = results_file.split("\n");
 
   useEffect(() => {
-    const jsonData = JSON.parse(jsonString);
-    setRoutesData(jsonData.routes);
-  }, []);
+    const fetchMyAnswer = async () => {
+      console.log("QUESTION ID2", ques_id);
+        try {
+          const res = await axios.get(
+            `http://localhost:8080/api/getResults?id=${ques_id}`
+          );
+          setRoutesData(res.data[0].answer.Routes);
+          setAnswerObjective(res.data[0].answer.Objective)
+          setAnswerMaxDistance(res.data[0].answer.MaximumDistance)
+          console.log("Fetched Answer: ", res.data[0].answer.Routes);
+        } catch (error) {
+          console.log(error);
+        }
+    };
+
+    fetchMyAnswer();
+  }, [ques_id]);
 
   useEffect(() => {
     const fetchAccessToken = async () => {
@@ -75,7 +103,7 @@ const ShowResults = () => {
     };
     if (selectedRoute !== null && routesData.length > 0) {  
       const selectedRouteData = routesData[selectedRoute]; 
-      const routeDescription = selectedRouteData["Route"];
+      const routeDescription = selectedRouteData.Route;
   
       
       const nodes = routeDescription.split(" -> ").map((node) => node.trim());
@@ -164,7 +192,7 @@ const ShowResults = () => {
                 {routesData.map((route, index) => (
                   <tr key={index}>
                     <td>{index}</td>
-                    <td>{route["Distance of the route"]}</td>
+                    <td>XXXXXX</td>
                     <td>
                       <button
                         className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"

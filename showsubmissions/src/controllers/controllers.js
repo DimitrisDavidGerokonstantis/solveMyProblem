@@ -1,7 +1,4 @@
 import axios from "axios";
-// import amqp from "amqplib"
-// import { consume_from_questions_queue } from "../consumeQuestion.js";
-// import { consume_from_questions_queue2 } from "../consumeQuestion2.js";
 import Problems from "../models/Problems.js";
 import mongoose from "mongoose";
 

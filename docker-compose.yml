@@ -66,10 +66,19 @@ services:
     ports:
       - "5004:5000"
 
-  db:
-    image: mongo
+  showresults:
+    build: "./showresults"
     ports:
-      - "27016:27017"
+      - "5005:5000"
+    depends_on:
+      - db
+      - rabbitmqanswers
+    environment:
+      - MONGO_DB_URI=mongodb://db/microservices4
+      - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
+      - EXCHANGE_NAME_ANSWERS=answersExchange
+      - QUEUE_VIEW_RESULTS=viewResultsQueue
+      - JWT_KEY="arandomjwtkey"
 
   rabbitmqquestions:
     image: rabbitmq:3-management
@@ -84,6 +93,11 @@ services:
       - 5673:5672
       - 15673:15672
       - 25673:25672
+
+  db:
+    image: mongo
+    ports:
+      - "27016:27017"
 
   nginx:
     image: nginx:latest
