@@ -87,7 +87,7 @@ services:
   showresults:
     build: "./showresults"
     ports:
-      - "5005:5000"
+      - "5006:5000"
     depends_on:
       - db
       - rabbitmqanswers

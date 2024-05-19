@@ -32,6 +32,6 @@ function sleep(ms) {
 
 app.listen(5000, async () => {
   console.log("Connected!!");
-  await sleep(20000);
+  await sleep(40000);
   consume_from_answers_queue();
 });
