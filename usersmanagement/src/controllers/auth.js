@@ -3,7 +3,10 @@ import Users from "../models/Users.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import axios from "axios";
-
+import Stripe from "stripe";
+const stripe = new Stripe(
+  "sk_test_51PHvOEL9KWQMTSTa0LmM80Oo88aI943X1uaQpLIlcpeXTwrdfVD6GjbiNMwW9VXxquWZXaSUrfHaY0oSijSVd2LG00JZCFCb5u"
+);
 export const registerController = async (req, res) => {
   try {
     console.log(req.body);
@@ -127,14 +130,34 @@ export const getCreditsController = async (req, res) => {
 
 export const buyCreditsController = async (req, res) => {
   try {
+    const lineItem = [
+      {
+        price_data: {
+          currency: "usd",
+          unit_amount: 100,
+          product_data: { name: "credits" },
+        },
+        quantity: parseInt(req.body.creditsToBuy),
+      },
+    ];
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItem,
+      mode: "payment",
+      success_url: "http://localhost:8080/login",
+      cancel_url: "http://localhost:8080/login",
+    });
+
     let user = await Users.findOne({ _id: req.params.userid });
     user.credits = `${
       parseInt(user.credits) + parseInt(req.body.creditsToBuy)
     }`;
 
     await user.save();
-    return res.status(200).json(user);
+    return res.status(200).json({ id: session.id });
   } catch (error) {
+    console.log(error);
     return res.status(500).json(error);
   }
 };
