@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
@@ -124,6 +125,9 @@ const Navbar = () => {
 
   const handleCreditsBuy = async (e) => {
     try {
+      const stripe = await loadStripe(
+        "pk_test_51PHvOEL9KWQMTSTatKw8UWuoa1oLsN4pyyktesIdVeQHh6nZDhLQLeouBKVFaWMwpNMH6O5Vin5E1xkytZLZDpwm00pRUvSyhF"
+      );
       const res = await axios.put(
         `http://localhost:8080/auth/buyCredits/${userID}`,
         {
@@ -132,6 +136,13 @@ const Navbar = () => {
       );
       console.log(res.data);
       setCreditsChanged(!creditsChanged);
+
+      const result = stripe.redirectToCheckout({
+        sessionId: res.data.id,
+      });
+      if (result.error) {
+        console.log(result.error);
+      }
     } catch (error) {
       console.log(error);
     }

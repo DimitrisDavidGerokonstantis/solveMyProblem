@@ -72,7 +72,7 @@ export const sendEmailForAnswerController = async (req, res) => {
         to: user.email, // list of receivers
         subject: "Solvio : Your problem was solved", // Subject line
         html: `<p>Hello ${user.username},</p>
-        <p>Your problem was solved. You can see the results by visiting the following link :</p> <p>${link}</p>
+        <p>Your problem has been solved. You can see the results by visiting the following link :</p> <p>${link}</p>
         <p>Best wishes,<br><span style="color: #a36c3d;"><em>Solvio team</em></span></p>`, // html body
       });
 
