@@ -239,7 +239,7 @@ const ShowMySubmissions = () => {
                         )}
                       </td>
                       <td>
-                        {problem.status === "Finished" ? (
+                        {problem.status === "finished" ? (
                           <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                             View Results
                           </button>
