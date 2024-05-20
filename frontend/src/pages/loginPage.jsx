@@ -18,8 +18,9 @@ const LoginPage = () => {
 
   const [loginError, setLoginError] = useState("");
   const [usernameError, setUsernameError] = useState("");
+  const [problemID, setProblemID] = useState(searchParams.get("showresults"));
 
-  const problemID = searchParams.get("showresults");
+  //const problemID = searchParams.get("showresults");
   if (problemID) {
     localStorage.setItem(
       "problemToShowResults",
@@ -89,9 +90,9 @@ const LoginPage = () => {
         setUserId(JSON.parse(localStorage.getItem("user")).id);
         let probID = JSON.parse(localStorage.getItem("problemToShowResults"));
         console.log("probID", probID, typeof probID);
-        if (probID.problemID !== null) {
+        if (probID?.problemID !== null) {
           console.log("probID2", probID, typeof probID);
-          navigate(`/showresults/${probID.problemID}?forwardeddone=true`);
+          navigate(`/showresults/${probID?.problemID}?forwardeddone=true`);
         } else {
           if (res.data.role === "user") {
             navigate("/submissions");
@@ -129,7 +130,7 @@ const LoginPage = () => {
     };
 
     executeGoogleLoginOrFetchToken();
-  }, []);
+  }, [problemID]);
 
   return (
     <div class="relative flex h-screen w-screen">

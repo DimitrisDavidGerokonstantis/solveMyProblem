@@ -149,6 +149,8 @@ export const buyCreditsController = async (req, res) => {
       cancel_url: "http://localhost:8080/login",
     });
 
+    console.log("SESSION", session);
+
     let user = await Users.findOne({ _id: req.params.userid });
     user.credits = `${
       parseInt(user.credits) + parseInt(req.body.creditsToBuy)
