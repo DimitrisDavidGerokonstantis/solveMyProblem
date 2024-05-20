@@ -7,7 +7,7 @@ export const hasPermissionsToSeeResults = async (req, res, next) => {
     let id = req.query.id;
     let id_mongo = new mongoose.Types.ObjectId(id);
     const answer = await Answer.findOne({ _id: id_mongo });
-    console.log("ANSWER", answer);
+    console.log("ANSWER", answer, id_mongo);
     jwt.verify(
       req.cookies.access_token,
       process.env.JWT_KEY,
