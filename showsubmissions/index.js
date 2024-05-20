@@ -4,6 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import { consume_from_questions_queue } from "./src/consumeQuestion.js";
+import { consume_from_answers_queue } from "./src/consumeAnswer.js";
 
 mongoose.connect(process.env.MONGO_DB_URI);
 
@@ -29,4 +30,5 @@ app.listen(5000, async () => {
   console.log("Connected!!!");
   await sleep(40000);
   consume_from_questions_queue();
+  consume_from_answers_queue();
 });

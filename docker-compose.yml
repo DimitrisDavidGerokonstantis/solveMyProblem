@@ -46,7 +46,9 @@ services:
       - RABBITMQ_QUESTIONS_URL=amqp://guest:guest@rabbitmqquestions:5672/
       - EXCHANGE_NAME=questionsExchange
       - QUEUE_SHOW_SUBMISSIONS=showSubmissionsQueue
-      - QUEUE_VIEW_RESULTS=viewResultsQueue
+      - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
+      - EXCHANGE_NAME_ANSWERS=answersExchange
+      - QUEUE_VIEW_RESULTS=viewResultsQueue2
       - JWT_KEY="arandomjwtkey"
 
   solversproxy:
