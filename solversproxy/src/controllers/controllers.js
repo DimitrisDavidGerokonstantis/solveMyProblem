@@ -20,14 +20,18 @@ export async function Solver(data){
         const processedResult = processResult(response.data.result);
         console.log('Result received:', processedResult);
 
-        const thisId = new mongoose.Types.ObjectId(data._id)
-        storeResult(processedResult, thisId)
-            .then(response => {
-                console.log(response);
-                pushResults(response);
-            }).catch(error => {
-                console.error("Error:", error);
-            });
+        const thisId = new mongoose.Types.ObjectId(data._id);
+
+        const responseData = {
+            id: thisId,
+            userID: data.userID,
+            answer: processedResult,
+            execTime: response.data.execTime
+        };
+
+        //storeResult(processedResult, thisId);
+        console.log(responseData);
+        pushResults(responseData);
       })
       .catch((error) => {
         console.error('Error:', error.message);
@@ -50,7 +54,7 @@ function processResult(inputText) {
       } else if (line.startsWith('Maximum')) {
           maxDistance = line.split(':')[1].trim();
       }
-  }
+  };
 
   const jsonObject = {
       "Objective": objective,

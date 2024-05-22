@@ -27,7 +27,7 @@ export async function consumeProblem() {
 
                     if (parsedMessage.status === "running") {
                         console.log(`Received Problem (id: ${parsedMessage._id}) from ProxyQueue`);
-                        await storeProblem(parsedMessage);
+                        //await storeProblem(parsedMessage);
                         await Solver(parsedMessage);
                     }
                 }

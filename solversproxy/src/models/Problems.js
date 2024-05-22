@@ -48,7 +48,8 @@ const Problems_Schema = new mongoose.Schema({
             MaximumDistance: String
         },
         default: null
-    }
+    },
+    execTime : { type: Number, default: null }
 })
 
 export default mongoose.model("Problems", Problems_Schema)
