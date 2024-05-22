@@ -1,7 +1,6 @@
 import mongoose from "mongoose"
 
 const Problems_Schema = new mongoose.Schema({
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
     userID: { type: mongoose.SchemaTypes.ObjectId, required: true },
     name: { type: String, required: true },
     model: { type: String, required: true },

@@ -1,24 +1,10 @@
 import axios from "axios"
 import mongoose from "mongoose"
-import { consumeProblem } from "../consumeProblem.js";
-import { storeProblem } from "../models/storeProblem.js";
 import { storeResult } from "../models/storeResult.js";
 import { pushResults } from "../pushResults.js";
 
-export const consumeController = async () => {
-    console.log("Testing consumeController");
-    try {
-        const parsedMessage = await consumeProblem();
-        await storeProblem(parsedMessage);
-        // // LOGIC MISSING
-        Solver(parsedMessage);
-        
-    } catch (error) {
-        console.log(error);
-    }
-};
 
-async function Solver(data){
+export async function Solver(data){
     const dataForSolver = {
         python_script: data.pythonScript.script,
         input_data: data.inputDataFile.content,

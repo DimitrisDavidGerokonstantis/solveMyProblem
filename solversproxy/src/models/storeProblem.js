@@ -30,7 +30,7 @@ export async function storeProblem(data) {
             },
         });
         newProblem.save();
-        console.log("Received Problem is stored in the database: ", newProblem);
+        console.log(`Problem (id: ${newProblem.id}) is stored in the database`);
     } catch (error) {
         console.log(error);
     }

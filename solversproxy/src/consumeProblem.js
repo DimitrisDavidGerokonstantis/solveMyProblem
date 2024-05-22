@@ -1,5 +1,8 @@
 import amqp from 'amqplib';
-import Problems from './models/Problems.js';
+import { storeProblem } from './models/storeProblem.js';
+import { Solver } from './controllers/controllers.js';
+
+let solverStatus = true;
 
 export async function consumeProblem() {
     try {
@@ -12,16 +15,25 @@ export async function consumeProblem() {
         const queue = await channel.assertQueue(queueName, { durable: true });
         
         console.log(`Consumer started. Waiting for messages in queue ${queueName}...`);
-        await channel.bindQueue(queue.queue, process.env.EXCHANGE_NAME_QUESTIONS, "");
+        await channel.bindQueue(queue.queue, process.env.EXCHANGE_NAME_QUESTIONS, '');
 
-        return new Promise((resolve) => {
-            channel.consume(queue.queue, (message) => {
-                console.log(`Received message from ProxyQueue`);
-                channel.ack(message);
-                const parsedMessage = JSON.parse(message.content.toString());
-                resolve(parsedMessage);
-            }, { noAck: false });
-        });
+        while (true) {
+            if (solverStatus) {
+                solverStatus = false;
+                const message = await channel.get(queue.queue, { noAck: false });
+                if (message) {
+                    channel.ack(message);
+                    const parsedMessage = await JSON.parse(message.content.toString());
+
+                    if (parsedMessage.status === "running") {
+                        console.log(`Received Problem (id: ${parsedMessage._id}) from ProxyQueue`);
+                        await storeProblem(parsedMessage);
+                        await Solver(parsedMessage);
+                    }
+                }
+                solverStatus = true;
+            }
+        }
     } catch (error) {
         console.log(error);
     }
