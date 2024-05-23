@@ -10,9 +10,10 @@ const answersSchema = new Schema({
         Routes: [
             {
                 Route: String,
+                Route_distance: String
             }
         ],
-        MaximumDistance: String
+        Maximum_distance: String
     },
     default: null
 }

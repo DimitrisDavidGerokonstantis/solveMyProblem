@@ -97,6 +97,11 @@ const ShowMySubmissions = () => {
     setProblemDeleted(!problemDeleted);
   };
 
+  const navigateToAnswer = (id) => {
+    console.log("We Prick You", id)
+    navigate(`/showresults/${id}`);
+  };
+
   const makeDatesReadable = (dateString) => {
     const date = new Date(dateString);
 
@@ -240,7 +245,10 @@ const ShowMySubmissions = () => {
                       </td>
                       <td>
                         {problem.status === "finished" ? (
-                          <button className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                          <button 
+                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                          onClick={() => navigateToAnswer(problem._id)}
+                          >
                             View Results
                           </button>
                         ) : (
@@ -253,7 +261,7 @@ const ShowMySubmissions = () => {
                         )}
                       </td>
                       <td>
-                        {problem.status === "ready" ? (
+                        {problem.status !== "running" ? (
                           <button
                             className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
                             onClick={() => openModal(problem._id)}
