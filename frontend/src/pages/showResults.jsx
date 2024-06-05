@@ -50,6 +50,8 @@ const ShowResults = () => {
     routesData.forEach((route, index) => {
       const Route = route.Route;
       result += `\nRoute for vehicle ${index}:\n ${Route}\n`;
+      const Distance = route.Route_distance;
+      result += `\nDistance of the route: ${Distance}\n`;
     });
 
     result += maxDistance;
@@ -96,7 +98,7 @@ const ShowResults = () => {
         setNotAllowedToSeeResults(false);
         setRoutesData(res.data[0].answer.Routes);
         setAnswerObjective(res.data[0].answer.Objective);
-        setAnswerMaxDistance(res.data[0].answer.MaximumDistance);
+        setAnswerMaxDistance(res.data[0].answer.Maximum_distance);
         console.log("Fetched Answer: ", res.data[0].answer.Routes);
       } catch (error) {
         console.log(error.response.status);
@@ -243,7 +245,7 @@ const ShowResults = () => {
                     {routesData.map((route, index) => (
                       <tr key={index}>
                         <td>{index}</td>
-                        <td>XXXXXX</td>
+                        <td>{route.Route_distance}</td>
                         <td>
                           <button
                             className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
