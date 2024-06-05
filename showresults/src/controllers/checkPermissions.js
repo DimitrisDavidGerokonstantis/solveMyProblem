@@ -7,6 +7,7 @@ export const hasPermissionsToSeeResults = async (req, res, next) => {
     let id = req.query.id;
     let id_mongo = new mongoose.Types.ObjectId(id);
     const answer = await Answer.findOne({ _id: id_mongo });
+    if (!answer) return res.status(404).json("Answer does not exist");
     console.log("ANSWER", answer, id_mongo);
     jwt.verify(
       req.cookies.access_token,

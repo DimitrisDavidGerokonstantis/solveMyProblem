@@ -33,6 +33,19 @@ export async function consume_from_answers_queue() {
           console.log(
             `Received message from ${queueName}: ${messageData.userID}`
           );
+          const user = await Users.findOne({ _id: messageData.userID });
+          console.log("INFO", user, messageData.execTime);
+          user.credits = `${parseInt(user.credits) - messageData.execTime}`;
+          console.log(user.credits);
+          user.totalExecTime = user.totalExecTime + messageData.execTime;
+          if (user.totalExecTime > 60) {
+            const times = parseInt(user.totalExecTime / 60);
+            user.totalExecTime = user.totalExecTime % 60;
+            user.credits = `${parseInt(user.credits) + 10 * times}`;
+          }
+          console.log("FINAL", user);
+          await user.save();
+
           channel.ack(message);
         } catch (error) {
           console.error("Error processing message:", error);

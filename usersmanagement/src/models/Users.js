@@ -15,6 +15,10 @@ const usersSchema = new Schema({
     type: Number,
     default: 100,
   },
+  totalExecTime: {
+    type: Number,
+    default: 0,
+  },
   role: {
     type: String,
     default: "user",

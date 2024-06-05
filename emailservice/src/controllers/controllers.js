@@ -31,7 +31,7 @@ export const addUserController = async (req, res) => {
         html: `<p>Hello ${createdUser.username},</p>
         <p>Welcome to Solvio!</p>
         <p>Visit our website, submit your problems and receive the answers you need!
-        You will be awarded 10 credits for every hour you use the solver we provide!</p>
+        You will need 1 credit for every second you use the solver. You will be awarded 10 credits for every minute you use the solver we provide!</p>
         <p>Best wishes,<br><span style="color: #a36c3d;"><em>Solvio team</em></span></p>`, // html body
       });
 
@@ -70,7 +70,7 @@ export const sendEmailForAnswerController = async (req, res) => {
       const info = await transporter.sendMail({
         from: '"Solvio App" <solvio.app@gmail.com>', // sender address
         to: user.email, // list of receivers
-        subject: "Solvio : Your problem was solved", // Subject line
+        subject: "Solvio : Your problem has been solved", // Subject line
         html: `<p>Hello ${user.username},</p>
         <p>Your problem has been solved. You can see the results by visiting the following link :</p> <p>${link}</p>
         <p>Best wishes,<br><span style="color: #a36c3d;"><em>Solvio team</em></span></p>`, // html body

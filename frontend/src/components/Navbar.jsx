@@ -321,7 +321,8 @@ const Navbar = () => {
                           <img
                             className="h-10 w-10 rounded-full"
                             src={googleuser.picture}
-                            alt="could not load"
+                            alt="error"
+                            crossorigin="anonymous"
                           />
                         </button>
                         {open && (

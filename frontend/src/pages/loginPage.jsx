@@ -90,7 +90,7 @@ const LoginPage = () => {
         setUserId(JSON.parse(localStorage.getItem("user")).id);
         let probID = JSON.parse(localStorage.getItem("problemToShowResults"));
         console.log("probID", probID, typeof probID);
-        if (probID?.problemID !== null) {
+        if (probID?.problemID !== null && probID?.problemID !== undefined) {
           console.log("probID2", probID, typeof probID);
           navigate(`/showresults/${probID?.problemID}?forwardeddone=true`);
         } else {
