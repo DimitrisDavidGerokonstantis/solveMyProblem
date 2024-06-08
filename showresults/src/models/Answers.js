@@ -4,19 +4,23 @@ const Schema = mongoose.Schema;
 
 const answersSchema = new Schema({
   userID: mongoose.SchemaTypes.ObjectId,
-  answer : {
+  answer: {
     type: {
-        Objective: Number,
-        Routes: [
-            {
-                Route: String,
-                Route_distance: String
-            }
-        ],
-        Maximum_distance: String
+      Objective: Number,
+      Routes: [
+        {
+          Route: String,
+          Route_distance: String,
+        },
+      ],
+      Maximum_distance: String,
     },
-    default: null
-}
+    default: null,
+  },
+  allowToShowResults: {
+    type: String,
+    default: "true",
+  },
 });
 
 // problemsSchema.pre("save", function (next) {

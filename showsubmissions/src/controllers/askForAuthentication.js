@@ -33,7 +33,7 @@ export const hasUsersPermissions = async (req, res, next) => {
     if (!resp.data) {
       return res
         .status(403)
-        .json("Forbidden : You have not permissions to do this");
+        .json("Forbidden : You have no permissions to do this");
     }
     next();
   } catch (error) {

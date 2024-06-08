@@ -19,6 +19,7 @@ const ShowResults = () => {
   const [edges, setEdges] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [notAllowedToSeeResults, setNotAllowedToSeeResults] = useState(false);
+  const [enoughCredits, setEnoughCredits] = useState(true);
 
   const path = useLocation().pathname.split("/");
   const problemID = path[path.length - 1];
@@ -94,12 +95,17 @@ const ShowResults = () => {
         const res = await axios.get(
           `http://localhost:8080/api/getResults?id=${ques_id}`
         );
-        console.log("STATUS", res.status);
-        setNotAllowedToSeeResults(false);
-        setRoutesData(res.data[0].answer.Routes);
-        setAnswerObjective(res.data[0].answer.Objective);
-        setAnswerMaxDistance(res.data[0].answer.Maximum_distance);
-        console.log("Fetched Answer: ", res.data[0].answer.Routes);
+        if (res.status === 200) {
+          console.log("STATUS", res.status);
+          setNotAllowedToSeeResults(false);
+          setRoutesData(res.data[0].answer.Routes);
+          setAnswerObjective(res.data[0].answer.Objective);
+          setAnswerMaxDistance(res.data[0].answer.Maximum_distance);
+          console.log("Fetched Answer: ", res.data[0].answer.Routes);
+        }
+        if (res.status === 204) {
+          setEnoughCredits(false);
+        }
       } catch (error) {
         console.log(error.response.status);
         if (error.response.status === 403) {
@@ -204,6 +210,15 @@ const ShowResults = () => {
     );
   }
   if (accessToken) {
+    if (!enoughCredits) {
+      return (
+        <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
+          <span class="flex text-3xl">
+            NOT ENOUGH CREDITS TO SEE THE RESULTS
+          </span>
+        </div>
+      );
+    }
     if (notAllowedToSeeResults) {
       return (
         <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">

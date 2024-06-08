@@ -77,3 +77,19 @@ export const callDummyController = async (req, res) => {
   // console.log('ekana kai kati allo meta giati den kollaw!!!!!!!!!!!')
   return res.status(200).json({ message: "Data received successfully" });
 };
+
+export const updateAllowResults = async (req, res) => {
+  try {
+    console.log("PROBLEMID", req.body.problemID);
+    let problem = await Problems.findOne({
+      _id: req.body.problemID,
+    });
+    console.log("PROBBBB", problem);
+    problem.allowToShowResults = "false";
+    await problem.save();
+    return res.status(200).json(problem);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Internal Server Error");
+  }
+};

@@ -16,6 +16,10 @@ const problemsSchema = new Schema({
     type: Date,
     default: () => Date.now(),
   },
+  allowToShowResults: {
+    type: String,
+    default: "true",
+  },
 });
 
 // problemsSchema.pre("save", function (next) {

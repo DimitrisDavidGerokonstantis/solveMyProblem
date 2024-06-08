@@ -98,7 +98,7 @@ const ShowMySubmissions = () => {
   };
 
   const navigateToAnswer = (id) => {
-    console.log("We Prick You", id)
+    console.log("We Prick You", id);
     navigate(`/showresults/${id}`);
   };
 
@@ -205,8 +205,8 @@ const ShowMySubmissions = () => {
     return (
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
         <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center "></div>
-        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center overflow-auto">
-          <div className="money w-full shadow-lg ring-1 ring-orange-200">
+        <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center mb-10">
+          <div className="money w-full shadow-lg ring-1 ring-orange-200 overflow-auto">
             <br></br>
             <div className="flex justify-between">
               <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
@@ -271,14 +271,16 @@ const ShowMySubmissions = () => {
                         )}
                       </td>
                       <td>
-                        {problem.status === "finished" ? (
-                          <button 
-                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                          onClick={() => navigateToAnswer(problem._id)}
-                          >
-                            View Results
-                          </button>
-                        ) : (
+                        {problem.status === "finished" &&
+                          problem.allowToShowResults === "true" && (
+                            <button
+                              className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                              onClick={() => navigateToAnswer(problem._id)}
+                            >
+                              View Results
+                            </button>
+                          )}{" "}
+                        {problem.status !== "finished" && (
                           <button
                             disabled
                             className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
@@ -286,11 +288,17 @@ const ShowMySubmissions = () => {
                             View Results
                           </button>
                         )}
+                        {problem.status === "finished" &&
+                          problem.allowToShowResults === "false" && (
+                            <button className="bg-red-600 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                              Not enough credits
+                            </button>
+                          )}
                       </td>
                       <td>
                         {problem.status !== "running" ? (
                           <button
-                            className="bg-rose-500 text-white rounded-md px-4 py-2 hover:bg-rose-700 transition"
+                            className="bg-rose-500 text-white rounded-md px-4 py-2"
                             onClick={() => openModal(problem._id)}
                           >
                             Delete

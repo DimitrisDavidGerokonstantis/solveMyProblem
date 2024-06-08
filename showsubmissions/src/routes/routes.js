@@ -4,6 +4,7 @@ import {
   fetchProblems,
   deleteProblem,
   fetchProblemsAdmin,
+  updateAllowResults,
 } from "../controllers/controllers.js";
 // middleware that checks if the user who makes the request is logged in
 import {
@@ -23,5 +24,7 @@ router.post(
   deleteProblem
 );
 router.get("/admin/showSubmissions", isLoggedIn, fetchProblemsAdmin);
+
+router.post("/updateAllowResults", updateAllowResults);
 
 export default router;

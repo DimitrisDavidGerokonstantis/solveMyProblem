@@ -79,7 +79,7 @@ export const hasPermissionsToUpdate = async (req, res, next) => {
     if (!resp.data) {
       return res
         .status(403)
-        .json("Forbidden : You have not permissions to edit this problem");
+        .json("Forbidden : You have no permissions to edit this problem");
     }
     next();
   } catch (error) {
