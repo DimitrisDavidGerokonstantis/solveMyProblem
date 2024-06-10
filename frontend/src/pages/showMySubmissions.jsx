@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Filter from '../images/filter.png'
+
 const ShowMySubmissions = () => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
@@ -13,31 +15,11 @@ const ShowMySubmissions = () => {
   const [problemRun, setProblemRun] = useState(false);
 
   const [problemDeleted, setProblemDeleted] = useState(false);
-  // const json1 = {
-  //   userID: 1,
-  //   name: "Problem1",
-  //   status: "Ready",
-  //   createdAt: Date.now(),
-  //   updatedAt: Date.now(),
-  // };
 
-  // const json2 = {
-  //   userID: 1,
-  //   name: "Problem2",
-  //   status: "Running",
-  //   createdAt: Date.now(),
-  //   updatedAt: Date.now(),
-  // };
+  const [isModalOpen2, setIsModal2Open] = useState(false);
 
-  // const json3 = {
-  //   userID: 1,
-  //   name: "Problem3",
-  //   status: "Finished",
-  //   createdAt: Date.now(),
-  //   updatedAt: Date.now(),
-  // };
-
-  // const jsonArray = [json1, json2, json3];
+  const [selectedOption, setSelectedOption] = useState("all");
+  const [filter, setFilter] = useState("all");
 
   /* Possible Statuses and buttons the user can press: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
@@ -48,24 +30,6 @@ const ShowMySubmissions = () => {
 
   // Finished: The problem has finished running and the answers have returned throught the second queue to the user
   //        Buttons: The user can press the View/Edit button so as to only view and the View Results button
-
-  // let readabledateCreate = [];
-  // let readabledateUpdate = [];
-  // let jsonData = [];
-  // for (let i = 0; i < jsonArray.length; i++) {
-  //   const json = jsonArray[i];
-
-  //   const jsonString = JSON.stringify(json);
-  //   jsonData[i] = JSON.parse(jsonString);
-
-  //   const CreatedOnTimestamp = jsonData[i].createdAt;
-  //   const UpdatedOnTimestamp = jsonData[i].updatedAt;
-
-  //   const dateCreate = new Date(CreatedOnTimestamp);
-  //   const dateUpdate = new Date(UpdatedOnTimestamp);
-  //   readabledateCreate[i] = dateCreate.toLocaleString();
-  //   readabledateUpdate[i] = dateUpdate.toLocaleString();
-  // }
 
   const [ReadyToRefresh, setReadyToRefresh] = useState(false);
 
@@ -79,6 +43,15 @@ const ShowMySubmissions = () => {
     }
   }, []); // Empty dependency array ensures this effect runs only once after initial render
 
+  const handleOptionChange = (e) => {
+    setSelectedOption(e.target.id);
+  };
+
+  const handleConfirmSelection = () => {
+    setFilter(selectedOption);
+    closeModal2();
+  };
+
   const openModal = (id) => {
     setIsModalOpen(true);
     setToBeDeleted(id);
@@ -87,6 +60,14 @@ const ShowMySubmissions = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const openModal2 = () => {
+    setIsModal2Open(true);
+};
+
+const closeModal2 = () => {
+  setIsModal2Open(false);
+};
 
   const handleDeleteProblem = async () => {
     const res = await axios.post(`http://localhost:8080/api/deleteProblem`, {
@@ -212,6 +193,9 @@ const ShowMySubmissions = () => {
               <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
                 My Submissions
               </h2>
+              <button onClick={openModal2} className="flex justify-between items-center bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-700 transition flex-initial">
+               <img src={Filter} alt="" class="w-7 h-7" /> Filter Options
+              </button>
               <button
                 onClick={() => navigate("/submitproblem")}
                 className="mt-5 mr-20 bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-400 transition flex-initial"
@@ -221,6 +205,8 @@ const ShowMySubmissions = () => {
             </div>
             <br></br>
             <br></br>
+
+            {filter==="all" ? (
             <table className="bg-orange-100">
               <thead>
                 <tr>
@@ -325,6 +311,112 @@ const ShowMySubmissions = () => {
                 )}
               </tbody>
             </table>
+            ) : (
+              <table className="bg-orange-100">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Created On</th>
+                  <th>Status</th>
+                  <th>View/Edit</th>
+                  <th>Last Updated On</th>
+                  <th>Run</th>
+                  <th>View Results</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                {problems.length > 0 ? (
+                  problems.filter(data => data.status === filter).map((problem, index) => (
+                    <tr key={index}>
+                      <td>{problem.name}</td>
+                      <td>{makeDatesReadable(problem.createdAt)}</td>
+                      <td>{problem.status}</td>
+                      <td>
+                        <button
+                          onClick={() =>
+                            navigate(`/editproblem/${problem._id}`)
+                          }
+                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                        >
+                          View/Edit
+                        </button>
+                      </td>
+                      <td>{makeDatesReadable(problem.updatedAt)}</td>
+                      <td>
+                        {problem.status === "ready" ? (
+                          <button
+                            id={problem._id}
+                            onClick={handleRun}
+                            className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                          >
+                            Run
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          >
+                            Run
+                          </button>
+                        )}
+                      </td>
+                      <td>
+                        {problem.status === "finished" &&
+                          problem.allowToShowResults === "true" && (
+                            <button
+                              className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                              onClick={() => navigateToAnswer(problem._id)}
+                            >
+                              View Results
+                            </button>
+                          )}{" "}
+                        {problem.status !== "finished" && (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                          >
+                            View Results
+                          </button>
+                        )}
+                        {problem.status === "finished" &&
+                          problem.allowToShowResults === "false" && (
+                            <button className="bg-red-600 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                              Not enough credits
+                            </button>
+                          )}
+                      </td>
+                      <td>
+                        {problem.status !== "running" ? (
+                          <button
+                            className="bg-rose-500 text-white rounded-md px-4 py-2"
+                            onClick={() => openModal(problem._id)}
+                          >
+                            Delete
+                          </button>
+                        ) : (
+                          <button
+                            disabled
+                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                            onClick={() => openModal(problem._id)}
+                          >
+                            Delete
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8">
+                      No problems have been found. Refresh the page to try
+                      again!
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            )}
 
             {/* Modal */}
             {isModalOpen && (
@@ -383,6 +475,46 @@ const ShowMySubmissions = () => {
                       Cancel{" "}
                     </button>
                   </div>
+                </div>
+              </div>
+            )}
+
+            {/* Modal 2 */}
+            {isModalOpen2 && (
+              <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
+                <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
+                  <div className="flex justify-end p-2">
+                    <button onClick={closeModal2} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="text-center p-5">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">Filter Options</h3>
+                    <div className="mt-5">
+                    <div className="flex items-center mb-4">
+                        <input id="all" type="radio" name="options" className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2" onChange={handleOptionChange}/>
+                        <label htmlFor="radio3" className="ml-2 text-sm font-medium text-gray-900">Show All Submissions</label>
+                      </div>
+                      <div className="flex items-center mb-4">
+                        <input id="ready" type="radio" name="options" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" onChange={handleOptionChange}/>
+                        <label htmlFor="radio1" className="ml-2 text-sm font-medium text-gray-900">Show Ready Submissions</label>
+                      </div>
+                      <div className="flex items-center mb-4">
+                        <input id="running" type="radio" name="options" className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2" onChange={handleOptionChange}/>
+                        <label htmlFor="radio2" className="ml-2 text-sm font-medium text-gray-900">Show Running Submissions</label>
+                      </div>
+                      <div className="flex items-center mb-4">
+                        <input id="finished" type="radio" name="options" className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2" onChange={handleOptionChange}/>
+                        <label htmlFor="radio3" className="ml-2 text-sm font-medium text-gray-900">Show Finished Submissions</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" onClick={handleConfirmSelection}> Confirm Selection </button>
+                            <button class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onClick={closeModal2}> Cancel </button>
+                        </div>
                 </div>
               </div>
             )}
