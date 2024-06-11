@@ -21,6 +21,9 @@ const ShowMySubmissions = () => {
   const [selectedOption, setSelectedOption] = useState("all");
   const [filter, setFilter] = useState("all");
 
+  const [query, setQuery] = useState("");
+  const [sampleItem, setSampleItem] = useState("");
+
   /* Possible Statuses and buttons the user can press: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
   //        Buttons: The user can press the View/Edit button so as to both edit and view, the Run button and the delete button
@@ -52,7 +55,8 @@ const ShowMySubmissions = () => {
     closeModal2();
   };
 
-  const openModal = (id) => {
+  const openModal = (id, name) => {
+    setSampleItem(name)
     setIsModalOpen(true);
     setToBeDeleted(id);
   };
@@ -191,9 +195,9 @@ const closeModal2 = () => {
             <br></br>
             <div className="flex justify-between">
               <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
-                My Submissions
+                {filter.charAt(0).toUpperCase() + filter.slice(1)} Submissions
               </h2>
-              <button onClick={openModal2} className="flex justify-between items-center bg-green-500 text-white rounded-md px-4 py-2 hover:bg-green-700 transition flex-initial">
+              <button onClick={openModal2} className="flex justify-between items-center bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
                <img src={Filter} alt="" class="w-7 h-7" /> Filter Options
               </button>
               <button
@@ -202,6 +206,14 @@ const closeModal2 = () => {
               >
                 Submit new problem
               </button>
+            </div>
+            <br></br>
+            <div className="flex items-center justify-center">
+            <input 
+                placeholder="Search by problem name" 
+                class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={(event) => setQuery(event.target.value)}
+            />
             </div>
             <br></br>
             <br></br>
@@ -222,7 +234,14 @@ const closeModal2 = () => {
               </thead>
               <tbody>
                 {problems.length > 0 ? (
-                  problems.map((problem, index) => (
+                  problems.filter((item) => {
+                    if (query === "") {
+                      return item;
+                    } else if (item.name.toLowerCase().includes(query.toLowerCase())) {
+                      return item;
+                    }
+                  })
+                  .map((problem, index) => (
                     <tr key={index}>
                       <td>{problem.name}</td>
                       <td>{makeDatesReadable(problem.createdAt)}</td>
@@ -285,7 +304,7 @@ const closeModal2 = () => {
                         {problem.status !== "running" ? (
                           <button
                             className="bg-rose-500 text-white rounded-md px-4 py-2"
-                            onClick={() => openModal(problem._id)}
+                            onClick={() => openModal(problem._id, problem.name)}
                           >
                             Delete
                           </button>
@@ -293,7 +312,7 @@ const closeModal2 = () => {
                           <button
                             disabled
                             className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                            onClick={() => openModal(problem._id)}
+                            onClick={() => openModal(problem._id, problem.name)}
                           >
                             Delete
                           </button>
@@ -327,7 +346,15 @@ const closeModal2 = () => {
               </thead>
               <tbody>
                 {problems.length > 0 ? (
-                  problems.filter(data => data.status === filter).map((problem, index) => (
+                  problems.filter(data => data.status === filter)
+                  .filter((item) => {
+                    if (query === "") {
+                      return item;
+                    } else if (item.name.toLowerCase().includes(query.toLowerCase())) {
+                      return item;
+                    }
+                  })
+                  .map((problem, index) => (
                     <tr key={index}>
                       <td>{problem.name}</td>
                       <td>{makeDatesReadable(problem.createdAt)}</td>
@@ -390,7 +417,7 @@ const closeModal2 = () => {
                         {problem.status !== "running" ? (
                           <button
                             className="bg-rose-500 text-white rounded-md px-4 py-2"
-                            onClick={() => openModal(problem._id)}
+                            onClick={() => openModal(problem._id, problem.name)}
                           >
                             Delete
                           </button>
@@ -398,7 +425,7 @@ const closeModal2 = () => {
                           <button
                             disabled
                             className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                            onClick={() => openModal(problem._id)}
+                            onClick={() => openModal(problem._id, problem.name)}
                           >
                             Delete
                           </button>
@@ -454,7 +481,7 @@ const closeModal2 = () => {
                       <p class="text-sm text-gray-500">
                         {" "}
                         Are you sure you want to delete{" "}
-                        <span class="font-bold">Sample Item</span>? This action
+                        <span class="font-bold">{sampleItem}</span>? This action
                         cannot be undone.{" "}
                       </p>
                     </div>
