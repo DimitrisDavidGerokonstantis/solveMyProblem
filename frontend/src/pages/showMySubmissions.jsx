@@ -109,7 +109,7 @@ const ShowMySubmissions = () => {
   };
 
   const openModal = (id, name) => {
-    setSampleItem(name)
+    setSampleItem(name);
     setIsModalOpen(true);
     setToBeDeleted(id);
   };
@@ -120,11 +120,11 @@ const ShowMySubmissions = () => {
 
   const openModal2 = () => {
     setIsModal2Open(true);
-};
+  };
 
-const closeModal2 = () => {
-  setIsModal2Open(false);
-};
+  const closeModal2 = () => {
+    setIsModal2Open(false);
+  };
 
   const handleDeleteProblem = async () => {
     const res = await axios.post(`http://localhost:8080/api/deleteProblem`, {
@@ -244,14 +244,17 @@ const closeModal2 = () => {
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
         <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center "></div>
         <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center mb-10">
-          <div className="money w-full shadow-lg ring-1 ring-orange-200 overflow-auto">
+          <div className="money w-full">
             <br></br>
             <div className="flex justify-between">
               <h2 className="mt-5 ml-20 text-2xl font-bold text-orange-800 flex-initial">
                 {filter.charAt(0).toUpperCase() + filter.slice(1)} Submissions
               </h2>
-              <button onClick={openModal2} className="flex justify-between items-center bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-               <img src={Filter} alt="" class="w-7 h-7" /> Filter Options
+              <button
+                onClick={openModal2}
+                className="flex justify-between items-center bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+              >
+                <img src={Filter} alt="" class="w-7 h-7" /> Filter Options
               </button>
               <button
                 onClick={() => navigate("/submitproblem")}
@@ -262,250 +265,302 @@ const closeModal2 = () => {
             </div>
             <br></br>
             <div className="flex items-center justify-center">
-            <input 
-                placeholder="Search by problem name" 
-                class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              <input
+                placeholder="Search by problem name"
+                class="w-full max-w-md px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 onChange={(event) => setQuery(event.target.value)}
-            />
+              />
             </div>
             <br></br>
             <br></br>
 
-            {filter==="all" ? (
-            <table className="bg-orange-100">
-              <thead>
-                <tr>
-                  <th className="relative flex items-center justify-center">
+            {filter === "all" ? (
+              <div class="h-96 overflow-y-auto mb-2">
+                <table className="bg-orange-100 ring-1 ring-orange-200 shadow-lg  overflow-auto min-w-full">
+                  <thead>
+                    <tr>
+                      <th className="relative flex items-center justify-center">
                             <div>Name</div>
                             <button className="w-6 h-6 absolute right-0" title="Sort" onClick={() => handleSort("name", count_name, count_update)}>
                                 <img src={Sort} alt=""/>
                             </button>
                   </th>
-                  <th>Created On</th>
-                  <th>Status</th>
-                  <th>View/Edit</th>
-                  <th className="relative flex items-center justify-center">
+                      <th>Created On</th>
+                      <th>Status</th>
+                      <th>View/Edit</th>
+                      <th className="relative flex items-center justify-center">
                           <div>Last Updated On</div>
                           <button className="w-6 h-6 absolute right-0" title="Sort" onClick={() => handleSort("update", count_name, count_update)}>
                               <img src={Sort} alt=""/>
                           </button>
                   </th>
-                  <th>Run</th>
-                  <th>View Results</th>
-                  <th>Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {problems.length > 0 ? (
-                  problems.filter((item) => {
-                    if (query === "") {
-                      return item;
-                    } else if (item.name.toLowerCase().includes(query.toLowerCase())) {
-                      return item;
-                    }
-                  })
-                  .map((problem, index) => (
-                    <tr key={index}>
-                      <td>{problem.name}</td>
-                      <td>{makeDatesReadable(problem.createdAt)}</td>
-                      <td>{problem.status}</td>
-                      <td>
-                        <button
-                          onClick={() =>
-                            navigate(`/editproblem/${problem._id}`)
-                          }
-                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                        >
-                          View/Edit
-                        </button>
-                      </td>
-                      <td>{makeDatesReadable(problem.updatedAt)}</td>
-                      <td>
-                        {problem.status === "ready" ? (
-                          <button
-                            id={problem._id}
-                            onClick={handleRun}
-                            className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                          >
-                            Run
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                          >
-                            Run
-                          </button>
-                        )}
-                      </td>
-                      <td>
-                        {problem.status === "finished" &&
-                          problem.allowToShowResults === "true" && (
-                            <button
-                              className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                              onClick={() => navigateToAnswer(problem._id)}
-                            >
-                              View Results
-                            </button>
-                          )}{" "}
-                        {problem.status !== "finished" && (
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                          >
-                            View Results
-                          </button>
-                        )}
-                        {problem.status === "finished" &&
-                          problem.allowToShowResults === "false" && (
-                            <button className="bg-red-600 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                              Not enough credits
-                            </button>
-                          )}
-                      </td>
-                      <td>
-                        {problem.status !== "running" ? (
-                          <button
-                            className="bg-rose-500 text-white rounded-md px-4 py-2"
-                            onClick={() => openModal(problem._id, problem.name)}
-                          >
-                            Delete
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                            onClick={() => openModal(problem._id, problem.name)}
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </td>
+                      <th>Run</th>
+                      <th>View Results</th>
+                      <th>Delete</th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8">
-                      No problems have been found. Refresh the page to try
-                      again!
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {problems.length > 0 ? (
+                      problems
+                        .filter((item) => {
+                          if (query === "") {
+                            return item;
+                          } else if (
+                            item.name
+                              .toLowerCase()
+                              .includes(query.toLowerCase())
+                          ) {
+                            return item;
+                          }
+                        })
+                        .map((problem, index) => (
+                          <tr key={index}>
+                            <td>{problem.name}</td>
+                            <td>{makeDatesReadable(problem.createdAt)}</td>
+                            <td>{problem.status}</td>
+                            <td>
+                              {problem.status !== "finished" ? (
+                                <button
+                                  onClick={() =>
+                                    navigate(`/editproblem/${problem._id}`)
+                                  }
+                                  className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                >
+                                  View/Edit
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    navigate(
+                                      `/editproblem/${problem._id}?viewOnly=true`
+                                    )
+                                  }
+                                  className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                >
+                                  View
+                                </button>
+                              )}
+                            </td>
+                            <td>{makeDatesReadable(problem.updatedAt)}</td>
+                            <td>
+                              {problem.status === "ready" ? (
+                                <button
+                                  id={problem._id}
+                                  onClick={handleRun}
+                                  className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                >
+                                  Run
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                                >
+                                  Run
+                                </button>
+                              )}
+                            </td>
+                            <td>
+                              {problem.status === "finished" &&
+                                problem.allowToShowResults === "true" && (
+                                  <button
+                                    className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                    onClick={() =>
+                                      navigateToAnswer(problem._id)
+                                    }
+                                  >
+                                    View Results
+                                  </button>
+                                )}{" "}
+                              {problem.status !== "finished" && (
+                                <button
+                                  disabled
+                                  className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                                >
+                                  View Results
+                                </button>
+                              )}
+                              {problem.status === "finished" &&
+                                problem.allowToShowResults === "false" && (
+                                  <button className="bg-red-600 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                                    Not enough credits
+                                  </button>
+                                )}
+                            </td>
+                            <td>
+                              {problem.status !== "running" ? (
+                                <button
+                                  className="bg-rose-500 text-white rounded-md px-4 py-2"
+                                  onClick={() =>
+                                    openModal(problem._id, problem.name)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                                  onClick={() =>
+                                    openModal(problem._id, problem.name)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8">
+                          No problems have been found. Refresh the page to try
+                          again!
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             ) : (
-              <table className="bg-orange-100">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Created On</th>
-                  <th>Status</th>
-                  <th>View/Edit</th>
-                  <th>Last Updated On</th>
-                  <th>Run</th>
-                  <th>View Results</th>
-                  <th>Delete</th>
-                </tr>
-              </thead>
-              <tbody>
-                {problems.length > 0 ? (
-                  problems.filter(data => data.status === filter)
-                  .filter((item) => {
-                    if (query === "") {
-                      return item;
-                    } else if (item.name.toLowerCase().includes(query.toLowerCase())) {
-                      return item;
-                    }
-                  })
-                  .map((problem, index) => (
-                    <tr key={index}>
-                      <td>{problem.name}</td>
-                      <td>{makeDatesReadable(problem.createdAt)}</td>
-                      <td>{problem.status}</td>
-                      <td>
-                        <button
-                          onClick={() =>
-                            navigate(`/editproblem/${problem._id}`)
-                          }
-                          className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                        >
-                          View/Edit
-                        </button>
-                      </td>
-                      <td>{makeDatesReadable(problem.updatedAt)}</td>
-                      <td>
-                        {problem.status === "ready" ? (
-                          <button
-                            id={problem._id}
-                            onClick={handleRun}
-                            className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                          >
-                            Run
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                          >
-                            Run
-                          </button>
-                        )}
-                      </td>
-                      <td>
-                        {problem.status === "finished" &&
-                          problem.allowToShowResults === "true" && (
-                            <button
-                              className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
-                              onClick={() => navigateToAnswer(problem._id)}
-                            >
-                              View Results
-                            </button>
-                          )}{" "}
-                        {problem.status !== "finished" && (
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                          >
-                            View Results
-                          </button>
-                        )}
-                        {problem.status === "finished" &&
-                          problem.allowToShowResults === "false" && (
-                            <button className="bg-red-600 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
-                              Not enough credits
-                            </button>
-                          )}
-                      </td>
-                      <td>
-                        {problem.status !== "running" ? (
-                          <button
-                            className="bg-rose-500 text-white rounded-md px-4 py-2"
-                            onClick={() => openModal(problem._id, problem.name)}
-                          >
-                            Delete
-                          </button>
-                        ) : (
-                          <button
-                            disabled
-                            className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
-                            onClick={() => openModal(problem._id, problem.name)}
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </td>
+              <div class="h-96 overflow-y-auto mb-2">
+                <table className="bg-orange-100 ring-1 ring-orange-200 shadow-lg  overflow-auto min-w-full">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Created On</th>
+                      <th>Status</th>
+                      <th>View/Edit</th>
+                      <th>Last Updated On</th>
+                      <th>Run</th>
+                      <th>View Results</th>
+                      <th>Delete</th>
                     </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="8">
-                      No problems have been found. Refresh the page to try
-                      again!
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+                  </thead>
+                  <tbody>
+                    {problems.length > 0 ? (
+                      problems
+                        .filter((data) => data.status === filter)
+                        .filter((item) => {
+                          if (query === "") {
+                            return item;
+                          } else if (
+                            item.name
+                              .toLowerCase()
+                              .includes(query.toLowerCase())
+                          ) {
+                            return item;
+                          }
+                        })
+                        .map((problem, index) => (
+                          <tr key={index}>
+                            <td>{problem.name}</td>
+                            <td>{makeDatesReadable(problem.createdAt)}</td>
+                            <td>{problem.status}</td>
+                            <td>
+                              {problem.status !== "finished" ? (
+                                <button
+                                  onClick={() =>
+                                    navigate(`/editproblem/${problem._id}`)
+                                  }
+                                  className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                >
+                                  View/Edit
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() =>
+                                    navigate(
+                                      `/editproblem/${problem._id}?viewOnly=true`
+                                    )
+                                  }
+                                  className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                >
+                                  View
+                                </button>
+                              )}
+                            </td>
+                            <td>{makeDatesReadable(problem.updatedAt)}</td>
+                            <td>
+                              {problem.status === "ready" ? (
+                                <button
+                                  id={problem._id}
+                                  onClick={handleRun}
+                                  className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                >
+                                  Run
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                                >
+                                  Run
+                                </button>
+                              )}
+                            </td>
+                            <td>
+                              {problem.status === "finished" &&
+                                problem.allowToShowResults === "true" && (
+                                  <button
+                                    className="bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                                    onClick={() =>
+                                      navigateToAnswer(problem._id)
+                                    }
+                                  >
+                                    View Results
+                                  </button>
+                                )}{" "}
+                              {problem.status !== "finished" && (
+                                <button
+                                  disabled
+                                  className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                                >
+                                  View Results
+                                </button>
+                              )}
+                              {problem.status === "finished" &&
+                                problem.allowToShowResults === "false" && (
+                                  <button className="bg-red-600 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition">
+                                    Not enough credits
+                                  </button>
+                                )}
+                            </td>
+                            <td>
+                              {problem.status !== "running" ? (
+                                <button
+                                  className="bg-rose-500 text-white rounded-md px-4 py-2"
+                                  onClick={() =>
+                                    openModal(problem._id, problem.name)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              ) : (
+                                <button
+                                  disabled
+                                  className="bg-gray-500 text-white rounded-md px-4 py-2 transition opacity-50 cursor-not-allowed"
+                                  onClick={() =>
+                                    openModal(problem._id, problem.name)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              )}
+                            </td>
+                          </tr>
+                        ))
+                    ) : (
+                      <tr>
+                        <td colSpan="8">
+                          No problems have been found. Refresh the page to try
+                          again!
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             )}
 
             {/* Modal */}
@@ -574,37 +629,108 @@ const closeModal2 = () => {
               <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
                 <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
                   <div className="flex justify-end p-2">
-                    <button onClick={closeModal2} type="button" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center">
-                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"></path>
+                    <button
+                      onClick={closeModal2}
+                      type="button"
+                      className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                    >
+                      <svg
+                        className="w-5 h-5"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        ></path>
                       </svg>
                     </button>
                   </div>
                   <div className="text-center p-5">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Filter Options</h3>
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                      Filter Options
+                    </h3>
                     <div className="mt-5">
-                    <div className="flex items-center mb-4">
-                        <input id="all" type="radio" name="options" className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2" onChange={handleOptionChange}/>
-                        <label htmlFor="radio3" className="ml-2 text-sm font-medium text-gray-900">Show All Submissions</label>
+                      <div className="flex items-center mb-4">
+                        <input
+                          id="all"
+                          type="radio"
+                          name="options"
+                          className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300  "
+                          onChange={handleOptionChange}
+                        />
+                        <label
+                          htmlFor="radio3"
+                          className="ml-2 text-sm font-medium text-gray-900"
+                        >
+                          Show All Submissions
+                        </label>
                       </div>
                       <div className="flex items-center mb-4">
-                        <input id="ready" type="radio" name="options" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2" onChange={handleOptionChange}/>
-                        <label htmlFor="radio1" className="ml-2 text-sm font-medium text-gray-900">Show Ready Submissions</label>
+                        <input
+                          id="ready"
+                          type="radio"
+                          name="options"
+                          className="w-4 h-4 text-orange-800 bg-gray-100 border-gray-300  "
+                          onChange={handleOptionChange}
+                        />
+                        <label
+                          htmlFor="radio1"
+                          className="ml-2 text-sm font-medium text-gray-900"
+                        >
+                          Show Ready Submissions
+                        </label>
                       </div>
                       <div className="flex items-center mb-4">
-                        <input id="running" type="radio" name="options" className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2" onChange={handleOptionChange}/>
-                        <label htmlFor="radio2" className="ml-2 text-sm font-medium text-gray-900">Show Running Submissions</label>
+                        <input
+                          id="running"
+                          type="radio"
+                          name="options"
+                          className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 "
+                          onChange={handleOptionChange}
+                        />
+                        <label
+                          htmlFor="radio2"
+                          className="ml-2 text-sm font-medium text-gray-900"
+                        >
+                          Show Running Submissions
+                        </label>
                       </div>
                       <div className="flex items-center mb-4">
-                        <input id="finished" type="radio" name="options" className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 focus:ring-2" onChange={handleOptionChange}/>
-                        <label htmlFor="radio3" className="ml-2 text-sm font-medium text-gray-900">Show Finished Submissions</label>
+                        <input
+                          id="finished"
+                          type="radio"
+                          name="options"
+                          className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300"
+                          onChange={handleOptionChange}
+                        />
+                        <label
+                          htmlFor="radio3"
+                          className="ml-2 text-sm font-medium text-gray-900"
+                        >
+                          Show Finished Submissions
+                        </label>
                       </div>
                     </div>
                   </div>
                   <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                            <button class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-500 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" onClick={handleConfirmSelection}> Confirm Selection </button>
-                            <button class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm" onClick={closeModal2}> Cancel </button>
-                        </div>
+                    <button
+                      class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-orange-800 text-base font-medium text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
+                      onClick={handleConfirmSelection}
+                    >
+                      {" "}
+                      Confirm Selection{" "}
+                    </button>
+                    <button
+                      class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
+                      onClick={closeModal2}
+                    >
+                      {" "}
+                      Cancel{" "}
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

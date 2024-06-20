@@ -7,6 +7,15 @@ import Stripe from "stripe";
 const stripe = new Stripe(
   "sk_test_51PHvOEL9KWQMTSTa0LmM80Oo88aI943X1uaQpLIlcpeXTwrdfVD6GjbiNMwW9VXxquWZXaSUrfHaY0oSijSVd2LG00JZCFCb5u"
 );
+import paypal from "@paypal/checkout-server-sdk";
+const paypalClient = new paypal.core.PayPalHttpClient(
+  new paypal.core.SandboxEnvironment(
+    process.env.PAYPAL_CLIENT_ID,
+    process.env.PAYPAL_CLIENT_SECRET
+  )
+);
+const base = "https://api-m.sandbox.paypal.com";
+
 export const registerController = async (req, res) => {
   try {
     console.log(req.body);

@@ -1,11 +1,14 @@
 //Loading Spinner from : https://contactmentor.com/how-to-add-loading-spinner-react-js/
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import PaypalPayment from "./PaypalPayment";
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
@@ -32,7 +35,12 @@ const Navbar = () => {
   const [usernameInButton, setUsernameInButton] = useState(
     currentUser?.username
   );
-
+  const initialOptions = {
+    clientId:
+      "Abm-etelbBB8P8lIP1heUZvy_V4gg1Qzi6emTTY2Nv5_hWy168dVbmDxQd6ge76YcmNobwgL58xvKWlH",
+    currency: "USD",
+    intent: "capture",
+  };
   console.log(username, currentUser);
 
   useEffect(() => {
@@ -252,18 +260,28 @@ const Navbar = () => {
                       <p className="py-4 mt-4 text-lg ">Buy credits</p>
 
                       <input
-                        type="text"
+                        type="number"
                         placeholder="credits to buy"
                         onChange={handleCredits}
                         className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
                       />
                       <form method="dialog">
-                        <button
+                        {/* <button
                           onClick={handleCreditsBuy}
                           className="px-4 py-2 inline-flex items-center relative px-2 border bg-green-200 border-green-900 rounded-xl hover:bg-green-400"
                         >
                           Buy
-                        </button>
+                        </button> */}
+                        {creditsToBuy ? (
+                          <PayPalScriptProvider options={initialOptions}>
+                            <p className="mb-2 mt-2 py-4 text-xl ">
+                              Buy {creditsToBuy} credits with Paypal :
+                            </p>
+                            <PaypalPayment credits={creditsToBuy} />
+                          </PayPalScriptProvider>
+                        ) : (
+                          ""
+                        )}
                       </form>
                     </div>
                   )}
