@@ -352,7 +352,7 @@ const EditProblem = () => {
   ) {
     return (
       <React.Fragment>
-        <div class=" bg-orange-50 bg-cover w-screen h-screen flex-col items-center justify-center overflow-scroll">
+        <div class=" bg-orange-50 bg-cover w-screen h-screen flex-col items-center justify-center overflow-auto">
           <div class="w-full p-9 mt-10 bg-red-100 rounded-lg shadow-lg mb-10">
             <h1 class="text-center text-xl sm:text-xl font-semibold mb-4 text-gray-800">
               Selected model
@@ -667,7 +667,7 @@ const EditProblem = () => {
                     </div>
                     {/*body*/}
                     <div className="relative flex-auto ">
-                      <p className="my-4 text-blueGray-500 text-sm leading-relaxed overflow-y-scroll h-screen">
+                      <p className="my-4 text-blueGray-500 text-sm leading-relaxed overflow-y-auto h-screen">
                         {MyCoolCodeBlock({
                           code: inputDataFile,
                           language: "python",
@@ -713,7 +713,7 @@ const EditProblem = () => {
                     </div>
                     {/*body*/}
                     <div className="overflow-y-auto mt-10">
-                      <p className="text-blueGray-500 text-sm leading-relaxed overflow-y-scroll h-screen">
+                      <p className="text-blueGray-500 text-sm leading-relaxed overflow-y-auto h-screen">
                         {MyCoolCodeBlock({
                           code: inputScriptFile,
                           language: "python",

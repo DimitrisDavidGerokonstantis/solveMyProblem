@@ -319,7 +319,7 @@ const NewSubmission = () => {
   if (accessToken && role != "admin") {
     return (
       <React.Fragment>
-        <div class=" bg-orange-50 bg-cover w-screen h-screen flex-col items-center justify-center overflow-scroll">
+        <div class=" bg-orange-50 bg-cover w-screen h-screen flex-col items-center justify-center overflow-auto">
           <div class="flex flex-col justify-center items-center relative">
             <span class="flex mt-10 text-xl">
               Choose the solver's model that you want to use
@@ -611,7 +611,7 @@ const NewSubmission = () => {
                     </div>
                     {/*body*/}
                     <div className="relative flex-auto ">
-                      <p className="my-4 text-blueGray-500 text-sm leading-relaxed overflow-y-scroll h-screen">
+                      <p className="my-4 text-blueGray-500 text-sm leading-relaxed overflow-y-auto h-screen">
                         {MyCoolCodeBlock({
                           code: inputDataFile,
                           language: "python",
@@ -657,7 +657,7 @@ const NewSubmission = () => {
                     </div>
                     {/*body*/}
                     <div className="overflow-y-auto mt-10">
-                      <p className="text-blueGray-500 text-sm leading-relaxed overflow-y-scroll h-screen">
+                      <p className="text-blueGray-500 text-sm leading-relaxed overflow-y-auto h-screen">
                         {MyCoolCodeBlock({
                           code: inputScriptFile,
                           language: "python",

@@ -229,9 +229,9 @@ const ShowResults = () => {
       );
     } else {
       return (
-        <div className="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-scroll">
-          <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
-          <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-scroll">
+        <div className="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
+          <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-auto"></div>
+          <div class="bg-orange-50 bg-cover w-4/6 h-screen flex-col items-center justify-center overflow-auto">
             <div className="flex flex-col items-center justify-center parthome w-full shadow-lg ring-orange-200">
               <div class="gap-5 mt-10 flex items-center">
                 <h3 class="text-xl font-bold text-orange-800">
@@ -366,7 +366,7 @@ const ShowResults = () => {
               )}
             </div>
           </div>
-          <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-scroll"></div>
+          <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-auto"></div>
         </div>
       );
     }

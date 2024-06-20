@@ -4,6 +4,9 @@ services:
     build: "./frontend"
     ports:
       - "3000:3000"
+    environment:
+      - PAYPAL_CLIENT_ID=Abm-etelbBB8P8lIP1heUZvy_V4gg1Qzi6emTTY2Nv5_hWy168dVbmDxQd6ge76YcmNobwgL58xvKWlH
+      - PAYPAL_CLIENT_SECRET=EHuiR15AZ8YvD3NJevfdkAe8SLhUzrK707uBVg41Qv2o1yhty_ayUaYrqGkmleSCiTPvFonoLWMXQ5gv
 
   submitproblem:
     build: "./submitproblem"
@@ -33,6 +36,8 @@ services:
       - EXCHANGE_NAME_ANSWERS=answersExchange
       - QUEUE_NAME_USERS_MANAGEMENT=UsersManagementQueue
       - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
+      - PAYPAL_CLIENT_ID=Abm-etelbBB8P8lIP1heUZvy_V4gg1Qzi6emTTY2Nv5_hWy168dVbmDxQd6ge76YcmNobwgL58xvKWlH
+      - PAYPAL_CLIENT_SECRET=EHuiR15AZ8YvD3NJevfdkAe8SLhUzrK707uBVg41Qv2o1yhty_ayUaYrqGkmleSCiTPvFonoLWMXQ5gv
 
   showsubmissions:
     build: "./showsubmissions"
