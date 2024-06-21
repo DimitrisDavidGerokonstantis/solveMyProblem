@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Filter from '../images/filter.png'
-import Sort from '../images/sort.png'
+import Filter from "../images/filter.png";
+import Sort from "../images/sort.png";
 
 const ShowMySubmissions = () => {
   const navigate = useNavigate();
@@ -61,51 +61,51 @@ const ShowMySubmissions = () => {
 
   const handleSort = (sort, count1, count2) => {
     let helperArray = [...problems];
-        if(sort==="name"){
-          if(count1 %2 === 0){
-            helperArray.sort((a, b) => {
-              if (a.name.toLowerCase() < b.name.toLowerCase()) {
-                return -1;
-              }
-              if (a.name.toLowerCase() > b.name.toLowerCase()) {
-                return 1;
-              }
-              return 0;
-            });
-            setCountName(count1 + 1);
-            console.log(helperArray)
-            setProblems(helperArray);
-         }
-         else{
-          helperArray.sort((a, b) => {
-            if (a.name.toLowerCase() < b.name.toLowerCase()) {
-              return 1;
-            }
-            if (a.name.toLowerCase() > b.name.toLowerCase()) {
-              return -1;
-            }
-            return 0;
-          });
-          setCountName(count1 + 1);
-          console.log(helperArray)
-          setProblems(helperArray);
-         }
-        }
-        else if(sort==="update"){
-          if(count2 % 2===0){
-            helperArray.sort((a, b) => a.updatedAt - b.updatedAt);
-            setCountUpdate(count2 + 1);
-            console.log(helperArray)
-            setProblems(helperArray);
+    if (sort === "name") {
+      if (count1 % 2 === 0) {
+        helperArray.sort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
           }
-          else{
-            helperArray.sort((a, b) => b.updatedAt - a.updatedAt);
-            setCountUpdate(count2 + 1);
-            console.log(helperArray)
-            setProblems(helperArray);
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
           }
-
-        }
+          return 0;
+        });
+        setCountName(count1 + 1);
+        console.log(helperArray);
+        setProblems(helperArray);
+      } else {
+        helperArray.sort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return 1;
+          }
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return -1;
+          }
+          return 0;
+        });
+        setCountName(count1 + 1);
+        console.log(helperArray);
+        setProblems(helperArray);
+      }
+    } else if (sort === "update") {
+      if (count2 % 2 === 0) {
+        helperArray.sort(
+          (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
+        );
+        setCountUpdate(count2 + 1);
+        console.log("UPDATE", helperArray);
+        setProblems(helperArray);
+      } else {
+        helperArray.sort(
+          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
+        );
+        setCountUpdate(count2 + 1);
+        console.log("UPDATE2", helperArray);
+        setProblems(helperArray);
+      }
+    }
   };
 
   const openModal = (id, name) => {
@@ -280,20 +280,32 @@ const ShowMySubmissions = () => {
                   <thead>
                     <tr>
                       <th className="relative flex items-center justify-center">
-                            <div>Name</div>
-                            <button className="w-6 h-6 absolute right-0" title="Sort" onClick={() => handleSort("name", count_name, count_update)}>
-                                <img src={Sort} alt=""/>
-                            </button>
-                  </th>
+                        <div>Name</div>
+                        <button
+                          className="w-6 h-6 absolute right-0"
+                          title="Sort"
+                          onClick={() =>
+                            handleSort("name", count_name, count_update)
+                          }
+                        >
+                          <img src={Sort} alt="" />
+                        </button>
+                      </th>
                       <th>Created On</th>
                       <th>Status</th>
                       <th>View/Edit</th>
                       <th className="relative flex items-center justify-center">
-                          <div>Last Updated On</div>
-                          <button className="w-6 h-6 absolute right-0" title="Sort" onClick={() => handleSort("update", count_name, count_update)}>
-                              <img src={Sort} alt=""/>
-                          </button>
-                  </th>
+                        <div>Last Updated On</div>
+                        <button
+                          className="w-6 h-6 absolute right-0"
+                          title="Sort"
+                          onClick={() =>
+                            handleSort("update", count_name, count_update)
+                          }
+                        >
+                          <img src={Sort} alt="" />
+                        </button>
+                      </th>
                       <th>Run</th>
                       <th>View Results</th>
                       <th>Delete</th>
