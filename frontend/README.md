@@ -32,7 +32,7 @@ Apart from the submissions information and control described above, the home pag
 
 ![Screenshot from 2024-06-22 20-47-31](https://github.com/ntua/saas2024-19/assets/115417360/5d5d8d24-1c03-47a1-83e3-b41902d07b10)  
 
-- a Search Bar. The user can search for a particular problem by typing its name there. As the user is typing, only the problems with names that contain the typed characters will appear and when the user has finished typing, only the problems whose names contain the typed characters will be visible.
+- a **Search Bar**. The user can search for a particular problem by typing its name there. As the user is typing, only the problems with names that contain the typed characters will appear and when the user has finished typing, only the problems whose names contain the typed characters will be visible.
 
 - the **Submit new problem** button. By pressing it the user is navigated to a new page where he can submit a new problem. Once navigated there, the user must choose which solver's model he wants to utilize (as of now, only the Vehicle Routing Problem has been implemented as explained in the main README). Afterwards, the user will have to upload the two necessary files using the Drag & Drop method and specify the number of vehicles, the depot, the maximum distance of each vehicle and the name of the problem. He can then create the problem:
 
@@ -58,7 +58,7 @@ Finally, by clicking the File icon, the user can view the solver's raw answer as
 
 ![Screenshot from 2024-06-22 20-47-47](https://github.com/ntua/saas2024-19/assets/115417360/c8c13986-ba05-4264-8438-788689eba044)
 
-- the username icon. By pressing it the user can view how many credits he has and also buy more credits using **PayPal**:
+- the **username icon**. By pressing it the user can view how many credits he has and also buy more credits using **PayPal**:
 
 ![Screenshot from 2024-06-22 20-49-51](https://github.com/ntua/saas2024-19/assets/115417360/0329d61c-f85e-413f-8d2e-c7a965d3bfec)
 
@@ -66,7 +66,7 @@ The user can specify the amount of credits he wants to purchase and then hit the
 
 ![Screenshot from 2024-06-22 20-50-06](https://github.com/ntua/saas2024-19/assets/115417360/35bd7dea-12f9-4429-b207-e68e4f074978)  
 
-Last but not least, the user can receive two kinds of emails to his personal Google email (provided he has logged in with his Google account to Solvio):
+Last but not least, the user can receive two kinds of **emails** to his personal Google email (provided he has logged in with his Google account to Solvio):
 
 - a welcome email the first time he logs in to Solvio that can be seen below:
 
