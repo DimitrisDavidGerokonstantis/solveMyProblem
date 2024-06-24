@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import Answer from "../models/Answers.js";
 import mongoose from "mongoose";
+import axios from "axios";
 
 export const hasPermissionsToSeeResults = async (req, res, next) => {
   try {
@@ -22,7 +23,16 @@ export const hasPermissionsToSeeResults = async (req, res, next) => {
           userInfo.id === answer.userID,
           userInfoId_mongo.equals(answer.userID)
         );
-        if (!userInfoId_mongo.equals(answer.userID))
+
+        let response = await axios.get(
+          `http://usersmanagement:5000/auth/getRole/${userInfo.id}`
+        );
+        console.log("GET ROLE RESPONSE", response.data);
+
+        if (
+          !userInfoId_mongo.equals(answer.userID) &&
+          response.data.role === "user"
+        )
           return res
             .status(403)
             .json(

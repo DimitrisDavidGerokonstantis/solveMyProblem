@@ -218,6 +218,19 @@ export const adminsPermissionsController = async (req, res) => {
   );
 };
 
+export const getRoleController = async (req, res) => {
+  try {
+    console.log("GETO ROLE REQUEST", req.params);
+    const userID = req.params.userid;
+    let user = await Users.findOne({ _id: userID });
+    console.log("USER FOUND", user);
+    return res.status(200).json({ role: user.role });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
+
 export const editPermissionsController = async (req, res) => {
   jwt.verify(
     req.body.request.access_token,

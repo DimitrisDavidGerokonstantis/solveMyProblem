@@ -16,6 +16,7 @@ import {
   adminsPermissionsController,
   editPermissionsController,
   deletePermissionsController,
+  getRoleController,
 } from "../controllers/auth.js";
 
 // middleware that checks if the user who makes the request is logged in
@@ -66,7 +67,7 @@ router.put(
 router.post("/authenticate", authenticationController);
 router.post("/usersPermissions", usersPermissionsController);
 router.post("/adminsPermissions", adminsPermissionsController);
-
+router.get("/getRole/:userid", getRoleController);
 router.post("/editPermissions", editPermissionsController);
 router.post("/deletePermissions", deletePermissionsController);
 

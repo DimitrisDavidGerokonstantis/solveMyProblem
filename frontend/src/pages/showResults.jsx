@@ -26,10 +26,12 @@ const ShowResults = () => {
 
   if (forwardedDone) {
     console.log("forwardedDone");
-    localStorage.setItem(
-      "problemToShowResults",
-      JSON.stringify({ problemID: null })
-    );
+    setTimeout(() => {
+      localStorage.setItem(
+        "problemToShowResults",
+        JSON.stringify({ problemID: null })
+      );
+    }, 3500);
   }
 
   const navigate = useNavigate();
