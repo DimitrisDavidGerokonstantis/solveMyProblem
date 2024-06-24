@@ -11,11 +11,22 @@ import RegisterPage from "./pages/registerPage.jsx";
 import LoginPage from "./pages/loginPage";
 import ShowAllSubmissions from "./pages/showAllSubmissions.jsx";
 import ViewStatistics from "./pages/viewStatistics.jsx";
+import Landing from "./pages/landing.jsx";
 
 import "./index.css";
 import { AuthContextProvider } from "./context/authContext.js";
 
 const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <Landing />
+        <Footer />
+      </React.Fragment>
+    ),
+  },
   {
     path: "/login",
     element: (
@@ -67,7 +78,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/submissions", //it seems to be the homepage for users
+    path: "/submissions", //it is the home page for users
     element: (
       <React.Fragment>
         <Navbar />
@@ -77,7 +88,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/allsubmissions", //it seems to be the homepage for admins
+    path: "/allsubmissions", //it is the home page for admins
     element: (
       <React.Fragment>
         <Navbar />
