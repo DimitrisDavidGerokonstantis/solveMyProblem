@@ -3,6 +3,11 @@
 This is a full presentation of all frontend screens and functionalities of our application:  
 
 ### Landing Page    
+
+Once the website is loaded, the landing page appears, from where the user can choose to either login (with a Solvio or Google account) or register (create a new account). Depending on what he chooses, he is navigated to either the login or the register page. The user can also be redirected to the GitHub repository of this project by clicking the respective button.  
+
+![landing page](https://github.com/ntua/saas2024-19/assets/115417360/8dfc4eee-ab3d-465e-98f4-a5fb5ac49d4e)
+
 ### Login/Register  
 
 The user can login to his account through the following page by filling in his credentials. We also support logging in through a google account as can be seen below, by pressing the **Sign in with Google** button:  
