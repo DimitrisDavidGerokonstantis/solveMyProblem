@@ -105,6 +105,19 @@ services:
       - QUEUE_VIEW_RESULTS=viewResultsQueue
       - JWT_KEY="arandomjwtkey"
 
+  viewstatistics:
+    build: "./viewstatistics"
+    ports:
+      - "5007:5000"
+    depends_on:
+      - db
+      - rabbitmqanswers
+    environment:
+      - MONGO_DB_URI=mongodb://db/microservices5
+      - RABBITMQ_ANSWERS_URL=amqp://guest:guest@rabbitmqanswers:5672/
+      - EXCHANGE_NAME=answersExchange
+      - QUEUE_NAME=viewstatisticsQueue
+
   rabbitmqquestions:
     image: rabbitmq:3-management
     ports:

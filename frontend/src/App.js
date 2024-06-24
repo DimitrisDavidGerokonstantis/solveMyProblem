@@ -10,6 +10,7 @@ import ShowMySubmissions from "./pages/showMySubmissions.jsx";
 import RegisterPage from "./pages/registerPage.jsx";
 import LoginPage from "./pages/loginPage";
 import ShowAllSubmissions from "./pages/showAllSubmissions.jsx";
+import ViewStatistics from "./pages/viewStatistics.jsx";
 
 import "./index.css";
 import { AuthContextProvider } from "./context/authContext.js";
@@ -85,6 +86,16 @@ const router = createBrowserRouter([
       </React.Fragment>
     ),
   },
+  {
+    path: "/statistics",
+    element: (
+      <React.Fragment>
+        <Navbar />
+        <ViewStatistics />
+        <Footer />
+      </React.Fragment>
+    )
+  }
 ]);
 
 class App extends Component {

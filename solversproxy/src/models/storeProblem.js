@@ -28,6 +28,7 @@ export async function storeProblem(data) {
                 depot: data.extraParams.depot,
                 maxDistance: data.extraParams.maxDistance
             },
+            date : data.updatedAt
         });
         newProblem.save();
         console.log(`Problem (id: ${newProblem.id}) is stored in the database`);
