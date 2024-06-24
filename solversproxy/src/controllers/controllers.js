@@ -27,6 +27,7 @@ export async function Solver(data) {
         userID: data.userID,
         answer: processedResult,
         execTime: response.data.execTime,
+        updatedAt: data.updatedAt,
         problemID: data._id,
       };
 

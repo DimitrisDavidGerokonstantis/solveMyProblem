@@ -6,7 +6,7 @@ export async function storeResult(data) {
         const newResult = new Results({
             userID: new mongoose.Types.ObjectId(data.userID),
             model: data.model,
-            data: data.updatedAt,
+            date: data.updatedAt,
             execTime: data.execTime
         });
         newResult.save();
