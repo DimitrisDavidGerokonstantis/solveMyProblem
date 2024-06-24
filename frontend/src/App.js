@@ -34,7 +34,7 @@ const handleNotification = (message) => {
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "/landing",
     element: (
       <React.Fragment>
         <Navbar />
@@ -131,8 +131,8 @@ const router = createBrowserRouter([
         <ViewStatistics />
         <Footer />
       </React.Fragment>
-    )
-  }
+    ),
+  },
 ]);
 
 class App extends Component {
