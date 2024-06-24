@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { PayPalButtons } from "@paypal/react-paypal-js";
+
 class PaypalPayment extends React.Component {
   constructor(props) {
     super(props);
@@ -42,7 +43,9 @@ class PaypalPayment extends React.Component {
       }
     )
       .then((response) => response.json())
-      .then(() => window.location.reload());
+      .then(() =>
+        this.props.onNotifyPaypal(`You received ${this.props.credits} credits`)
+      );
   }
   render() {
     return (

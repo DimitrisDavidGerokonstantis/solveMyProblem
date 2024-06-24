@@ -5,7 +5,7 @@ import axios from "axios";
 import Filter from "../images/filter.png";
 import Sort from "../images/sort.png";
 
-const ShowMySubmissions = () => {
+const ShowMySubmissions = ({ onNotify }) => {
   const navigate = useNavigate();
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState("");
@@ -133,6 +133,7 @@ const ShowMySubmissions = () => {
     closeModal();
     console.log("Problem Deleted!");
     setProblemDeleted(!problemDeleted);
+    onNotify("The problem was deleted!");
   };
 
   const navigateToAnswer = (id) => {
@@ -209,6 +210,7 @@ const ShowMySubmissions = () => {
       setTimeout(() => {
         setProblemRun(problemRun + 1);
       }, 100);
+      onNotify("The problem was submitted for execution!");
     } catch (error) {
       console.log(error);
     }
@@ -254,7 +256,7 @@ const ShowMySubmissions = () => {
                 onClick={openModal2}
                 className="flex justify-between items-center bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
               >
-                <img src={Filter} alt="" class="w-7 h-7" /> Filter Options
+                <img src={Filter} alt="" class="w-5 h-5" /> Filter Options
               </button>
               <button
                 onClick={() => navigate("/submitproblem")}

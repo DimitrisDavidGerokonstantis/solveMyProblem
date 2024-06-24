@@ -167,7 +167,9 @@ export const capturePaypalOrder = async (req, res) => {
         async (err, userInfo) => {
           if (err) return res.status(403).json("Token is not valid!");
           let user = await Users.findOne({ _id: userInfo.id });
-          user.credits = `${parseInt(user.credits) + parseInt(creditsToBuy)}`;
+          user.credits = `${
+            parseFloat(user.credits) + parseFloat(creditsToBuy)
+          }`;
 
           await user.save();
         }
