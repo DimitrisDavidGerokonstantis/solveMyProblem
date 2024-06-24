@@ -4,7 +4,7 @@ import { CopyBlock, dracula } from "react-code-blocks";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const NewSubmission = () => {
+const NewSubmission = ({ onNotify }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState("");
@@ -259,6 +259,7 @@ const NewSubmission = () => {
         );
         console.log("DATA", res.data.problem);
         navigate("/submissions");
+        onNotify("A new problem was created!");
       } catch (error) {
         console.log(error);
       }

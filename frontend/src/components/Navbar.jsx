@@ -9,11 +9,16 @@ import { loadStripe } from "@stripe/stripe-js";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import PaypalPayment from "./PaypalPayment";
 
-const Navbar = () => {
+const Navbar = ({ onNotify }) => {
   const [open, setOpen] = useState(false);
 
   const toggleOpen = () => {
     setOpen(!open);
+  };
+
+  const myNotify = (message) => {
+    onNotify(message);
+    setCreditsChanged(!creditsChanged);
   };
 
   var { currentUser, logout } = useContext(AuthContext);
@@ -119,6 +124,7 @@ const Navbar = () => {
         localStorage.setItem("user", JSON.stringify(user));
         document.getElementById("my_modal_1").close();
         setNameChanged(!nameChanged);
+        onNotify("Username was updated!");
       } catch (error) {
         console.log("ERROR", error);
         console.log("ERROR", error.response.data);
@@ -263,7 +269,7 @@ const Navbar = () => {
                         type="number"
                         placeholder="credits to buy"
                         onChange={handleCredits}
-                        className="input text-center py-2 px-4 mb-2 input-bordered w-full max-w-xs rounded-full bg-orange-50"
+                        className="input text-center py-2 px-2 mb-2 input-bordered w-fit max-w-xs rounded-full bg-orange-50"
                       />
                       <form method="dialog">
                         {/* <button
@@ -277,7 +283,11 @@ const Navbar = () => {
                             <p className="mb-2 mt-2 py-4 text-xl ">
                               Buy {creditsToBuy} credits with Paypal :
                             </p>
-                            <PaypalPayment credits={creditsToBuy} />
+                            <PaypalPayment
+                              credits={creditsToBuy}
+                              onNotifyPaypal={(message) => myNotify(message)}
+                              navigate={navigate}
+                            />
                           </PayPalScriptProvider>
                         ) : (
                           ""

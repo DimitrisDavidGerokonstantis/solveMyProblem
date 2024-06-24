@@ -3,7 +3,7 @@ import ReactDOM from "react-dom";
 import { CopyBlock, dracula } from "react-code-blocks";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-const EditProblem = () => {
+const EditProblem = ({ onNotify }) => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState(null);
   const [role, setRole] = useState("");
@@ -287,8 +287,10 @@ const EditProblem = () => {
             name: name,
           }
         );
+
         console.log("DATA", res.data.problem);
         navigate("/submissions");
+        onNotify("The problem was updated!");
       } catch (error) {
         console.log(error);
       }

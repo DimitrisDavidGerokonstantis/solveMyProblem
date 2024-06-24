@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 import Navbar from "./components/Navbar.jsx";
@@ -14,12 +16,27 @@ import ShowAllSubmissions from "./pages/showAllSubmissions.jsx";
 import "./index.css";
 import { AuthContextProvider } from "./context/authContext.js";
 
+const handleNotification = (message) => {
+  console.log("TOAST");
+  toast.success(message, {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};
+
 const router = createBrowserRouter([
   {
     path: "/login",
     element: (
       <React.Fragment>
-        <Navbar />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
         <LoginPage />
         <Footer />
       </React.Fragment>
@@ -29,7 +46,8 @@ const router = createBrowserRouter([
     path: "/register",
     element: (
       <React.Fragment>
-        <Navbar />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
         <RegisterPage />
         <Footer />
       </React.Fragment>
@@ -39,8 +57,9 @@ const router = createBrowserRouter([
     path: "/submitproblem",
     element: (
       <React.Fragment>
-        <Navbar />
-        <NewSubmission />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
+        <NewSubmission onNotify={(message) => handleNotification(message)} />
         <Footer />
       </React.Fragment>
     ),
@@ -49,8 +68,9 @@ const router = createBrowserRouter([
     path: "/editproblem/:id",
     element: (
       <React.Fragment>
-        <Navbar />
-        <EditProblem />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
+        <EditProblem onNotify={(message) => handleNotification(message)} />
         <Footer />
       </React.Fragment>
     ),
@@ -59,7 +79,8 @@ const router = createBrowserRouter([
     path: "/showresults/:id",
     element: (
       <React.Fragment>
-        <Navbar />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
         <ShowResults />
         <Footer />
       </React.Fragment>
@@ -69,8 +90,12 @@ const router = createBrowserRouter([
     path: "/submissions", //it seems to be the homepage for users
     element: (
       <React.Fragment>
-        <Navbar />
-        <ShowMySubmissions />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
+        {/* Your other component code */}
+        <ShowMySubmissions
+          onNotify={(message) => handleNotification(message)}
+        />
         <Footer />
       </React.Fragment>
     ),
@@ -79,7 +104,8 @@ const router = createBrowserRouter([
     path: "/allsubmissions", //it seems to be the homepage for admins
     element: (
       <React.Fragment>
-        <Navbar />
+        <Navbar onNotify={(message) => handleNotification(message)} />
+        <ToastContainer />
         <ShowAllSubmissions />
         <Footer />
       </React.Fragment>
@@ -92,7 +118,6 @@ class App extends Component {
     return (
       <div className="app">
         <div className="container">
-          {" "}
           <RouterProvider router={router} />
         </div>
       </div>
