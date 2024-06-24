@@ -27,12 +27,12 @@ const Card2 = ({ title, val1 }) => {
   );
 };
 
-const SummaryCards = () => {
+const SummaryCards = ({ val1, val2, val3, val4 }) => {
   return (
     <div className="flex w-full justify-center items-start gap-5">
-      <Card1 title="Total problems submitted" val1="153" val2="2"/>
-      <Card2 title="Average solution time" val1="12.2"/>
-      <Card2 title="Current queue length" val1="4"/>
+      <Card1 title="Total problems submitted" val1={val1} val2={val2}/>
+      <Card2 title="Average solution time" val1={val3}/>
+      <Card2 title="Current queue length" val1={val4}/>
     </div>
   );
 };

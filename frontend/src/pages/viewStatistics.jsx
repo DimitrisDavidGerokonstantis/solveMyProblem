@@ -2,11 +2,15 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SummaryCards from "./Charts/SummaryCards.jsx"
 import SubmissionChart2 from "./Charts/SubmissionChart2";
-import QueueChart from "./Charts/QueueChart.jsx"
+// import QueueChart from "./Charts/QueueChart.jsx"
 import Histogram from "./Charts/Histogram.jsx"
 
 const ViewStatistics = () => {
     const [accessToken, setAccessToken] = useState(null);
+    const [totalSubmissions, setTotalSubmissions] = useState();
+    const [todaysSubmissions, setTodaysSubmissions] = useState();
+    const [avgExecTime, setAvgExecTime] = useState();
+    // const [queueLength, setQueueLength] = useState();
     const [data1, setData1] = useState([]);
     const [data2, setData2] = useState([[]]);
 
@@ -14,6 +18,10 @@ const ViewStatistics = () => {
       const fetchData = async () => {
         try {
           const res = await axios.get(`http://localhost:8080/api/admin/viewStatistics`);
+          setTotalSubmissions(res.data.totalSubmissions);
+          setTodaysSubmissions(res.data.todaysSubmissions);
+          setAvgExecTime(res.data.avgExecTime);
+          // setQueueLength(res.data.queueLength);
           setData1(res.data.data1);
           setData2(res.data.data2);
         } catch (error) {
@@ -56,7 +64,7 @@ const ViewStatistics = () => {
     return (
       <div className="flex justify-center">
         <div className="flex flex-col items-center w-full max-w-5xl mt-12">
-          <SummaryCards />
+          <SummaryCards val1={totalSubmissions} val2={todaysSubmissions} val3={avgExecTime} val4={2}/>
           <SubmissionChart2 data={data1}/>
           {/* <QueueChart data={data1}/> */}
           <Histogram data={data2}/>
