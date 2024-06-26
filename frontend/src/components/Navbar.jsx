@@ -37,6 +37,9 @@ const Navbar = ({ onNotify }) => {
   const [profileInfoClass, setProfileInfoClass] = useState(
     "fixed hidden mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
   );
+  const pathname = window.location.pathname;
+  // Extract the "landing" part
+  const pathSegment = pathname.split("/").pop();
   const [usernameInButton, setUsernameInButton] = useState(
     currentUser?.username
   );
@@ -194,7 +197,22 @@ const Navbar = ({ onNotify }) => {
         <div className="flex justify-end items-center relative">
           <div className="block">
             <div className="inline-flex relative">
-              {currentUser && (
+              {currentUser &&
+                role === "admin" &&
+                pathSegment !== "landing" &&
+                pathSegment !== "login" &&
+                pathSegment !== "statistics" && (
+                  <button
+                    onClick={() => {
+                      navigate("/statistics");
+                    }}
+                    type="button"
+                    className="mr-40 px-4 py-2 inline-flex items-center relative px-2 border rounded-md border-orange-900 hover:shadow-lg bg-yellow-400"
+                  >
+                    View Statistics
+                  </button>
+                )}
+              {currentUser && pathSegment !== "landing" && (
                 <button
                   type="button"
                   onClick={() =>
@@ -305,18 +323,20 @@ const Navbar = ({ onNotify }) => {
                   </div>
                 </div>
               </dialog>
-              {!currentUser && (
-                <button
-                  onClick={() => {
-                    navigate("/login");
-                  }}
-                  type="button"
-                  className="ml-10 px-4 py-2 inline-flex items-center relative px-2 border border-orange-900 rounded-full hover:shadow-lg"
-                >
-                  Login
-                </button>
-              )}{" "}
-              {currentUser && !isGoogleUser && (
+              {!currentUser &&
+                pathSegment !== "landing" &&
+                pathSegment !== "login" && (
+                  <button
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                    type="button"
+                    className="ml-10 px-4 py-2 inline-flex items-center relative px-2 border border-orange-900 rounded-full hover:shadow-lg"
+                  >
+                    Login
+                  </button>
+                )}{" "}
+              {currentUser && !isGoogleUser && pathSegment !== "landing" && (
                 <button
                   onClick={() => {
                     logout();
@@ -328,7 +348,7 @@ const Navbar = ({ onNotify }) => {
                   Logout
                 </button>
               )}
-              {isGoogleUser && (
+              {isGoogleUser && pathSegment !== "landing" && (
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <div className="flex justify-between h-fit">
                     <div className="flex">

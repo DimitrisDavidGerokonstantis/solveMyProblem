@@ -277,7 +277,7 @@ const ShowMySubmissions = ({ onNotify }) => {
             <br></br>
 
             {filter === "all" ? (
-              <div class="h-96 overflow-y-auto mb-2">
+              <div class="h-150 overflow-y-auto mb-2">
                 <table className="bg-orange-100 ring-1 ring-orange-200 shadow-lg  overflow-auto min-w-full">
                   <thead>
                     <tr>
