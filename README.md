@@ -1,4 +1,4 @@
-# Solvio - Software as a Service (SaaS) application - Summer Semester 2023-2024  
+# Solvio - Software as a Service (SaaS) application - Spring Semester 2023-2024  
 
 This project was developed as part of the SaaS course at the National Technical University of Athens.
 
@@ -19,6 +19,10 @@ The project was implemented using a **microservices architecture**. The microser
 - **emailservice**: Manages the sending of emails to the users when they first make an account and when the results to a problem they submitted are ready.
 
 Detailed **UML diagrams**, made with **Visual Paradigm**, describing the project's architecture can be found in the **architecture folder** [here](https://github.com/ntua/saas2024-19/tree/main/architecture).  
+The UML component diagram is shown here as well to give a full picture of the architecture of the application (in the Visual Paradigm files one can see the diagrams better):  
+
+![282a695b-c674-43b8-838a-7a4dc23d3300](https://github.com/ntua/saas2024-19/assets/115417360/7d5c7105-a048-48e5-b07a-059168c109e6)
+
 
 ## Installation - Deployment  
 
