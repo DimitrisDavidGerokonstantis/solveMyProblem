@@ -32,6 +32,12 @@ in the project's root and then access the frontend through `localhost:8080/landi
 
 ## Collaborators  
 
+| Name  | NTUA register number (Αριθμός Μητρώου) |
+| ------------- | ------------- |  
+|  [Dimitrios-David Gerokonstantis](https://github.com/DimitrisDavidGerokonstantis)  | el19209  | 
+|  [Athanasios Tsoukleidis-Karydakis](https://github.com/ThanosTsoukleidis-Karydakis) | el19009  |  
+|  [Filippos Sevastakis](https://github.com/FilipposSevastakis)  |  el19183 |  
+
 
 
 
