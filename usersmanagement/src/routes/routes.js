@@ -17,6 +17,7 @@ import {
   editPermissionsController,
   deletePermissionsController,
   getRoleController,
+  getUserDetailsController,
 } from "../controllers/auth.js";
 
 // middleware that checks if the user who makes the request is logged in
@@ -70,6 +71,13 @@ router.post("/adminsPermissions", adminsPermissionsController);
 router.get("/getRole/:userid", getRoleController);
 router.post("/editPermissions", editPermissionsController);
 router.post("/deletePermissions", deletePermissionsController);
+
+router.get(
+  "/getUserDetails/:userID",
+  isLoggedIn,
+  hasAdminsPermissions,
+  getUserDetailsController
+);
 
 // // creates the google URL that the frontend will trigger
 // router.post("/googleRequest", async (req, res, next) => {

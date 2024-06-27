@@ -287,3 +287,10 @@ export const deletePermissionsController = async (req, res) => {
     }
   );
 };
+
+export const getUserDetailsController = async (req, res) => {
+  const userID = req.params.userID;
+  let user = await Users.findOne({ _id: userID });
+  if (!user) return res.status(404).json("User not found!");
+  return res.status(200).json(user);
+};

@@ -197,7 +197,7 @@ const Navbar = ({ onNotify }) => {
         <div className="flex justify-end items-center relative">
           <div className="block">
             <div className="inline-flex relative">
-              {currentUser &&
+              {/* {currentUser &&
                 role === "admin" &&
                 pathSegment !== "landing" &&
                 pathSegment !== "login" &&
@@ -211,7 +211,7 @@ const Navbar = ({ onNotify }) => {
                   >
                     View Statistics
                   </button>
-                )}
+                )} */}
               {currentUser && pathSegment !== "landing" && (
                 <button
                   type="button"
@@ -369,7 +369,7 @@ const Navbar = ({ onNotify }) => {
                           <img
                             className="h-10 w-10 rounded-full"
                             src={googleuser.picture}
-                            alt="error"
+                            alt=""
                             crossorigin="anonymous"
                           />
                         </button>

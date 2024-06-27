@@ -28,6 +28,12 @@ const ShowMySubmissions = () => {
   const [count_name, setCountName] = useState(0);
   const [count_update, setCountUpdate] = useState(0);
 
+  const [problemUserID, setProblemUserID] = useState("");
+  const [problemUsername, setProblemUsername] = useState("");
+  const [problemUserCredits, setProblemUserCredits] = useState("");
+  const [problemUserEmail, setProblemUserEmail] = useState("");
+  const [problemUserPicture, setProblemUserPicture] = useState("");
+
   /* Possible Statuses and buttons the admin can press - he cannot run a problem a user has created: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
   //        Buttons: The admin can press the View button so as to view the problem and the delete button
@@ -214,6 +220,19 @@ const ShowMySubmissions = () => {
     }
   };
 
+  const hanldeOpenUserProfile = async (e) => {
+    e.preventDefault();
+    document.getElementById("my_modal_2").showModal();
+    const res = await axios.get(
+      `http://localhost:8080/auth/getUserDetails/${e.target.value}`
+    );
+    setProblemUserID(res.data._id);
+    setProblemUsername(res.data.username);
+    setProblemUserCredits(res.data.credits);
+    setProblemUserEmail(res.data.email);
+    setProblemUserPicture(res.data.picture);
+  };
+
   if (accessToken === null) {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -244,6 +263,82 @@ const ShowMySubmissions = () => {
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
         <div class="bg-orange-50 bg-cover w-1/12 h-screen flex-col items-center justify-center "></div>
         <div class=" bg-orange-50 bg-cover w-5/6 h-screen flex-col items-center justify-center mb-10">
+          <dialog
+            id="my_modal_2"
+            className="modal p-8 rounded-lg bg-orange-100"
+          >
+            <div className="modal-box px-4 flex flex-col items-center justify-center overflow-auto">
+              <h3 className="font-bold text-lg">User Information</h3>
+
+              <img
+                className="h-14 w-14 rounded-full mt-4"
+                src={problemUserPicture}
+                alt="No picture"
+                crossorigin="anonymous"
+              />
+
+              <table className="mt-8 min-w-full text-center mb-6 rounded-md">
+                <thead className="border-b bg-orange-800">
+                  <tr>
+                    <th
+                      scope="col"
+                      className="text-sm font-medium text-white px-6 py-4"
+                    >
+                      Field
+                    </th>
+                    <th
+                      scope="col"
+                      className="text-sm font-medium text-white px-6 py-4"
+                    >
+                      Value
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="bg-white border-b">
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      ID
+                    </td>
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      {problemUserID}
+                    </td>
+                  </tr>
+                  <tr className="bg-gray-200 border-b">
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      Name
+                    </td>
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      {problemUsername}
+                    </td>
+                  </tr>
+                  <tr className="bg-white border-b">
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      Credits
+                    </td>
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      {problemUserCredits}
+                    </td>
+                  </tr>
+                  <tr className="bg-gray-200 border-b">
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      Email
+                    </td>
+                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                      {problemUserEmail ? problemUserEmail : "<Not available>"}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div className=" modal-action">
+                <form method="dialog">
+                  {/* if there is a button in form, it will close the modal */}
+                  <button className="px-4 py-2 inline-flex items-center relative px-2 border bg-red-200 border-orange-900 rounded-full hover:shadow-lg btn">
+                    Close
+                  </button>
+                </form>
+              </div>
+            </div>
+          </dialog>
           <div className="money w-full">
             <br></br>
             <div className="flex justify-between">
@@ -252,15 +347,15 @@ const ShowMySubmissions = () => {
               </h2>
               <button
                 onClick={openModal2}
-                className="flex justify-between items-center bg-orange-900 text-white rounded-md px-4 py-2 hover:bg-orange-700 transition"
+                className="flex justify-between items-center bg-orange-900 text-white px-4 rounded-md hover:bg-orange-700 transition"
               >
                 <img src={Filter} alt="" class="w-7 h-7" /> Filter Options
               </button>
               <button
-                onClick={() => navigate("/submitproblem")}
-                className="mt-5 mr-20 bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-400 transition flex-initial"
+                onClick={() => navigate("/statistics")}
+                className="mr-20 bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-400 transition flex-initial"
               >
-                Submit new problem
+                View Statistics
               </button>
             </div>
             <br></br>
@@ -291,6 +386,7 @@ const ShowMySubmissions = () => {
                           <img src={Sort} alt="" />
                         </button>
                       </th>
+                      <th>User ID</th>
                       <th>Created On</th>
                       <th>Status</th>
                       <th>View</th>
@@ -327,6 +423,17 @@ const ShowMySubmissions = () => {
                         .map((problem, index) => (
                           <tr key={index}>
                             <td>{problem.name}</td>
+                            <td>
+                              {" "}
+                              <button
+                                type="button"
+                                onClick={hanldeOpenUserProfile}
+                                value={problem.userID}
+                                className="px-4 py-2 inline-flex items-center relative px-2 border bg-red-100 border-orange-400 rounded-full hover:shadow-lg"
+                              >
+                                {problem.userID}
+                              </button>
+                            </td>
                             <td>{makeDatesReadable(problem.createdAt)}</td>
                             <td>{problem.status}</td>
                             <td>
