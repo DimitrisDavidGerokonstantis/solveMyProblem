@@ -1,16 +1,14 @@
 import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
 import fetch from "node-fetch";
 import { OAuth2Client } from "google-auth-library";
-import mongoose from "mongoose";
 import Users from "../models/Users.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import axios from "axios";
 
 dotenv.config();
 
+// redirection after signing in via google
 const redirectUrl = "http://127.0.0.1:5001/googleAuth/oauth";
 
 const oAuth2Client = new OAuth2Client(
@@ -19,6 +17,7 @@ const oAuth2Client = new OAuth2Client(
   redirectUrl
 );
 
+// get info about an email user
 async function getUserData(access_token) {
   const response = await fetch(
     `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${access_token}`
@@ -28,13 +27,16 @@ async function getUserData(access_token) {
   return data;
 }
 
+// add the email user into the DB with a dummy password
+// (or just update the google access token if the user is already into the DB)
 const createGoogleUser = async (userData, google_access_token) => {
   try {
+    console.log("GOOGLE USER DATA", userData);
     let existingUser = await Users.findOne({ email: userData.email });
     if (!existingUser) {
       console.log("USER DOES NOT EXIST", existingUser);
       let createdUser = await Users.create({
-        username: userData.given_name,
+        username: userData.name,
         password: "not_a_valid_pwd",
         email: userData.email,
         google_access_token: google_access_token,
@@ -92,6 +94,8 @@ router.get("/oauth", async (req, res, next) => {
   }
 });
 
+// when a google user is logged in, a JWT is created so that we are
+// consistent with the usual loggin handling (i.e. when we are not using google)
 router.post("/loginByGoogleToken", async (req, res, next) => {
   try {
     let googleUser = await Users.findOne({

@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import Problems from "../models/Problems.js";
-import amqp from "amqplib";
 import { produce_to_questions_queue } from "../publishQuestion.js";
 
+// submit a new problem and push it to the queue
 export const submitController = async (req, res) => {
   try {
     let problem = await Problems.create({
@@ -25,6 +25,7 @@ export const submitController = async (req, res) => {
   }
 };
 
+// update a submitted problem and push the updated problem to the queue
 export const updateSubmission = async (req, res) => {
   try {
     let problemToUpdate = await Problems.findOne({ _id: req.body.problemId });
@@ -43,9 +44,9 @@ export const updateSubmission = async (req, res) => {
   }
 };
 
+// get information about a problem
 export const getProblemInfo = async (req, res) => {
   try {
-    console.log("GET INFO COOKIES", "");
     let problem = await Problems.find({ _id: req.params.problemId });
     return res.status(200).json({ problem });
   } catch (error) {
@@ -53,9 +54,10 @@ export const getProblemInfo = async (req, res) => {
   }
 };
 
+// update the status of a problem to "running" and push the problem to the queue
+// (so that solversproxy forwards the problem to the solver for execution)
 export const runProblemController = async (req, res) => {
   try {
-    console.log("RECEIVED", req.body.problemID);
     let problem = await Problems.findOne({ _id: req.body.problemID });
     problem.status = "running";
     await problem.save();

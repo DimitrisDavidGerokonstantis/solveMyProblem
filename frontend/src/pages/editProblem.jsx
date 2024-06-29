@@ -71,7 +71,7 @@ const EditProblem = ({ onNotify }) => {
         console.log("INFO", res.data.problem);
         setModel(res.data.problem[0].model);
         setInputDataFile(
-          JSON.stringify(res.data.problem[0].inputDataFile.content)
+          JSON.stringify(res.data.problem[0].inputDataFile.content, null, 2)
         );
         setInputScriptFile(res.data.problem[0].pythonScript.script);
         setNumVehicles(res.data.problem[0].extraParams.numVehicles);

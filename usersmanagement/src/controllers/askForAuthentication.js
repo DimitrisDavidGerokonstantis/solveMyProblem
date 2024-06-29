@@ -1,5 +1,9 @@
 import axios from "axios";
+// The functions below make calls to usersmanagement microservice so as to
+// ensure that a user has enough permissions to make a request
+// If not enough permissions available, an appropriate status code is returned
 
+// check if a user is logged in
 export const isLoggedIn = async (req, res, next) => {
   try {
     console.log("COOKIES", req.cookies);
@@ -20,6 +24,7 @@ export const isLoggedIn = async (req, res, next) => {
   }
 };
 
+// check for user's permissions
 export const hasUsersPermissions = async (req, res, next) => {
   try {
     console.log("COOKIES", req.cookies);
@@ -41,7 +46,7 @@ export const hasUsersPermissions = async (req, res, next) => {
     return res.status(500).json(error.response.data);
   }
 };
-
+// check for admin's permissions
 export const hasAdminsPermissions = async (req, res, next) => {
   try {
     console.log("COOKIES", req.cookies);
