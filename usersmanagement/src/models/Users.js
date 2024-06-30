@@ -30,6 +30,12 @@ const usersSchema = new Schema({
   },
   google_access_token: { type: String, default: "" },
   picture: { type: String, default: "" },
+  joinedAt: {
+    type: Date,
+    immutable: true,
+    required: true,
+    default: () => Date.now(),
+  },
 });
 
 // create the users model related to the previous schema

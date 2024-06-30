@@ -33,6 +33,7 @@ const ShowMySubmissions = () => {
   const [problemUserCredits, setProblemUserCredits] = useState("");
   const [problemUserEmail, setProblemUserEmail] = useState("");
   const [problemUserPicture, setProblemUserPicture] = useState("");
+  const [problemUserJoinedAt, setUserJoinedAt] = useState("");
 
   /* Possible Statuses and buttons the admin can press - he cannot run a problem a user has created: */
   // Ready: The user hasn't pressed the run button yet but has uploaded the files and created the problem
@@ -234,6 +235,7 @@ const ShowMySubmissions = () => {
     setProblemUserCredits(res.data.credits);
     setProblemUserEmail(res.data.email);
     setProblemUserPicture(res.data.picture);
+    setUserJoinedAt(res.data.joinedAt);
   };
 
   //until all operations (e.g. user authentication) are completed, a Loading Spinner is being displayed
@@ -273,67 +275,82 @@ const ShowMySubmissions = () => {
             className="modal p-8 rounded-lg bg-orange-100"
           >
             <div className="modal-box px-4 flex flex-col items-center justify-center overflow-auto">
-              <h3 className="font-bold text-lg">User Information</h3>
-
-              <img
-                className="h-14 w-14 rounded-full mt-4"
-                src={problemUserPicture}
-                alt="No picture"
-                crossorigin="anonymous"
-              />
-
-              <table className="mt-8 min-w-full text-center mb-6 rounded-md">
-                <thead className="border-b bg-orange-800">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4"
-                    >
-                      Field
-                    </th>
-                    <th
-                      scope="col"
-                      className="text-sm font-medium text-white px-6 py-4"
-                    >
-                      Value
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="bg-white border-b">
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      ID
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {problemUserID}
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-200 border-b">
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      Name
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {problemUsername}
-                    </td>
-                  </tr>
-                  <tr className="bg-white border-b">
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      Credits
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {problemUserCredits}
-                    </td>
-                  </tr>
-                  <tr className="bg-gray-200 border-b">
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      Email
-                    </td>
-                    <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
-                      {problemUserEmail ? problemUserEmail : "<Not available>"}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <div className="mt-2 min-w-full text-center mb-1 rounded-lg w-full shadow-lg p-4  bg-orange-200 flex flex-col items-center justify-center ">
+                <h3 className="font-bold text-lg">User Information</h3>
+                <div className="mt-2 min-w-full text-center mb-1 rounded-lg w-full shadow-lg p-4 bg-gray-300 flex items-center justify-center gap-4 ">
+                  <img
+                    className="h-14 w-14 rounded-full"
+                    src={problemUserPicture}
+                    alt="No picture"
+                    crossorigin="anonymous"
+                  />
+                  <p className="font-bold text-sm">{problemUsername}</p>
+                </div>
+              </div>
+              <div className="mt-8 min-w-full text-center mb-6 rounded-lg w-full shadow-lg p-4  bg-orange-200 flex-col items-center justify-center ">
+                <table>
+                  <thead className="border-b bg-orange-800">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="text-sm font-medium text-white px-6 py-4"
+                      >
+                        Field
+                      </th>
+                      <th
+                        scope="col"
+                        className="text-sm font-medium text-white px-6 py-4"
+                      >
+                        Value
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="bg-white border-b">
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        ID
+                      </td>
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        {problemUserID}
+                      </td>
+                    </tr>
+                    <tr className="bg-gray-200 border-b">
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        Name
+                      </td>
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        {problemUsername}
+                      </td>
+                    </tr>
+                    <tr className="bg-white border-b">
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        Credits
+                      </td>
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        {problemUserCredits}
+                      </td>
+                    </tr>
+                    <tr className="bg-gray-200 border-b">
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        Email
+                      </td>
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        {problemUserEmail
+                          ? problemUserEmail
+                          : "<Not available>"}
+                      </td>
+                    </tr>
+                    <tr className="bg-white border-b">
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        Joined at
+                      </td>
+                      <td className="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
+                        {new Date(problemUserJoinedAt).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
               <div className=" modal-action">
                 <form method="dialog">
                   {/* if there is a button in form, it will close the modal */}
