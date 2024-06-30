@@ -2,6 +2,7 @@ import amqp from "amqplib";
 import Users from "./models/Users.js";
 import axios from "axios";
 
+// consume an answer from the broker of answers
 export async function consume_from_answers_queue() {
   try {
     // Connect to RabbitMQ server
@@ -11,17 +12,19 @@ export async function consume_from_answers_queue() {
     // Create a channel
     const channel = await connection.createChannel();
 
-    // Create the direct exchange
+    // Create the fanout exchange
     const exchangeName = process.env.EXCHANGE_NAME_ANSWERS;
     await channel.assertExchange(exchangeName, "fanout", { durable: true });
 
-    // Create the chart_A queue
+    // Create the email service queue and bind it to the exchange
+    // (no binding key is necessary - fanout exchange)
     const queueName = process.env.QUEUE_NAME_EMAIL_SERVICE;
     const assertQueue = await channel.assertQueue(queueName, { durable: true });
 
     await channel.bindQueue(assertQueue.queue, exchangeName, "");
 
-    // Start consuming messages
+    // Start consuming messages : When a new answer is consumed, an email is sent to the
+    // appropriate user (call to the email service)
     console.log(
       `Consumer started. Waiting for messages in queue ${queueName}...`
     );
