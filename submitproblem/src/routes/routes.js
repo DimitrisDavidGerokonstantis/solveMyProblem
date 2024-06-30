@@ -1,5 +1,5 @@
 import express from "express";
-import cors from "cors";
+// import controllers
 import {
   submitController,
   getProblemInfo,
@@ -7,9 +7,8 @@ import {
   runProblemController,
 } from "../controllers/controllers.js";
 
-// middleware that checks if the user who makes the request is logged in
+// middleware that checks if the user who makes the request has enough permissions
 import {
-  hasAdminsPermissions,
   isLoggedIn,
   hasUsersPermissions,
   hasPermissionsToUpdate,
@@ -17,6 +16,7 @@ import {
 
 const router = express.Router();
 
+// define endpoints
 router.post(
   "/submitProblem/submit",
   isLoggedIn,

@@ -1,15 +1,15 @@
 import mongoose from "mongoose";
 import Users from "../models/Users.js";
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
+// base paypal URL
 const base = "https://api-m.sandbox.paypal.com";
 
 import fetch from "node-fetch";
 import "dotenv/config";
-// import path from "path";
 
-// host static files
+// The code above is taken from the PayPal's documentation
+// Only some adaptation were needed
 
 /**
  * Generate an OAuth 2.0 access token for authenticating with PayPal REST APIs.
@@ -153,6 +153,9 @@ const captureOrder = async (orderID) => {
 // });
 
 // captureOrder route
+
+// Only when the the money is captured successfully by the seller (i.e. Solvio) the user
+// receives the credits
 export const capturePaypalOrder = async (req, res) => {
   try {
     const { orderID } = req.params;

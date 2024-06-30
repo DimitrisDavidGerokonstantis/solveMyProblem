@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+// Define the schema for a user
 const usersSchema = new Schema({
   username: {
     type: String,
@@ -31,4 +32,5 @@ const usersSchema = new Schema({
   picture: { type: String, default: "" },
 });
 
+// create the users model related to the previous schema
 export default mongoose.model("Users", usersSchema);

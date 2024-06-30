@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+// Define the schema of a problem
 const problemsSchema = new Schema({
   userID: {
     type: mongoose.SchemaTypes.ObjectId,
@@ -60,4 +61,5 @@ problemsSchema.pre("save", function (next) {
   next();
 });
 
+// create a model related to the previous schema
 export default mongoose.model("Problems", problemsSchema);

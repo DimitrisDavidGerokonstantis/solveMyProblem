@@ -7,15 +7,8 @@ import Stripe from "stripe";
 const stripe = new Stripe(
   "sk_test_51PHvOEL9KWQMTSTa0LmM80Oo88aI943X1uaQpLIlcpeXTwrdfVD6GjbiNMwW9VXxquWZXaSUrfHaY0oSijSVd2LG00JZCFCb5u"
 );
-import paypal from "@paypal/checkout-server-sdk";
-const paypalClient = new paypal.core.PayPalHttpClient(
-  new paypal.core.SandboxEnvironment(
-    process.env.PAYPAL_CLIENT_ID,
-    process.env.PAYPAL_CLIENT_SECRET
-  )
-);
-const base = "https://api-m.sandbox.paypal.com";
 
+// register a new user
 export const registerController = async (req, res) => {
   try {
     console.log(req.body);
@@ -37,10 +30,13 @@ export const registerController = async (req, res) => {
   }
 };
 
+// User Login
 export const loginController = async (req, res) => {
   try {
+    // find user
     let user = await Users.where("username").equals(req.body.username);
     if (user.length === 0) return res.status(404).json("User not found!");
+    // if the user is a google user, login via google is required
     if (user[0].google_access_token)
       return res
         .status(409)
@@ -72,6 +68,7 @@ export const loginController = async (req, res) => {
   }
 };
 
+// Logout - clear access token
 export const logoutController = async (req, res) => {
   return res
     .clearCookie("access_token", {
@@ -82,6 +79,7 @@ export const logoutController = async (req, res) => {
     .json("User has been logged out.");
 };
 
+// get the access token and extra information about a user
 export const getTokenController = async (req, res) => {
   const myToken = req.cookies.access_token;
   let role = "";
@@ -104,15 +102,9 @@ export const getTokenController = async (req, res) => {
   } else {
     return res.status(200).json({ token: myToken, role: role, userid: id });
   }
-  // if (!myToken) return res.status(200).json({ token: myToken });
-  // jwt.verify(myToken, process.env.JWT_KEY, (err, userInfo) => {
-  //   if (err) return res.status(403).json({ token: null });
-  //   if (req.params.userID != userInfo.id)
-  //     return res.status(401).json({ token: null });
-  //   return res.status(200).json({ token: myToken });
-  // });
 };
 
+// update the username of a user (must be unique)
 export const updateUsernameController = async (req, res) => {
   try {
     let existingUser = await Users.findOne({ username: req.body.username });
@@ -128,6 +120,7 @@ export const updateUsernameController = async (req, res) => {
   }
 };
 
+// get the credits of a user
 export const getCreditsController = async (req, res) => {
   try {
     let user = await Users.findOne({ _id: req.params.userid });
@@ -137,6 +130,7 @@ export const getCreditsController = async (req, res) => {
   }
 };
 
+// buy credits with Stripe
 export const buyCreditsController = async (req, res) => {
   try {
     const lineItem = [
@@ -190,6 +184,7 @@ export const authenticationController = async (req, res) => {
   }
 };
 
+// checks for user's permissions
 export const usersPermissionsController = async (req, res) => {
   console.log("REQUEST", req.body);
   jwt.verify(
@@ -204,6 +199,7 @@ export const usersPermissionsController = async (req, res) => {
   );
 };
 
+// checks for admin's permissions
 export const adminsPermissionsController = async (req, res) => {
   console.log("REQUEST", req.body);
   jwt.verify(
@@ -218,6 +214,7 @@ export const adminsPermissionsController = async (req, res) => {
   );
 };
 
+// get the role of a participant (user-admin)
 export const getRoleController = async (req, res) => {
   try {
     console.log("GETO ROLE REQUEST", req.params);
@@ -231,6 +228,8 @@ export const getRoleController = async (req, res) => {
   }
 };
 
+// check for permissions to update a problem
+// the editor must be the creator of the problem
 export const editPermissionsController = async (req, res) => {
   jwt.verify(
     req.body.request.access_token,
@@ -262,6 +261,8 @@ export const editPermissionsController = async (req, res) => {
   );
 };
 
+// checks if a user has permissions to delete a problem
+// (must be the creator of the problem or an admin)
 export const deletePermissionsController = async (req, res) => {
   jwt.verify(
     req.body.request.access_token,
@@ -288,6 +289,7 @@ export const deletePermissionsController = async (req, res) => {
   );
 };
 
+// get details about a user
 export const getUserDetailsController = async (req, res) => {
   const userID = req.params.userID;
   let user = await Users.findOne({ _id: userID });
