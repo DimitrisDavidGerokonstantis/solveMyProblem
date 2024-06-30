@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+//define the schema for the answers document in mongoDB
 const answersSchema = new Schema({
   userID: mongoose.SchemaTypes.ObjectId,
   answer: {
@@ -22,10 +23,5 @@ const answersSchema = new Schema({
     default: "true",
   },
 });
-
-// problemsSchema.pre("save", function (next) {
-//   this.updatedAt = Date.now();
-//   next();
-// });
 
 export default mongoose.model("Answers", answersSchema);
