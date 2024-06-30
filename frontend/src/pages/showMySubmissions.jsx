@@ -40,6 +40,7 @@ const ShowMySubmissions = ({ onNotify }) => {
 
   const [ReadyToRefresh, setReadyToRefresh] = useState(false);
 
+  //Auto-refresh the page after a problem has been created so that it can be seen in the user home page
   useEffect(() => {
     if (!ReadyToRefresh) {
       const timer = setTimeout(() => {
@@ -50,6 +51,8 @@ const ShowMySubmissions = ({ onNotify }) => {
     }
   }, []); // Empty dependency array ensures this effect runs only once after initial render
 
+  //The following 2 functions have to do with the Filter Options modal. They make sure the option chosen is saved and the filter is
+  //correctly set after the user confirms his selection.
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.id);
   };
@@ -59,10 +62,11 @@ const ShowMySubmissions = ({ onNotify }) => {
     closeModal2();
   };
 
+  //a function that is triggered when the user wants to sort by name or last updated on. It handles both cases of sorting.
   const handleSort = (sort, count1, count2) => {
     let helperArray = [...problems];
     if (sort === "name") {
-      if (count1 % 2 === 0) {
+      if (count1 % 2 === 0) {  // %2 is being used because on second press to the sorting button we want a reverse sorting to occur
         helperArray.sort((a, b) => {
           if (a.name.toLowerCase() < b.name.toLowerCase()) {
             return -1;
@@ -73,7 +77,6 @@ const ShowMySubmissions = ({ onNotify }) => {
           return 0;
         });
         setCountName(count1 + 1);
-        console.log(helperArray);
         setProblems(helperArray);
       } else {
         helperArray.sort((a, b) => {
@@ -86,7 +89,6 @@ const ShowMySubmissions = ({ onNotify }) => {
           return 0;
         });
         setCountName(count1 + 1);
-        console.log(helperArray);
         setProblems(helperArray);
       }
     } else if (sort === "update") {
@@ -95,19 +97,19 @@ const ShowMySubmissions = ({ onNotify }) => {
           (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
         );
         setCountUpdate(count2 + 1);
-        console.log("UPDATE", helperArray);
         setProblems(helperArray);
       } else {
         helperArray.sort(
           (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
         );
         setCountUpdate(count2 + 1);
-        console.log("UPDATE2", helperArray);
         setProblems(helperArray);
       }
     }
   };
 
+  //The following 2 functions handle the opening and closing of the modal for the Deletion of a problem. They also save the id
+  //of the problem about to be deleted.
   const openModal = (id, name) => {
     setSampleItem(name);
     setIsModalOpen(true);
@@ -118,6 +120,7 @@ const ShowMySubmissions = ({ onNotify }) => {
     setIsModalOpen(false);
   };
 
+  //The following 2 functions handle the opening and closing of the modal for the Filter Options
   const openModal2 = () => {
     setIsModal2Open(true);
   };
@@ -126,21 +129,23 @@ const ShowMySubmissions = ({ onNotify }) => {
     setIsModal2Open(false);
   };
 
+  //A function that handles the deletion of a problem. It makes the necessary API call and also closes the modal. Triggered when
+  //the user confirms that he wants to delete a problem.
   const handleDeleteProblem = async () => {
     const res = await axios.post(`http://localhost:8080/api/deleteProblem`, {
       id: toBeDeleted,
     });
     closeModal();
-    console.log("Problem Deleted!");
     setProblemDeleted(!problemDeleted);
     onNotify("The problem was deleted!");
   };
 
+  //Navigates the user to the results of problem. The user needs to press the Show Results button of a (finished) problem
   const navigateToAnswer = (id) => {
-    console.log("We Prick You", id);
     navigate(`/showresults/${id}`);
   };
 
+  //A function that takes the dates from the database and makes them readable to humans and also transforms them to Greek time. 
   const makeDatesReadable = (dateString) => {
     const date = new Date(dateString);
 
@@ -161,13 +166,13 @@ const ShowMySubmissions = ({ onNotify }) => {
     return formattedDate;
   };
 
+  //necessary for user authentication and access token management
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
         const res = await axios.get(`http://localhost:8080/auth/getToken`);
         setAccessToken(res.data.token);
         setRole(res.data.role);
-        console.log("TOKEN", res.data);
         if (res.data.token) {
           setUserId(JSON.parse(localStorage.getItem("user")).id);
         } else {
@@ -180,9 +185,9 @@ const ShowMySubmissions = ({ onNotify }) => {
     fetchAccessToken();
   }, []);
 
+  //called on every render of the page. Fetches all problems of the particular user so that they can be rendered on the page. 
   useEffect(() => {
     const fetchMySubmissions = async () => {
-      console.log("UserId is ", userId);
       if (userId) {
         try {
           const res = await axios.get(
@@ -198,15 +203,13 @@ const ShowMySubmissions = ({ onNotify }) => {
     fetchMySubmissions();
   }, [problemDeleted, ReadyToRefresh, userId, problemRun]);
 
-  console.log(accessToken);
 
+  //Called whenever the user presses the Run button to run a problem (send it to the queue so that the solver can take it)
   const handleRun = async (e) => {
     try {
-      console.log("RUN ", e.target.id);
       const res = await axios.put(`http://localhost:8080/api/runproblem`, {
         problemID: e.target.id,
       });
-      console.log(res.data);
       setTimeout(() => {
         setProblemRun(problemRun + 1);
       }, 100);
@@ -216,6 +219,7 @@ const ShowMySubmissions = ({ onNotify }) => {
     }
   };
 
+  //until all operations (e.g. user authentication) are completed, a Loading Spinner is being displayed
   if (accessToken === null) {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -241,6 +245,7 @@ const ShowMySubmissions = ({ onNotify }) => {
       </div>
     );
   }
+  //when all actions have been completed, the page is rendered to the user
   if (accessToken && role != "admin") {
     return (
       <div class="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
@@ -577,7 +582,7 @@ const ShowMySubmissions = ({ onNotify }) => {
               </div>
             )}
 
-            {/* Modal */}
+            {/* Modal - Delete a Problem */}
             {isModalOpen && (
               <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
                 <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
@@ -638,7 +643,7 @@ const ShowMySubmissions = ({ onNotify }) => {
               </div>
             )}
 
-            {/* Modal 2 */}
+            {/* Modal 2 - Filter Options */}
             {isModalOpen2 && (
               <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
                 <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-xl">
@@ -754,6 +759,7 @@ const ShowMySubmissions = ({ onNotify }) => {
       </div>
     );
   } else {
+    //in case the user doesn't have permission to view the page (e.g. incorrect authentication)
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
         <h3 className="mt-40 text-4xl font-semibold">
