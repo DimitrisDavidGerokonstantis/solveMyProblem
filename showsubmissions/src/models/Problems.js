@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const Schema = mongoose.Schema;
 
+//defining the document where all problems will be saved
 const problemsSchema = new Schema({
   userID: mongoose.SchemaTypes.ObjectId,
   name: String,
@@ -21,10 +22,5 @@ const problemsSchema = new Schema({
     default: "true",
   },
 });
-
-// problemsSchema.pre("save", function (next) {
-//   this.updatedAt = Date.now();
-//   next();
-// });
 
 export default mongoose.model("Problems", problemsSchema);

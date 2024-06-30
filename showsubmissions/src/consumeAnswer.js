@@ -26,12 +26,12 @@ export async function consume_from_answers_queue() {
         const messageData = JSON.parse(message.content.toString());
         console.log(`Received message from ${queueName}: ${messageData}`);
 
+        //we need to consume the answers so that when an answer of an existing problem arrives we can set the status to finished
         const existingProblem = await Problem.findOne({ _id: messageData.id });
-        console.log("HIIIIIIIIIIII", messageData.id)
+
         if(existingProblem){
           existingProblem.status = 'finished';
           await existingProblem.save(); 
-          console.log("Existing problem updated in MongoDB:", existingProblem);
         }
         
         channel.ack(message);

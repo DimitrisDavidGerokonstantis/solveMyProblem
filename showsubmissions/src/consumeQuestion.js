@@ -28,24 +28,32 @@ export async function consume_from_questions_queue() {
         const messageData = JSON.parse(message.content.toString());
         console.log(`Received message from ${queueName}: ${messageData}`);
 
+        //we consume every problem that's created. Note: when a problem is edited or has its status changed, it's also re-sent to the queue so we re-consume it.
         const existingProblem = await Problem.findOne({ _id: messageData._id });
+
+        //if we receive a problem whose id is already in the DB it means that this problem was edited or someone pressed Run
         if(existingProblem){
+
+          //case where the problem's name was edited
           if(existingProblem.name!==messageData.name){
             existingProblem.name = messageData.name;
             await existingProblem.save(); 
-            console.log("Existing problem updated in MongoDB:", existingProblem);
           }
+
+          //case where the problem's status was edited (meaning the user pressed the Run button to submit it to the solver)
           if(messageData.status==="running"){
             existingProblem.status = 'running';
             await existingProblem.save(); 
-            console.log("Existing problem updated in MongoDB:", existingProblem);
           }
+
+          //if the problem was edited and not submitted to the solver (through pressing the run button) we need to compute the last updated on value
           else{
             existingProblem.updatedAt = new Date();
             await existingProblem.save(); 
-            console.log("Existing problem updated in MongoDB:", existingProblem);
           }
         }
+
+        //if the problem is completely new we need to save it to the DB
         else{
         const newProblem = new Problem({
           _id: messageData._id,
@@ -57,12 +65,10 @@ export async function consume_from_questions_queue() {
           updatedAt: messageData.updatedAt
         });
         await newProblem.save();
-        console.log("New problem saved to MongoDB:", newProblem);
         }
         channel.ack(message);
       } catch (error) {
         console.error("Error processing message:", error);
-        //channel.reject(message, false);
       }
     }, { noAck: false });
 

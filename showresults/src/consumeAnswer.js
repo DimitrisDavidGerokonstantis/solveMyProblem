@@ -26,13 +26,14 @@ export async function consume_from_answers_queue() {
         const messageData = JSON.parse(message.content.toString());
         console.log(`Received message from ${queueName}: ${messageData}`);
 
+        //For every answer sent to this microservice by the solver's proxy we need to create a new mongoDB document and save it to the
+        //database
         const newAnswer = new Answer({
           _id: messageData.id,
           userID: messageData.userID,
           answer: messageData.answer,
         });
         await newAnswer.save();
-        console.log("New answer saved to MongoDB:", newAnswer);
         channel.ack(message);
       }, { noAck: false });
   

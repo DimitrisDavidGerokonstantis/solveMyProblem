@@ -25,7 +25,6 @@ const ShowResults = () => {
   const problemID = path[path.length - 1];
 
   if (forwardedDone) {
-    console.log("forwardedDone");
     setTimeout(() => {
       localStorage.setItem(
         "problemToShowResults",
@@ -35,18 +34,13 @@ const ShowResults = () => {
   }
 
   const navigate = useNavigate();
-  // const [answer, setAnswer] = useState([]);
 
   const [ques_id, setQuestionId] = useState(
     useLocation().pathname.split("/")[2]
   );
 
-  console.log("QUESTION ID1", ques_id);
-
-  function formatRoutes(jsonString) {
-    // const data = JSON.parse(jsonString);
-    // const { Objective, routes } = data;
-
+  //format all details into the .txt file that can be downloaded
+  function formatRoutes() {
     let result = `Objective: ${Objective}\n`;
     let maxDistance = `\nMaximum of the route distances: ${MaxDistance}\n`;
 
@@ -61,49 +55,24 @@ const ShowResults = () => {
 
     return result;
   }
-  const jsonString = `{
-    "Objective": 1158945,
-    "routes": [
-      {
-        "Route": "0 ->  12 ->  7 ->  13 ->  2 ->  4 -> 0",
-        "Distance of the route": "8361m"
-      },
-      {
-        "Route": "0 ->  9 ->  14 -> 0",
-        "Distance of the route": "11178m"
-      },
-      {
-        "Route": "0 ->  19 ->  1 ->  6 ->  16 ->  18 ->  5 -> 0",
-        "Distance of the route": "11165m"
-      },
-      {
-        "Route": "0 ->  3 ->  11 ->  8 ->  15 ->  17 ->  10 ->  20 ->  21 ->  22 ->  23 ->  24 -> 0",
-        "Distance of the route": "15000m"
-      },
-      {
-        "Route": "0 ->  25 ->  26 ->  27 ->  28 ->  29 ->  30 ->  31 ->  32 ->  33 ->  34 -> 0",
-        "Distance of the route": "18000m"
-      }
-    ]
-  }`;
 
-  const results_file = formatRoutes(jsonString);
+  //format all results info and render the results in the downloadable .txt file
+  const results_file = formatRoutes();
   const render_results_file = results_file.split("\n");
 
+  //on loading of the page, fetch the appropriate results of the question that was used in the route to get here
+  //handle appropriate errors : not enough credits to view the results
   useEffect(() => {
     const fetchMyAnswer = async () => {
-      console.log("QUESTION ID2", ques_id);
       try {
         const res = await axios.get(
           `http://localhost:8080/api/getResults?id=${ques_id}`
         );
         if (res.status === 200) {
-          console.log("STATUS", res.status);
           setNotAllowedToSeeResults(false);
           setRoutesData(res.data[0].answer.Routes);
           setAnswerObjective(res.data[0].answer.Objective);
           setAnswerMaxDistance(res.data[0].answer.Maximum_distance);
-          console.log("Fetched Answer: ", res.data[0].answer.Routes);
         }
         if (res.status === 204) {
           setEnoughCredits(false);
@@ -119,12 +88,12 @@ const ShowResults = () => {
     fetchMyAnswer();
   }, [ques_id]);
 
+  //necessary for user authentication and access token management
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
         const res = await axios.get(`http://localhost:8080/auth/getToken`);
         setAccessToken(res.data.token);
-        console.log("TOKEN", res.data);
         if (res.data.token) {
           setUserId(JSON.parse(localStorage.getItem("user")).id);
         } else setAccessToken(false);
@@ -132,10 +101,13 @@ const ShowResults = () => {
         console.log(error);
       }
     };
+    
+    //construct the graph that depicts the route of a vehicle
     if (selectedRoute !== null && routesData.length > 0) {
-      const selectedRouteData = routesData[selectedRoute];
+      const selectedRouteData = routesData[selectedRoute]; //the selected vehicle
       const routeDescription = selectedRouteData.Route;
 
+      //find the nodes and save them to a state variable
       const nodes = routeDescription.split(" -> ").map((node) => node.trim());
       let help1 = [];
       let help2 = [];
@@ -147,6 +119,7 @@ const ShowResults = () => {
       }
       setNodes_Graph(help1);
 
+      //find the edges and save them to a state variable
       for (let i = 0; i < nodes.length - 1; i++) {
         help2.push({
           id: i,
@@ -160,15 +133,19 @@ const ShowResults = () => {
     fetchAccessToken();
   }, [selectedRoute, routesData, notAllowedToSeeResults]);
 
+  //update necessary state variables regarding the chosen vehicle of the user
   const handleRouteSelection = (routeIndex) => {
     setSelectedRoute(routeIndex);
     setShowModal(true);
   };
+
+  //function to close the modal with the graph of a route
   const closeModal = () => {
     setShowModal(false);
     setSelectedRoute(null);
   };
 
+  //functions to handle the opening and closing of the modal showing the .txt file
   const handleFileClick = () => {
     setIsFileOpen(true);
   };
@@ -177,6 +154,7 @@ const ShowResults = () => {
     setIsFileOpen(false);
   };
 
+  //handling the downloading of the file in a .txt format
   const DownloadFile = () => {
     const link = document.createElement("a");
     const content = results_file;
@@ -186,6 +164,8 @@ const ShowResults = () => {
     link.click();
     URL.revokeObjectURL(link.href);
   };
+
+  //until all operations (e.g. user authentication) are completed, a Loading Spinner is being displayed
   if (accessToken === null) {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -212,6 +192,7 @@ const ShowResults = () => {
     );
   }
   if (accessToken) {
+    //handle the not enough credits error by showing a suitable message to the user
     if (!enoughCredits) {
       return (
         <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -221,6 +202,7 @@ const ShowResults = () => {
         </div>
       );
     }
+    //handling the case when a user is not authenticated to see the results of a problem
     if (notAllowedToSeeResults) {
       return (
         <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
@@ -230,6 +212,7 @@ const ShowResults = () => {
         </div>
       );
     } else {
+      //rendering the problem's results to the user
       return (
         <div className="bg-orange-50 bg-cover w-screen flex items-center justify-center overflow-auto">
           <div class="bg-orange-50 bg-cover w-1/6 h-screen flex-col items-center justify-center overflow-auto"></div>
@@ -277,7 +260,7 @@ const ShowResults = () => {
                 </table>
               </div>
 
-              {/* Modal */}
+              {/* Modal - Graph of the route of the chosen vehicle : use of reagraph's Graph Canvas component */}
               {showModal && selectedRoute !== null && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
                   <div className="relative bg-white shadow-xl rounded-md max-w-screen-lg mx-auto">
@@ -310,7 +293,7 @@ const ShowResults = () => {
                 </div>
               )}
 
-              {/* File */}
+              {/* File Modal */}
               {isFileOpen && (
                 <div className="fixed z-50 inset-0 bg-gray-900 bg-opacity-60 overflow-y-auto h-full w-full px-4">
                   <div className="relative top-40 mx-auto shadow-xl rounded-md bg-white max-w-3xl">
@@ -373,6 +356,7 @@ const ShowResults = () => {
       );
     }
   } else {
+    //case when one tries to view a problem that's not his (he hasn't logged in)
     if (!forwardedFromEmail) {
       return (
         <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">
@@ -383,7 +367,6 @@ const ShowResults = () => {
       );
     } else {
       if (accessToken === false) {
-        console.log("accessTokFalse");
         navigate(`/login?showresults=${problemID}`);
       }
     }
