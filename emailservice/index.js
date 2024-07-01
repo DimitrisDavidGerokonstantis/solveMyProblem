@@ -1,5 +1,6 @@
 import express from "express";
 import routes from "./src/routes/routes.js";
+import healthRoute from "./src/routes/healthRoute.js";
 import cors from "cors";
 import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
@@ -21,6 +22,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/email", routes);
+app.use("/health", healthRoute);
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(() => resolve(), ms));

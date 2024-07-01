@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Filter from "../images/filter.png";
+import Anonymous from "../images/anonymous-avatar-icon-25.png";
 import Sort from "../images/sort.png";
 
 const ShowMySubmissions = () => {
@@ -283,6 +284,9 @@ const ShowMySubmissions = () => {
                     src={problemUserPicture}
                     alt="No picture"
                     crossorigin="anonymous"
+                    onError={(e) => {
+                      if (problemUserPicture) e.target.src = { Anonymous };
+                    }}
                   />
                   <p className="font-bold text-sm">{problemUsername}</p>
                 </div>

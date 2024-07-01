@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 //import { consumeProblem } from "./src/consumeProblem.js";
 import { consumeResult } from "./src/consumeResult.js";
 import cors from "cors";
+import healthRoute from "./src/routes/healthRoute.js";
 import routes from "./src/routes/routes.js";
 import cookieParser from "cookie-parser";
 mongoose.connect(process.env.MONGO_DB_URI);
@@ -19,6 +20,7 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use("/api", routes);
+app.use("/health", healthRoute);
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(() => resolve(), ms));

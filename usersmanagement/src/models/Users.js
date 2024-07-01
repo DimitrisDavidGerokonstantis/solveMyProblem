@@ -29,7 +29,11 @@ const usersSchema = new Schema({
     default: "",
   },
   google_access_token: { type: String, default: "" },
-  picture: { type: String, default: "" },
+  picture: {
+    type: String,
+    default:
+      "https://as1.ftcdn.net/v2/jpg/05/16/27/58/1000_F_516275801_f3Fsp17x6HQK0xQgDQEELoTuERO4SsWV.jpg",
+  },
   joinedAt: {
     type: Date,
     immutable: true,

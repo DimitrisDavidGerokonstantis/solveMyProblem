@@ -1,4 +1,5 @@
 import express from "express";
+import healthRoute from "./src/routes/healthRoute.js";
 import routes from "./src/routes/routes.js";
 import googleRoutes from "./src/routes/oauth.js";
 import paymentRoutes from "./src/routes/paymentRoutes.js";
@@ -30,6 +31,7 @@ app.use(cookieParser());
 app.use("/auth", routes);
 app.use("/googleAuth", googleRoutes);
 app.use("/pay", paymentRoutes);
+app.use("/health", healthRoute);
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(() => resolve(), ms));

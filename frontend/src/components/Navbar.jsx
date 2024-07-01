@@ -8,7 +8,8 @@ import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import PaypalPayment from "./PaypalPayment";
-
+import Anonymous from "../images/anonymous-avatar-icon-25.png";
+import healthCheck from "../images/healthCheck3.png";
 const Navbar = ({ onNotify }) => {
   const [open, setOpen] = useState(false);
 
@@ -37,6 +38,18 @@ const Navbar = ({ onNotify }) => {
   const [profileInfoClass, setProfileInfoClass] = useState(
     "fixed hidden mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
   );
+
+  const [emailServiceStatus, setEmailServiceStatus] = useState(null);
+  const [showResultsStatus, setshowResultsStatus] = useState(null);
+  const [showSubmissionsStatus, setshowSubmissionsStatus] = useState(null);
+  const [solverStatus, setSolverStatus] = useState(null);
+  const [solversProxyStatus, setSolversProxyStatus] = useState(null);
+  const [submitProblemStatus, setsubmitProblemStatus] = useState(null);
+  const [usersManagementStatus, setUsersManagementStatus] = useState(null);
+  const [viewStatisticsStatus, setViewStatisticsStatus] = useState(null);
+  const [healthProgress, setHealthProgress] = useState(0);
+  const [onlineServices, setOnlineServices] = useState(0);
+
   const pathname = window.location.pathname;
   // Extract the "landing" part
   const pathSegment = pathname.split("/").pop();
@@ -140,6 +153,169 @@ const Navbar = ({ onNotify }) => {
     setCreditsToBuy(e.target.value);
   };
 
+  const handleHealthCheck = async () => {
+    document.getElementById("my_modal_3").showModal();
+    let myHealthProg = healthProgress;
+    let online = onlineServices;
+
+    axios
+      .post("http://localhost:8080/health/emailservice/check")
+      .then((response) => {
+        if (response.status === 200 && response.data.status === "UP") {
+          setEmailServiceStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setEmailServiceStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/submitproblem/check")
+      .then((res2) => {
+        if (res2.status === 200 && res2.data.status === "UP") {
+          setsubmitProblemStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setsubmitProblemStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/showsubmissions/check")
+      .then((res4) => {
+        if (res4.status === 200 && res4.data.status === "UP") {
+          setshowSubmissionsStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setshowSubmissionsStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/viewresults/check")
+      .then((res3) => {
+        if (res3.status === 200 && res3.data.status === "UP") {
+          setshowResultsStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setshowResultsStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/viewstatistics/check")
+      .then((res5) => {
+        if (res5.status === 200 && res5.data.status === "UP") {
+          setViewStatisticsStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setViewStatisticsStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/usersmanagement/check")
+      .then((res8) => {
+        if (res8.status === 200 && res8.data.status === "UP") {
+          setUsersManagementStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setUsersManagementStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/solversproxy/check")
+      .then((res6) => {
+        if (res6.status === 200 && res6.data.status === "UP") {
+          setSolversProxyStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setSolversProxyStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+
+    axios
+      .post("http://localhost:8080/health/solver/check")
+      .then((res7) => {
+        if (res7.status === 200 && res7.data.status === "UP") {
+          setSolverStatus("Online");
+          setOnlineServices(online + 1);
+          online = online + 1;
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setSolverStatus("Offline");
+      })
+      .then(() => {
+        setHealthProgress(myHealthProg + 1);
+        myHealthProg = myHealthProg + 1;
+      });
+  };
+
+  const handleNullStatus = () => {
+    setEmailServiceStatus(null);
+    setshowResultsStatus(null);
+    setshowSubmissionsStatus(null);
+    setSolverStatus(null);
+    setSolversProxyStatus(null);
+    setsubmitProblemStatus(null);
+    setUsersManagementStatus(null);
+    setViewStatisticsStatus(null);
+    setHealthProgress(0);
+    setOnlineServices(0);
+  };
+
   const handleCreditsBuy = async (e) => {
     try {
       const stripe = await loadStripe(
@@ -192,6 +368,10 @@ const Navbar = ({ onNotify }) => {
           >
             SOLVIO
           </Link>
+          <button onClick={handleHealthCheck} className="ml-10">
+            {" "}
+            <img src={healthCheck} alt="" className="h-8 w-8" />
+          </button>
         </div>
 
         <div className="flex justify-end items-center relative">
@@ -283,12 +463,20 @@ const Navbar = ({ onNotify }) => {
                       </div>
                       <p className="py-4 mt-4 text-lg ">Buy credits</p>
 
-                      <input
+                      {/* <input
                         type="number"
                         placeholder="credits to buy"
                         onChange={handleCredits}
                         className="input text-center py-2 px-2 mb-2 input-bordered w-fit max-w-xs rounded-full bg-orange-50"
+                      /> */}
+                      <input
+                        type="range"
+                        min="1"
+                        max="100"
+                        className="range w-full h-4 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-orange-500 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        onChange={handleCredits}
                       />
+
                       <form method="dialog">
                         {/* <button
                           onClick={handleCreditsBuy}
@@ -316,7 +504,230 @@ const Navbar = ({ onNotify }) => {
                   <div className=" modal-action">
                     <form method="dialog">
                       {/* if there is a button in form, it will close the modal */}
-                      <button className="px-4 py-2 inline-flex items-center relative px-2 border bg-red-200 border-orange-900 rounded-full hover:shadow-lg btn">
+                      <button
+                        className="px-4 py-2 inline-flex items-center relative px-2 border bg-red-200 border-orange-900 rounded-full hover:shadow-lg btn"
+                        onClick={() => setCreditsToBuy("")}
+                      >
+                        Close
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </dialog>
+              <dialog
+                id="my_modal_3"
+                className="modal p-8 rounded-lg bg-orange-100"
+              >
+                <div class="flex flex-col bg-orange-200 text-black p-4 items-center justify-center">
+                  <div class="container mx-auto p-2 mb-4">
+                    <h1 class="text-4xl font-bold mb-4">
+                      Microservices Status
+                    </h1>
+                    <div class="grid grid-cols-3 gap-4">
+                      <div class="col-span-3 md:col-span-1">
+                        {emailServiceStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Email service</h2>
+                            <p class="text-sm">{emailServiceStatus}</p>
+                          </div>
+                        )}
+                        {emailServiceStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Email service</h2>
+                            <p class="text-sm">{emailServiceStatus}</p>
+                          </div>
+                        )}
+                        {!emailServiceStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Email service</h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {submitProblemStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Submit Problem</h2>
+                            <p class="text-sm">{submitProblemStatus}</p>
+                          </div>
+                        )}
+                        {submitProblemStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Submit Problem</h2>
+                            <p class="text-sm">{submitProblemStatus}</p>
+                          </div>
+                        )}
+                        {!submitProblemStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Submit Problem</h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {showSubmissionsStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">
+                              Show submissions
+                            </h2>
+                            <p class="text-sm">{showSubmissionsStatus}</p>
+                          </div>
+                        )}
+                        {showSubmissionsStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">
+                              Show submissions
+                            </h2>
+                            <p class="text-sm">{showSubmissionsStatus}</p>
+                          </div>
+                        )}
+                        {!showSubmissionsStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">
+                              Show submissions
+                            </h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {showResultsStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Show results</h2>
+                            <p class="text-sm">{showResultsStatus}</p>
+                          </div>
+                        )}
+                        {showResultsStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Show results</h2>
+                            <p class="text-sm">{showResultsStatus}</p>
+                          </div>
+                        )}
+                        {!showResultsStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Show results</h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {viewStatisticsStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">View Statistics</h2>
+                            <p class="text-sm">{viewStatisticsStatus}</p>
+                          </div>
+                        )}
+                        {viewStatisticsStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">View Statistics</h2>
+                            <p class="text-sm">{viewStatisticsStatus}</p>
+                          </div>
+                        )}
+                        {!viewStatisticsStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">View Statistics</h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {usersManagementStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">
+                              Users management
+                            </h2>
+                            <p class="text-sm">{usersManagementStatus}</p>
+                          </div>
+                        )}
+                        {usersManagementStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">
+                              Users management
+                            </h2>
+                            <p class="text-sm">{usersManagementStatus}</p>
+                          </div>
+                        )}
+                        {!usersManagementStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">
+                              Users management
+                            </h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {solversProxyStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Solver's proxy</h2>
+                            <p class="text-sm">{solversProxyStatus}</p>
+                          </div>
+                        )}
+                        {solversProxyStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Solver's proxy</h2>
+                            <p class="text-sm">{solversProxyStatus}</p>
+                          </div>
+                        )}
+                        {!solversProxyStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Solver's proxy</h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        {solverStatus === "Online" && (
+                          <div class="bg-green-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Solver</h2>
+                            <p class="text-sm">{solverStatus}</p>
+                          </div>
+                        )}
+                        {solverStatus === "Offline" && (
+                          <div class="bg-red-500 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Solver</h2>
+                            <p class="text-sm">{solverStatus}</p>
+                          </div>
+                        )}
+                        {!solverStatus && (
+                          <div class="bg-gray-400 p-4 rounded-lg text-center">
+                            <h2 class="text-lg font-medium">Solver</h2>
+                            <p class="text-sm">Wait...</p>
+                          </div>
+                        )}
+                      </div>
+                      <div class="col-span-3 md:col-span-1">
+                        <div class="bg-orange-900 p-4 rounded-lg text-center">
+                          <h2 class="text-lg text-gray-200 font-medium">
+                            Running Services
+                          </h2>
+                          <p class="text-sm text-gray-200">
+                            {onlineServices}/8
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {healthProgress !== 8 && (
+                    <div className="flex flex-row gap-4">
+                      <progress
+                        className="progress progress-success  mt-2 mb-4 w-56 h-4"
+                        value={(healthProgress / 8) * 100}
+                        max="100"
+                      ></progress>
+                      <p className="text-sm text-gray-700">
+                        {(healthProgress / 8) * 100}%
+                      </p>
+                    </div>
+                  )}
+
+                  <div className=" modal-action">
+                    <form method="dialog">
+                      {/* if there is a button in form, it will close the modal */}
+                      <button
+                        className="px-4 py-2 inline-flex items-center relative px-2 border bg-red-200 border-orange-900 rounded-full hover:shadow-lg btn"
+                        onClick={handleNullStatus}
+                      >
                         Close
                       </button>
                     </form>
@@ -371,6 +782,9 @@ const Navbar = ({ onNotify }) => {
                             src={googleuser.picture}
                             alt=""
                             crossorigin="anonymous"
+                            onError={(e) => {
+                              e.target.src = { Anonymous };
+                            }}
                           />
                         </button>
                         {open && (

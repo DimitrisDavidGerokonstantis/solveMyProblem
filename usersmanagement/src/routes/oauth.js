@@ -81,13 +81,24 @@ router.get("/oauth", async (req, res, next) => {
     console.log("Tokens acquired", tokens);
     const data = await getUserData(tokens.access_token);
     const createdUser = await createGoogleUser(data, tokens.access_token);
-    const result = await axios.post("http://emailservice:5000/email/addUser", {
-      user: createdUser,
-    });
-    console.log("Email service - Add user", result);
-    res.redirect(
-      `http://localhost:8080/login?google=true&token=${tokens.access_token}`
-    );
+    try {
+      const result = await axios.post(
+        "http://emailservice:5000/email/addUser",
+        {
+          user: createdUser,
+        }
+      );
+      console.log("Email service - Add user", result);
+      res.redirect(
+        `http://localhost:8080/login?google=true&token=${tokens.access_token}`
+      );
+      res.status(200);
+    } catch (error) {
+      res.redirect(
+        `http://localhost:8080/login?google=true&token=${tokens.access_token}`
+      );
+      res.status(200);
+    }
   } catch (error) {
     console.log("Error with signing in with Google:", error.message);
     res.status(500).send("Error with signing in with Google");

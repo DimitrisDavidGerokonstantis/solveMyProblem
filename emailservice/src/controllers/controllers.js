@@ -101,3 +101,11 @@ export const sendEmailForAnswerController = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+
+export const checkHealth = async (req, res) => {
+  try {
+    return res.status(200).json({ status: "UP" });
+  } catch (error) {
+    return res.status(500).json({ status: "DOWN" });
+  }
+};

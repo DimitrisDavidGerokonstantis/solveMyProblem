@@ -1,4 +1,5 @@
 import express from "express";
+import healthRoute from "./src/routes/healthRoute.js";
 import routes from "./src/routes/routes.js";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -20,6 +21,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", routes);
+app.use("/health", healthRoute);
 
 // Start server
 app.listen(5000, () => {

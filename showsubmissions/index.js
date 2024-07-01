@@ -1,4 +1,5 @@
 import express from "express";
+import healthRoute from "./src/routes/healthRoute.js";
 import routes from "./src/routes/routes.js";
 import cors from "cors";
 import mongoose from "mongoose";
@@ -21,7 +22,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 
 app.use("/api", routes);
-
+app.use("/health", healthRoute);
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(() => resolve(), ms));
 }

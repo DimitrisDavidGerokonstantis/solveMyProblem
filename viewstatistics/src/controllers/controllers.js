@@ -214,3 +214,11 @@ export const getStats = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch statistics" });
   }
 };
+
+export const checkHealth = async (req, res) => {
+  try {
+    return res.status(200).json({ status: "UP" });
+  } catch (error) {
+    return res.status(500).json({ status: "DOWN" });
+  }
+};
