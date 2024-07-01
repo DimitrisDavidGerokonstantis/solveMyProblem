@@ -10,6 +10,7 @@ export const AuthContextProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("user") || null)
   );
 
+  // set user in the local storage and call the login endpoint
   const login = async (inputs) => {
     const res = await axios.post(`http://localhost:8080/auth/login`, inputs);
     setCurrentUser(res.data);
@@ -17,6 +18,7 @@ export const AuthContextProvider = ({ children }) => {
     return res.data.role;
   };
 
+  // login via google using the provided google token
   const googleLogin = async (googleToken) => {
     const res = await axios.post(
       "http://localhost:8080/googleAuth/loginByGoogleToken",
@@ -34,6 +36,7 @@ export const AuthContextProvider = ({ children }) => {
     return res.data;
   };
 
+  // set user as null and call logout endpoint
   const logout = async (inputs) => {
     const res = await axios.post(`http://localhost:8080/auth/logout`);
     setCurrentUser(null);

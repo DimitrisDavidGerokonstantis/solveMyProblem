@@ -1,20 +1,18 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
 import { CopyBlock, dracula } from "react-code-blocks";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
-
+// onNotify (function to create react-toastify notifications)
 const NewSubmission = ({ onNotify }) => {
   const [accessToken, setAccessToken] = useState(null);
   const [userId, setUserId] = useState(null);
   const [role, setRole] = useState("");
-
   const navigate = useNavigate();
-
   const [showModalInput, setShowModalInput] = React.useState(false);
   const [showModalScript, setShowModalScript] = React.useState(false);
   const [file1Error, setFile1Error] = useState("");
   const [file2Error, setFile2Error] = useState("");
+  // state variables related to the problem's params
   const [inputDataFile, setInputDataFile] = useState("");
   const [inputScriptFile, setInputScriptFile] = useState("");
   const [inputDataFileName, setInputDataFileName] = useState("");
@@ -23,6 +21,7 @@ const NewSubmission = ({ onNotify }) => {
   const [textContent2, setTextContent2] = useState("");
   const [model, setModel] = useState("No model selected");
   const [isOpen, setIsOpen] = useState(true); // Set to true to open the dropdown by default
+  // solver's models to show in the dropdown
   const models = [
     "No model selected",
     "Model 1 : Vehicle Routing Problem (VRP)",
@@ -30,6 +29,7 @@ const NewSubmission = ({ onNotify }) => {
     "Model 3 : Solve problem 3",
     "Model 4 : Solve problem 4",
   ];
+  // dropdown styling (hidden or not)
   const [dropDownClass, setDropdownClass] = useState(
     "hidden rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
   );
@@ -40,12 +40,15 @@ const NewSubmission = ({ onNotify }) => {
   const [maxDistance, setMaxDistance] = useState("");
   const [distanceError, setDistanceError] = useState("");
   const [submitError, setSubmitError] = useState("");
+  // default problem's name
   const [name, setName] = useState(
     "problem" + Math.floor(Math.random() * 999999999) + 1
   );
 
+  // regular expression to recognize numbers
   const numberRegex = /^[0-9]+$/;
 
+  // check if the user is logged in and get info about the user
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
@@ -65,6 +68,7 @@ const NewSubmission = ({ onNotify }) => {
     fetchAccessToken();
   }, []);
 
+  // define a block of code (so as to show the .json and .py input files)
   console.log(inputDataFile.length, inputScriptFile.length);
   function MyCoolCodeBlock({ code, language, showLineNumbers }) {
     return (
@@ -80,6 +84,7 @@ const NewSubmission = ({ onNotify }) => {
     );
   }
 
+  // just defining the styling of the dropdown containing the models (hidden or not)
   function toggleDropdown() {
     setIsOpen(!isOpen);
     if (isOpen) {
@@ -97,6 +102,7 @@ const NewSubmission = ({ onNotify }) => {
     toggleDropdown();
   };
 
+  // searching in the models' dropdown
   const handleSearch = (e) => {
     const searchTerm = e.target.value.toLowerCase();
     const items = document
@@ -112,6 +118,7 @@ const NewSubmission = ({ onNotify }) => {
     });
   };
 
+  // file inputs : handling drag and drop operations
   const handleDragOver = (e) => {
     e.preventDefault();
     e.target.classList.add("border-orange-500", "border-2");
@@ -142,6 +149,9 @@ const NewSubmission = ({ onNotify }) => {
     }
   };
 
+  // read the input files and check if their format is valid
+  // change the corresponding state variables including those containing info about the submitted
+  // input files (name, size)
   function handleFiles(files, id) {
     for (const file of files) {
       if (
@@ -188,7 +198,7 @@ const NewSubmission = ({ onNotify }) => {
       }
     }
   }
-
+  // calculate input files' size
   function formatBytes(bytes) {
     if (bytes === 0) return "0 Bytes";
 
@@ -199,10 +209,14 @@ const NewSubmission = ({ onNotify }) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   }
 
+  // handle changes in the problem's name
   const handleName = (e) => {
     setName(e.target.value);
   };
 
+  // handle new submissions
+  // check for missing or invalid inputs
+  // and call the corresponding endpoint to submit the problem
   const handleSubmit = async (e) => {
     e.preventDefault();
     let error = false;
@@ -265,7 +279,8 @@ const NewSubmission = ({ onNotify }) => {
       }
     }
   };
-
+  // handle changes in the number of vehicles
+  // (also check for valid values)
   const handleVehicles = (e) => {
     setNumVehicles(e.target.value);
     if (!e.target.value.match(numberRegex) && e.target.value !== "") {
@@ -274,7 +289,8 @@ const NewSubmission = ({ onNotify }) => {
       setVehiclesError("");
     }
   };
-
+  // handle changes in the depot param
+  // (also check for valid values)
   const handleDepot = (e) => {
     setDepot(e.target.value);
     if (!e.target.value.match(numberRegex) && e.target.value !== "") {
@@ -283,7 +299,8 @@ const NewSubmission = ({ onNotify }) => {
       setDepotError("");
     }
   };
-
+  // handle changes in distance param
+  // (also check for valid values)
   const handleDistance = (e) => {
     setMaxDistance(e.target.value);
     if (!e.target.value.match(numberRegex) && e.target.value !== "") {
@@ -292,6 +309,7 @@ const NewSubmission = ({ onNotify }) => {
       setDistanceError("");
     }
   };
+  // if the access token is not fetched, just show a loading spinner
   if (accessToken === null) {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -317,6 +335,7 @@ const NewSubmission = ({ onNotify }) => {
       </div>
     );
   }
+  // if access token exists and the user is not an admin, load the main page for submitting problems
   if (accessToken && role != "admin") {
     return (
       <React.Fragment>
@@ -684,6 +703,7 @@ const NewSubmission = ({ onNotify }) => {
         </>
       </React.Fragment>
     );
+    // if access token is not available or the user is an admin, show error message
   } else {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">

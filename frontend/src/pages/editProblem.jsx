@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import ReactDOM from "react-dom";
 import { CopyBlock, dracula } from "react-code-blocks";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+
+// onNotify (function to create react-toastify notifications)
 const EditProblem = ({ onNotify }) => {
   const navigate = useNavigate();
   const [accessToken, setAccessToken] = useState(null);
@@ -12,6 +13,7 @@ const EditProblem = ({ onNotify }) => {
   const [showModalScript, setShowModalScript] = React.useState(false);
   const [file1Error, setFile1Error] = useState("");
   const [file2Error, setFile2Error] = useState("");
+  // state variables related to the problem's params
   const [inputDataFile, setInputDataFile] = useState("");
   const [inputScriptFile, setInputScriptFile] = useState("");
   const [inputDataFileName, setInputDataFileName] = useState("");
@@ -22,16 +24,16 @@ const EditProblem = ({ onNotify }) => {
   const [isOpen, setIsOpen] = useState(true); // Set to true to open the dropdown by default
   const viewOnly = useLocation().search === "?viewOnly=true";
   console.log("VIEW ONLY", viewOnly);
-  const models = [
-    "No model selected",
-    "Model 1 : Vehicle Routing Problem (VRP)",
-    "Model 2 : Solve problem 2",
-    "Model 3 : Solve problem 3",
-    "Model 4 : Solve problem 4",
-  ];
-  const [dropDownClass, setDropdownClass] = useState(
-    "hidden rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
-  );
+  // const models = [
+  //   "No model selected",
+  //   "Model 1 : Vehicle Routing Problem (VRP)",
+  //   "Model 2 : Solve problem 2",
+  //   "Model 3 : Solve problem 3",
+  //   "Model 4 : Solve problem 4",
+  // ];
+  // const [dropDownClass, setDropdownClass] = useState(
+  //   "hidden rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
+  // );
   const [numVehicles, setNumVehicles] = useState("");
   const [vehiclesError, setVehiclesError] = useState("");
   const [depot, setDepot] = useState("");
@@ -43,9 +45,11 @@ const EditProblem = ({ onNotify }) => {
     useLocation().pathname.split("/")[2]
   );
   const [name, setName] = useState("");
-
+  // regular expression to recognize numbers
   const numberRegex = /^[0-9]+$/;
 
+  // check if the user is logged in and get info about the user
+  // also fetch information about a specific problem
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
@@ -88,7 +92,7 @@ const EditProblem = ({ onNotify }) => {
     fetchData();
   }, []);
 
-  //console.log(inputDataFile.length, inputScriptFile.length);
+  // define a block of code (so as to show the .json and .py input files)
   function MyCoolCodeBlock({ code, language, showLineNumbers }) {
     return (
       <div class="ml-10 mr-10">
@@ -103,38 +107,40 @@ const EditProblem = ({ onNotify }) => {
     );
   }
 
-  function toggleDropdown() {
-    setIsOpen(!isOpen);
-    if (isOpen) {
-      setDropdownClass(
-        "rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
-      );
-    } else {
-      setDropdownClass(
-        "hidden rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
-      );
-    }
-  }
+  // // just defining the styling of the dropdown
+  // function toggleDropdown() {
+  //   setIsOpen(!isOpen);
+  //   if (isOpen) {
+  //     setDropdownClass(
+  //       "rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
+  //     );
+  //   } else {
+  //     setDropdownClass(
+  //       "hidden rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 p-1"
+  //     );
+  //   }
+  // }
 
-  const handleDropdownClick = () => {
-    toggleDropdown();
-  };
+  // const handleDropdownClick = () => {
+  //   toggleDropdown();
+  // };
 
-  const handleSearch = (e) => {
-    const searchTerm = e.target.value.toLowerCase();
-    const items = document
-      .getElementById("dropdown-menu")
-      .querySelectorAll("a");
-    items.forEach((item) => {
-      const text = item.textContent.toLowerCase();
-      if (text.includes(searchTerm)) {
-        item.style.display = "block";
-      } else {
-        item.style.display = "none";
-      }
-    });
-  };
+  // const handleSearch = (e) => {
+  //   const searchTerm = e.target.value.toLowerCase();
+  //   const items = document
+  //     .getElementById("dropdown-menu")
+  //     .querySelectorAll("a");
+  //   items.forEach((item) => {
+  //     const text = item.textContent.toLowerCase();
+  //     if (text.includes(searchTerm)) {
+  //       item.style.display = "block";
+  //     } else {
+  //       item.style.display = "none";
+  //     }
+  //   });
+  // };
 
+  // handle drag and drop functionalities of file inputs
   const handleDragOver = (e) => {
     e.preventDefault();
     if (!viewOnly) {
@@ -173,6 +179,9 @@ const EditProblem = ({ onNotify }) => {
     }
   };
 
+  // read the input files and check if their format is valid
+  // change the corresponding state variables including those containing info about the submitted
+  // input files (name, size)
   function handleFiles(files, id) {
     for (const file of files) {
       if (
@@ -219,6 +228,7 @@ const EditProblem = ({ onNotify }) => {
     }
   }
 
+  // calculate input files' size
   function formatBytes(bytes) {
     if (bytes === 0) return "0 Bytes";
 
@@ -233,6 +243,9 @@ const EditProblem = ({ onNotify }) => {
     setName(e.target.value);
   };
 
+  // handle update submissions
+  // check for missing or invalid inputs
+  // and call the corresponding endpoint to update the problem
   const handleSubmit = async (e) => {
     e.preventDefault();
     let error = false;
@@ -297,6 +310,8 @@ const EditProblem = ({ onNotify }) => {
     }
   };
 
+  // handle changes in the number of vehicles
+  // (also check for valid values)
   const handleVehicles = (e) => {
     setNumVehicles(e.target.value);
     if (!e.target.value.match(numberRegex) && e.target.value !== "") {
@@ -306,6 +321,8 @@ const EditProblem = ({ onNotify }) => {
     }
   };
 
+  // handle changes in the depot param
+  // (also check for valid values)
   const handleDepot = (e) => {
     setDepot(e.target.value);
     if (!e.target.value.match(numberRegex) && e.target.value !== "") {
@@ -315,6 +332,8 @@ const EditProblem = ({ onNotify }) => {
     }
   };
 
+  // handle changes in distance param
+  // (also check for valid values)
   const handleDistance = (e) => {
     setMaxDistance(e.target.value);
     if (!e.target.value.match(numberRegex) && e.target.value !== "") {
@@ -323,6 +342,8 @@ const EditProblem = ({ onNotify }) => {
       setDistanceError("");
     }
   };
+
+  // if the access token is not fetched, just show a loading spinner
   if (accessToken === null) {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -348,6 +369,8 @@ const EditProblem = ({ onNotify }) => {
       </div>
     );
   }
+  // when user information is fetched, load the main page
+  // be sure that the user is either an admin with readonly permissions or a regular user
   if (
     (accessToken && role != "admin") ||
     (accessToken && role === "admin" && viewOnly)
@@ -741,6 +764,7 @@ const EditProblem = ({ onNotify }) => {
         </>
       </React.Fragment>
     );
+    // if no access token is available or the user has no permissions to read the page
   } else {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex justify-center">

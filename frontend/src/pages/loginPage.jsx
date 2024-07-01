@@ -14,14 +14,14 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [role, setRole] = useState("");
   const [userId, setUserId] = useState(null);
+  // state variables related to the user's credentials
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const [loginError, setLoginError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [problemID, setProblemID] = useState(searchParams.get("showresults"));
 
-  //const problemID = searchParams.get("showresults");
+  // used for redirection in the results page for a specific problem
   if (problemID) {
     localStorage.setItem(
       "problemToShowResults",
@@ -35,6 +35,7 @@ const LoginPage = () => {
     window.location.href = url;
   };
 
+  // navigate to google login page
   async function auth() {
     const response = await fetch(
       "http://127.0.0.1:5001/googleAuth/googleRequest",
@@ -46,6 +47,7 @@ const LoginPage = () => {
     navig(data.url);
   }
 
+  // handle username updates making the necessary validations
   const handleUsername = (e) => {
     setUsername(e.target.value);
     if (e.target.value.length > 24) {
@@ -54,11 +56,16 @@ const LoginPage = () => {
       setUsernameError("");
     }
   };
-
+  // handle password updates
   const handlePassword = (e) => {
     setPassword(e.target.value);
   };
 
+  // handle submission of credentials
+  // make some simple frontend validations and call the
+  // login function (that calls the login endpoint)
+  // after logging in, call fetch access token to verify the successful login
+  // and redirect to the correct page
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (username.length === 0 || password.length === 0) {
@@ -72,8 +79,6 @@ const LoginPage = () => {
           username: username,
           password: password,
         });
-        // if (result === "user") navigate("/submissions");
-        // else if (result === "admin") navigate("/allsubmissions");
         fetchAccessToken();
       } catch (error) {
         console.log(error.response.data);
@@ -81,6 +86,9 @@ const LoginPage = () => {
       }
     }
   };
+
+  // check if an access token is available (i.e. the user is logged in) and retrieve user's information
+  // navigate to the correct page corresponding to the user's role
   const fetchAccessToken = async () => {
     try {
       const res = await axios.get(`http://localhost:8080/auth/getToken`);
@@ -113,6 +121,9 @@ const LoginPage = () => {
     }
   };
 
+  // if the user is going to login via google, call googleLogin function
+  // which is going to register the user as a google user and create the necessary JWT
+  // After that, call fetchAccessToken to verify the successful login and redirect to the correct page
   useEffect(() => {
     const executeGoogleLoginOrFetchToken = async () => {
       try {
@@ -122,13 +133,6 @@ const LoginPage = () => {
           console.log("GOOGLE TOKEN", googleToken);
           const googleUser = await googleLogin(googleToken); // Wait for googleLogin to complete
           console.log("GU", googleUser);
-
-          // if (googleUser.role === "user") {
-          //   navigate("/submissions");
-          // }
-          // if (googleUser.role === "admin") {
-          //   navigate("/allsubmissions");
-          // }
         }
         setTimeout(() => {
           fetchAccessToken();
@@ -137,9 +141,10 @@ const LoginPage = () => {
         console.log(error);
       }
     };
-
     executeGoogleLoginOrFetchToken();
   }, [problemID]);
+
+  // if the access token is not fetched or google login is under processing, just show a loading spinner
   if (accessToken === null) {
     return (
       <div class="bg-orange-50 bg-cover w-screen h-screen flex items-center justify-center overflow-auto">
@@ -192,6 +197,7 @@ const LoginPage = () => {
     );
   }
 
+  // else render the main login page
   return (
     <div class="relative flex h-screen w-screen">
       <div class="h-screen w-2/5 bg-black-900">

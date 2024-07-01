@@ -1,22 +1,23 @@
 //Loading Spinner from : https://contactmentor.com/how-to-add-loading-spinner-react-js/
 import { useContext, useEffect, useState, useRef } from "react";
-import { FaSearch } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { loadStripe } from "@stripe/stripe-js";
+
+// PAYPAL PAYMENTS WERE FINALLY USED - NOT STRIPE
+// import { loadStripe } from "@stripe/stripe-js";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import PaypalPayment from "./PaypalPayment";
 import Anonymous from "../images/anonymous-avatar-icon-25.png";
 import healthCheck from "../images/healthCheck3.png";
+
+// onNotify (function to create react-toastify notifications)
 const Navbar = ({ onNotify }) => {
   const [open, setOpen] = useState(false);
-
   const toggleOpen = () => {
     setOpen(!open);
   };
-
   const myNotify = (message) => {
     onNotify(message);
     setCreditsChanged(!creditsChanged);
@@ -39,6 +40,7 @@ const Navbar = ({ onNotify }) => {
     "fixed hidden mt-14 ml-20 bg-white divide-y divide-gray-100 rounded-lg shadow w-fit dark:bg-gray-700 dark:divide-gray-600"
   );
 
+  // state variables related to the health status of the microservices
   const [emailServiceStatus, setEmailServiceStatus] = useState(null);
   const [showResultsStatus, setshowResultsStatus] = useState(null);
   const [showSubmissionsStatus, setshowSubmissionsStatus] = useState(null);
@@ -51,11 +53,12 @@ const Navbar = ({ onNotify }) => {
   const [onlineServices, setOnlineServices] = useState(0);
 
   const pathname = window.location.pathname;
-  // Extract the "landing" part
+  // Extract the last part of the URI
   const pathSegment = pathname.split("/").pop();
   const [usernameInButton, setUsernameInButton] = useState(
     currentUser?.username
   );
+  // initial options useful for the PayPal payments
   const initialOptions = {
     clientId:
       "Abm-etelbBB8P8lIP1heUZvy_V4gg1Qzi6emTTY2Nv5_hWy168dVbmDxQd6ge76YcmNobwgL58xvKWlH",
@@ -64,6 +67,7 @@ const Navbar = ({ onNotify }) => {
   };
   console.log(username, currentUser);
 
+  // fetch the user's credits
   useEffect(() => {
     const fetchCredits = async (userid) => {
       try {
@@ -76,18 +80,14 @@ const Navbar = ({ onNotify }) => {
         console.log(error);
       }
     };
-
     setUsernameInButton(username);
-
-    // if (!username) {
-    //   setUsername(currentUser?.username);
-    // }
     if (currentUser && role === "user") {
       fetchCredits(userID);
-      //setUserID(currentUser.id);
     }
   }, [nameChanged, currentUser, userID, creditsChanged]);
+  // fetch credits whenever these state variables change
 
+  // fetch access token : check if the user is logged in and if so, get info about the user
   useEffect(() => {
     const fetchAccessToken = async () => {
       try {
@@ -111,6 +111,7 @@ const Navbar = ({ onNotify }) => {
     fetchAccessToken();
   }, [currentUser]);
 
+  // handle username changes
   const handleUsername = (e) => {
     setUsername(e.target.value);
     if (e.target.value.length > 24) {
@@ -120,6 +121,7 @@ const Navbar = ({ onNotify }) => {
     }
   };
 
+  // handle username updates calling the corresponding endpoint
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (usernameError === "") {
@@ -132,7 +134,6 @@ const Navbar = ({ onNotify }) => {
             userID: userID,
           }
         );
-
         setUsernameError("");
         console.log(res.data);
         let user = JSON.parse(localStorage.getItem("user"));
@@ -149,10 +150,14 @@ const Navbar = ({ onNotify }) => {
     }
   };
 
+  // handle credits changes
   const handleCredits = (e) => {
     setCreditsToBuy(e.target.value);
   };
 
+  // when the healthcheck button is pressed,
+  // check the status of all the microservices
+  // by making call to the corresponding endpoints
   const handleHealthCheck = async () => {
     document.getElementById("my_modal_3").showModal();
     let myHealthProg = healthProgress;
@@ -303,6 +308,8 @@ const Navbar = ({ onNotify }) => {
       });
   };
 
+  // when the health monitoring modal is closed
+  // set the status of the microservices to unknown (null)
   const handleNullStatus = () => {
     setEmailServiceStatus(null);
     setshowResultsStatus(null);
@@ -316,31 +323,34 @@ const Navbar = ({ onNotify }) => {
     setOnlineServices(0);
   };
 
-  const handleCreditsBuy = async (e) => {
-    try {
-      const stripe = await loadStripe(
-        "pk_test_51PHvOEL9KWQMTSTatKw8UWuoa1oLsN4pyyktesIdVeQHh6nZDhLQLeouBKVFaWMwpNMH6O5Vin5E1xkytZLZDpwm00pRUvSyhF"
-      );
-      const res = await axios.put(
-        `http://localhost:8080/auth/buyCredits/${userID}`,
-        {
-          creditsToBuy: creditsToBuy,
-        }
-      );
-      console.log(res.data);
-      setCreditsChanged(!creditsChanged);
+  // ABOUT PAYMENTS WITH STRIPE : IT WAS REMOVED - REPLACED BY PAYPAL PAYMENTS
 
-      const result = stripe.redirectToCheckout({
-        sessionId: res.data.id,
-      });
-      if (result.error) {
-        console.log(result.error);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const handleCreditsBuy = async (e) => {
+  //   try {
+  //     const stripe = await loadStripe(
+  //       "pk_test_51PHvOEL9KWQMTSTatKw8UWuoa1oLsN4pyyktesIdVeQHh6nZDhLQLeouBKVFaWMwpNMH6O5Vin5E1xkytZLZDpwm00pRUvSyhF"
+  //     );
+  //     const res = await axios.put(
+  //       `http://localhost:8080/auth/buyCredits/${userID}`,
+  //       {
+  //         creditsToBuy: creditsToBuy,
+  //       }
+  //     );
+  //     console.log(res.data);
+  //     setCreditsChanged(!creditsChanged);
 
+  //     const result = stripe.redirectToCheckout({
+  //       sessionId: res.data.id,
+  //     });
+  //     if (result.error) {
+  //       console.log(result.error);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  // define the styling of the user's profile dropdown
   const toggleDropdown = () => {
     if (
       profileInfoClass ===

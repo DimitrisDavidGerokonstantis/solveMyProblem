@@ -1,21 +1,20 @@
 //Loading Spinner from : https://contactmentor.com/how-to-add-loading-spinner-react-js/
 import LoginPhoto from "../images/loginPhoto.png";
-import GoogleLogo from "../images/googleLogo.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 const RegisterPage = () => {
   const navigate = useNavigate();
-
+  // state variables related to user's credentials
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVerific, setPasswordVerific] = useState("");
-
   const [passwordErrorVerif, setPasswordErrorVerif] = useState("");
   const [registerError, setRegisterError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
+  // handle username changes and make input validations
   const handleUsername = (e) => {
     setUsername(e.target.value);
     if (e.target.value.length > 24) {
@@ -24,7 +23,7 @@ const RegisterPage = () => {
       setUsernameError("");
     }
   };
-
+  // handle password changes and make input validations
   const handlePassword = (e) => {
     setPassword(e.target.value);
     if (e.target.value.length < 6) {
@@ -42,6 +41,7 @@ const RegisterPage = () => {
     }
   };
 
+  // handle password verification error
   const handlePasswordVerific = (e) => {
     setPasswordVerific(e.target.value);
     if (e.target.value != password) {
@@ -51,6 +51,8 @@ const RegisterPage = () => {
     }
   };
 
+  // submit credentials and call the register endpoint to register the user
+  // handle error cases (for example, if a user already exists or the password is false)
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (username.length === 0 || password.length === 0) {
@@ -81,6 +83,7 @@ const RegisterPage = () => {
     }
   };
 
+  // render the register page
   return (
     <div class="relative flex h-screen w-screen">
       <div class="h-screen w-2/5 bg-black-900">

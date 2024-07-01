@@ -1,11 +1,13 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 
+// this component is about the paypal payment buttons
+// the code below is an adaptation of the code provided in the paypal docs
 class PaypalPayment extends React.Component {
   constructor(props) {
     super(props);
   }
+  //create a new paypal order for credits
   createOrder(data) {
     // Order is created on the server and the order id is returned
     return fetch("http://localhost:8080/pay/paypal/create-paypal-order", {
@@ -28,6 +30,7 @@ class PaypalPayment extends React.Component {
       .then((response) => response.json())
       .then((order) => order.id);
   }
+  // after the buyer approves the payment, capture the money
   onApprove(data) {
     // Order is captured on the server  /paypal/orders/:orderID/capture
     return fetch(
