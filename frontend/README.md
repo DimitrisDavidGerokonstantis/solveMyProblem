@@ -65,21 +65,35 @@ Finally, by clicking the File icon, the user can view the solver's raw answer as
 
 - the **username icon**. By pressing it the user can view how many credits he has and also buy more credits using **PayPal**:
 
-![Screenshot from 2024-06-22 20-49-51](https://github.com/ntua/saas2024-19/assets/115417360/0329d61c-f85e-413f-8d2e-c7a965d3bfec)
+![449395083_1000360771673038_1213810672347943043_n](https://github.com/ntua/saas2024-19/assets/115417360/521f016a-b99b-4966-aa82-5da8aca9ef76)
 
 The user can specify the amount of credits he wants to purchase and then hit the **PayPal button** in order to pay. He will then be redirected to a PayPal Sandbox to finalize the purchase:   
 
 ![Screenshot from 2024-06-22 20-50-06](https://github.com/ntua/saas2024-19/assets/115417360/35bd7dea-12f9-4429-b207-e68e4f074978)  
 
+- the **healthcheck icon**. By pressing it, users and admins alike can see which microservices are up and running and which ones aren't. Since the application is based on a microservices architecture, if one microservice is down, the rest of the application can continue operating. In the example below, the user can see that the statistics microservice is down while the rest of the microservices funtion properly.
+
+![449363627_480505161144026_5001118287371998216_n](https://github.com/ntua/saas2024-19/assets/115417360/f73fbfdd-c01a-4f1a-8b2e-78f4feba2776)  
+
+### Admin's functionalities  
+
+The admin's home page is really similar to the user's one. The main differences are that the admin can view every single problem submitted by any user, alongside the id of the user that submitted it and of course cannot run or edit the problems, since they don't belong to him. Furthermore, the admin can view some information about the user that has submitted a problem by clicking on that user's id. The pop-up modal that appears can be seen in the example below:  
+
+![449323116_1316504429307723_731093742119160580_n](https://github.com/ntua/saas2024-19/assets/115417360/3ddbc138-caa5-4c55-b009-ea32ef61197a)
+
+Moreover, the admin can view some statistics regarding the problems that have been submitted and the system's state by pressing the **View Statistics** button from their main page. The statistics that are gathered and displayed are the following ones and can be seen below:  
+
+### Emails  
+
 Last but not least, the user can receive two kinds of **emails** to his personal Google email (provided he has logged in with his Google account to Solvio):
 
 - a welcome email the first time he logs in to Solvio that can be seen below:
 
-![Screenshot from 2024-06-22 20-51-29](https://github.com/ntua/saas2024-19/assets/115417360/4a45cb4e-ad2f-4125-80f7-6158273d5b71)  
+![449326137_491357113565866_1671946733316602288_n](https://github.com/ntua/saas2024-19/assets/115417360/2d3313e1-5880-4bea-b590-bcb7fb429843)
 
 - an email that notifies the user that a problem he has submitted to Solvio has been solved. This email also includes a link to the page containing the answer to this particular problem:
 
-![Screenshot from 2024-06-22 20-51-50](https://github.com/ntua/saas2024-19/assets/115417360/e0ca9486-f5d4-4156-be6d-67153da172f5)
+![449356108_992286049034830_8948031287539156595_n](https://github.com/ntua/saas2024-19/assets/115417360/c4c34122-7ca7-4e43-bd89-7748c101c294)
 
 
 
