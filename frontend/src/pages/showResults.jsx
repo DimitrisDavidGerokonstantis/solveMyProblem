@@ -101,7 +101,7 @@ const ShowResults = () => {
         console.log(error);
       }
     };
-    
+
     //construct the graph that depicts the route of a vehicle
     if (selectedRoute !== null && routesData.length > 0) {
       const selectedRouteData = routesData[selectedRoute]; //the selected vehicle
@@ -263,14 +263,12 @@ const ShowResults = () => {
               {/* Modal - Graph of the route of the chosen vehicle : use of reagraph's Graph Canvas component */}
               {showModal && selectedRoute !== null && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                  <div className="relative bg-white shadow-xl rounded-md max-w-screen-lg mx-auto">
-                    <div className="flex justify-end p-2">
-                      <div className="mt-6 mb-3 text-lg font-bold text-orange-800">
-                        Route for Vehicle {selectedRoute}
-                      </div>
+                  <div className="relative bg-white shadow-xl rounded-md max-w-screen-lg mx-auto flex flex-col justify-center items-center">
+                    <div className="flex justify-between w-full mt-2">
+                      <div className="mt-4 text-2xl font-bold text-orange-800 mr-4 ml-4"></div>
                       <button
                         onClick={closeModal}
-                        className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                        className="text-gray-800 bg-gray-200 hover:bg-gray-100 rounded-lg text-sm items-center px-2 py-2 mt-4 mr-4"
                       >
                         <svg
                           className="w-5 h-5"
@@ -286,7 +284,10 @@ const ShowResults = () => {
                         </svg>
                       </button>
                     </div>
-                    <div className="relative shadow-xl rounded-md bg-white w-screen max-w-xl min-h-96">
+                    <div className="text-2xl font-bold text-orange-800">
+                      Route for Vehicle {selectedRoute}
+                    </div>
+                    <div className="relative shadow-xl rounded-md bg-white w-screen max-w-xl min-h-96 flex flex-col justify-center items-center">
                       <GraphCanvas nodes={nodes_graph} edges={edges} />
                     </div>
                   </div>
