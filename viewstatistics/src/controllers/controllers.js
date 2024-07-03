@@ -1,23 +1,21 @@
 import Results from "../models/Results.js";
 import axios from "axios";
 
-const RABBITMQ_USER = "guest";
-const RABBITMQ_PASS = "guest";
-const RABBITMQ_HOST = "rabbitmq";
-const QUEUE_NAME = "ProxyQueue";
-
 const getQueueLength = async () => {
-  try {
-    const response = await axios.get(
-      `http://${RABBITMQ_USER}:${RABBITMQ_PASS}@${RABBITMQ_HOST}:15672/api/queues/%2F/${QUEUE_NAME}`
-    );
-    const queueInfo = response.data;
-    console.log(`Queue Length: ${queueInfo.messages}`);
-    return queueInfo.messages;
-  } catch (error) {
-    console.error("Error fetching queue length:", error);
-    throw error;
-  }
+    const url = 'http://rabbitmqquestions:15672/api/queues/%2F/ProxyQueue';
+    const auth = {
+        username: 'guest',
+        password: 'guest'
+    }
+
+    try {
+        const response = await axios.get(url, { auth });
+        console.log(`ProxyQueue length: ${response.data.messages}`);
+        return response.data.messages;
+    } catch (error) {
+        console.error('Error fetching queue length:', error);
+        return null;
+    }
 };
 
 const countAll = async () => {
@@ -190,11 +188,12 @@ const query2 = async () => {
 
 export const getStats = async (req, res) => {
   try {
-    const [totalSubmissions, todaysSubmissions, avgExecTime, data1, data2] =
+    const [totalSubmissions, todaysSubmissions, avgExecTime, queueLen, data1, data2] =
       await Promise.all([
         countAll(),
         countTodays(),
         findAvgExecTime(),
+        getQueueLength(),
         query1(),
         query2(),
       ]);
@@ -203,6 +202,7 @@ export const getStats = async (req, res) => {
       totalSubmissions,
       todaysSubmissions,
       avgExecTime,
+      queueLen,
       data1,
       data2,
     };

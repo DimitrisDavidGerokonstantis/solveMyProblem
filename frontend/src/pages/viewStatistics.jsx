@@ -10,7 +10,7 @@ const ViewStatistics = () => {
   const [totalSubmissions, setTotalSubmissions] = useState();
   const [todaysSubmissions, setTodaysSubmissions] = useState();
   const [avgExecTime, setAvgExecTime] = useState();
-  // const [queueLength, setQueueLength] = useState();
+  const [queueLen, setQueueLength] = useState();
   const [data1, setData1] = useState([]);
   const [data2, setData2] = useState([[]]);
   const [userId, setUserId] = useState(null);
@@ -44,7 +44,7 @@ const ViewStatistics = () => {
         setTotalSubmissions(res.data.totalSubmissions);
         setTodaysSubmissions(res.data.todaysSubmissions);
         setAvgExecTime(res.data.avgExecTime);
-        // setQueueLength(res.data.queueLength);
+        setQueueLength(res.data.queueLen);
         setData1(res.data.data1);
         setData2(res.data.data2);
       } catch (error) {
@@ -115,7 +115,7 @@ const ViewStatistics = () => {
             val1={totalSubmissions}
             val2={todaysSubmissions}
             val3={avgExecTime}
-            val4={2}
+            val4={queueLen}
           />
           <SubmissionChart2 data={data1} />
           {/* <QueueChart data={data1}/> */}
