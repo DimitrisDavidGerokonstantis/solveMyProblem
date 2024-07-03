@@ -18,11 +18,12 @@ The project was implemented using a **microservices architecture**. The microser
 - **usersmanagement**: A microservice that deals with user authentication and makes sure at all times that users can't perform actions that they are not allowed to. Users can make a Solvio account or sign in with their Google account. It also keeps track of how many credits a user possesses. Credits are necessary in order to submit problems and can be bought using PayPal.
 - **emailservice**: Manages the sending of emails to the users when they first make an account and when the results to a problem they submitted are ready.
 
-Detailed **UML diagrams**, made with **Visual Paradigm**, describing the project's architecture can be found in the **architecture folder** [here](https://github.com/ntua/saas2024-19/tree/main/architecture).  
+Detailed **UML diagrams** (Component, Deployment, Sequence and Class), made with **Visual Paradigm**, describing the project's architecture can be found in the **architecture folder** [here](https://github.com/ntua/saas2024-19/tree/main/architecture).  
 The UML component diagram is shown here as well to give a full picture of the architecture of the application (in the Visual Paradigm files one can see the diagrams better):  
 
-![282a695b-c674-43b8-838a-7a4dc23d3300](https://github.com/ntua/saas2024-19/assets/115417360/7d5c7105-a048-48e5-b07a-059168c109e6)
+![1d290247-5c57-44eb-bc79-9f33ddd3b5be](https://github.com/ntua/saas2024-19/assets/115417360/9d4722e6-59b6-4a7b-b3d9-bb882f032858)
 
+Finally, we performed stress testing to our application using **Apache JMeter**. We tested the application for different amounts of requests and measured the throughput for each case. We also observed through the RabbitMQ UI the behaviour of the queues when the system is under heavy load. The results of this study can be found in the **stress testing** folder [here](https://github.com/ntua/saas2024-19/tree/main/stress%20testing)  
 
 ## Installation - Deployment  
 
