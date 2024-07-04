@@ -179,7 +179,7 @@ const query1 = async () => {
 const query2 = async () => {
   try {
     const results = await Results.find();
-    return [["execTime"], ...results.map((result) => [result.execTime])];
+    return [["problemID", "execTime"], ...results.map((result) => [result.problemID, result.execTime])];
   } catch (error) {
     console.error("Error calculating query 2", error);
     throw error;

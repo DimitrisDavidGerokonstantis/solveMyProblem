@@ -4,6 +4,7 @@ import Results from "./Results.js";
 export async function storeResult(data) {
     try {
         const newResult = new Results({
+            problemID: new mongoose.Types.ObjectId(data.problemID),
             userID: new mongoose.Types.ObjectId(data.userID),
             model: data.model,
             date: data.updatedAt,

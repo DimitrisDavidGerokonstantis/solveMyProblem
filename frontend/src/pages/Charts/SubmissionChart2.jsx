@@ -9,6 +9,7 @@ const options = {
   bar: { groupWidth: "100%" },
   colors: Array(24).fill("gray").concat(["brown"]),
   legend: { position: "none" },
+  backgroundColor: "#faf6de"
 };
 
 const SubmissionChart2 = ({ data }) => {
