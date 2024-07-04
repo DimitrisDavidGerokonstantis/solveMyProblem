@@ -89,7 +89,7 @@ Moreover, the admin can view some **statistics** regarding the problems that hav
 - a graph displaying the total number of problems solved for each hour of every day. One can also see the daily average of the problems solved (taking into account the hours when a problem has been submitted).
 - a graph showing the distribution of problems according to their execution time.
 
-![Selection_075](https://github.com/ntua/saas2024-19/assets/115417360/0acd0aa2-8dc7-4c2d-a46f-8a0d4c4e6629)
+![Selection_076](https://github.com/ntua/saas2024-19/assets/115417360/a8720380-ef87-4501-bf5e-5d0b9bdeda97)
 
 ### Emails  
 
