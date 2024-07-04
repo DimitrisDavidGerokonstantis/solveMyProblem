@@ -119,7 +119,8 @@ const query1 = async () => {
             },
           },
           counts: 1,
-          avg: { $avg: "$counts.count" },
+          total: { $sum: "$counts.count" },
+          avg: { $divide: [{ $sum: "$counts.count" }, 24] },
         },
       },
     ]);
