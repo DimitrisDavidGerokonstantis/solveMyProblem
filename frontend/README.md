@@ -86,7 +86,7 @@ Moreover, the admin can view some **statistics** regarding the problems that hav
 - The total number of problems solved (plus the new problems solved today)
 - The average execution time of the problems that have been solved
 - the length of the RabbitMQ queue that contains the problems that are waiting to be submitted to the solver
-- a graph displaying the total number of problems solved for each hour of every day. One can also see the daily average of the problems solved (taking into account he hours when a problem has been submitted).
+- a graph displaying the total number of problems solved for each hour of every day. One can also see the daily average of the problems solved (taking into account the hours when a problem has been submitted).
 - a graph showing the distribution of problems according to their execution time.
 
 ![Selection_075](https://github.com/ntua/saas2024-19/assets/115417360/0acd0aa2-8dc7-4c2d-a46f-8a0d4c4e6629)
