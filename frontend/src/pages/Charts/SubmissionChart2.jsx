@@ -3,7 +3,7 @@ import { Chart } from "react-google-charts";
 
 const options = {
   vAxis: { title: "Counts" },
-  hAxis: { title: "Date" },
+  hAxis: { title: "Date", direction: 1 },
   seriesType: "bars",
   series: { 24: { type: "line" } },
   bar: { groupWidth: "100%" },

@@ -39,7 +39,7 @@ const Histogram = ({ data }) => {
         <Chart chartType="Histogram" width="100%" height="400px" data={data} options={{
           legend: { position: "none" },
           hAxis: { title: "Execution Time" },
-          // histogram: { bucketSize: 2 },
+          histogram: { bucketSize: 3 },
           colors: ['darkred'],
           backgroundColor: "#faf6de",
         }} />
