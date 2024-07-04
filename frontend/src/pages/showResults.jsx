@@ -112,10 +112,18 @@ const ShowResults = () => {
       let help1 = [];
       let help2 = [];
       for (let i = 0; i < nodes.length - 1; i++) {
-        help1.push({
-          id: nodes[i],
-          label: nodes[i],
-        });
+        if (nodes[i] == 0) {
+          help1.push({
+            id: nodes[i],
+            label: nodes[i],
+            fill: "rgb(80, 255, 55)",
+          });
+        } else {
+          help1.push({
+            id: nodes[i],
+            label: nodes[i],
+          });
+        }
       }
       setNodes_Graph(help1);
 
